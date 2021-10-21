@@ -15,10 +15,8 @@ import oshi.SystemInfo;
 public class Main 
 {          
      public static void main(String args[])
-    {  
-        CheckLaunch();
-        
-        File dir = new File(System.getProperty("user.home"));
+    {          
+        File dir = new File(System.getProperty("user.dir"));
         if(!dir.exists())
             dir.mkdir();
         
@@ -46,10 +44,12 @@ public class Main
                     System.exit(0);
                     break;
                 case "-cli":
+                    CheckLaunch();
                     //ATTENTION: ADD CONSOLE FEEDBACK
                     BackgroundService bgs = new BackgroundService(false);
                     break;
                 case "-gui":
+                    CheckLaunch();
                     bgs = new BackgroundService(true);
                     break;
                 default:
