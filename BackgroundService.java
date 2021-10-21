@@ -161,7 +161,7 @@ public class BackgroundService
                 }
             };    
             timerRunning = true;
-            popupTimer.schedule(popupTask, 8000); 
+            popupTimer.schedule(popupTask, 12000); 
         }
     }  
     

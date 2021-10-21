@@ -331,7 +331,14 @@ public class Utilities
         return  null;
     }
     
-    public static String ToH2Char(String s)
+    /**
+     * Adds a single quote to the beginning and end of the string<br>
+     * Mostly used to insert a varchar into the H2 database, which needs <br>
+     * to be encased in single quotes
+     * @param s
+     * @return supplied string in single quotes
+     */
+    public static String SingleQuotedString(String s)
     {
         return "'" + s + "'";
     }

@@ -38,7 +38,7 @@ public class NewUserPanel extends javax.swing.JPanel
         try (Connection c = ConnectionDB.get_DBA_Connection(passwordField1.getPassword()))
         {       
             gui.dbManager.CreateTable(new String[]{"dba", "value", "varchar(50)"}, c);
-            gui.dbManager.InsertIntoDB(new String[]{"dba", "value", Utilities.ToH2Char(String.copyValueOf(dbPassword))}, c);
+            gui.dbManager.InsertIntoDB(new String[]{"dba", "value", Utilities.SingleQuotedString(String.copyValueOf(dbPassword))}, c);
             c.createStatement().execute("SHUTDOWN");
             c.close();
         }

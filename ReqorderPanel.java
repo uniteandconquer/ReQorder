@@ -317,15 +317,15 @@ public class ReqorderPanel extends javax.swing.JPanel
                 return;
 
             blocksMintedBox.setSelected(
-                    (boolean)dbManager.GetItemValue(editedWatchlist,"blocksminted","address", Utilities.ToH2Char(address),connection));
+                    (boolean)dbManager.GetItemValue(editedWatchlist,"blocksminted","address", Utilities.SingleQuotedString(address),connection));
             levelBox.setSelected(
-                    (boolean)dbManager.GetItemValue(editedWatchlist,"level","address", Utilities.ToH2Char(address),connection));
+                    (boolean)dbManager.GetItemValue(editedWatchlist,"level","address", Utilities.SingleQuotedString(address),connection));
             balanceBox.setSelected(
-                    (boolean)dbManager.GetItemValue(editedWatchlist,"balance","address", Utilities.ToH2Char(address),connection));
+                    (boolean)dbManager.GetItemValue(editedWatchlist,"balance","address", Utilities.SingleQuotedString(address),connection));
             balanceSpinner.setValue(
-                    (double)dbManager.GetItemValue(editedWatchlist,"balancetreshold","address", Utilities.ToH2Char(address),connection));
+                    (double)dbManager.GetItemValue(editedWatchlist,"balancetreshold","address", Utilities.SingleQuotedString(address),connection));
 
-            dbManager.FillJTable(editedWatchlist, " where address=" + Utilities.ToH2Char(address), itemsTable,connection);
+            dbManager.FillJTable(editedWatchlist, " where address=" + Utilities.SingleQuotedString(address), itemsTable,connection);
             
             connection.close();      
 
@@ -345,10 +345,10 @@ public class ReqorderPanel extends javax.swing.JPanel
             return;
         
         valuePairs = new ArrayList<>();
-        valuePairs.add(new KeyItemPair("blocksminted", String.valueOf(blocksMintedBox.isSelected()), "address", Utilities.ToH2Char(lastSelectedAddress)));
-        valuePairs.add(new KeyItemPair("level", String.valueOf(levelBox.isSelected()), "address", Utilities.ToH2Char(lastSelectedAddress)));
-        valuePairs.add(new KeyItemPair( "balance", String.valueOf(balanceBox.isSelected()), "address", Utilities.ToH2Char(lastSelectedAddress)));
-        valuePairs.add(new KeyItemPair("balancetreshold", String.valueOf(balanceSpinner.getValue()), "address", Utilities.ToH2Char(lastSelectedAddress)));
+        valuePairs.add(new KeyItemPair("blocksminted", String.valueOf(blocksMintedBox.isSelected()), "address", Utilities.SingleQuotedString(lastSelectedAddress)));
+        valuePairs.add(new KeyItemPair("level", String.valueOf(levelBox.isSelected()), "address", Utilities.SingleQuotedString(lastSelectedAddress)));
+        valuePairs.add(new KeyItemPair( "balance", String.valueOf(balanceBox.isSelected()), "address", Utilities.SingleQuotedString(lastSelectedAddress)));
+        valuePairs.add(new KeyItemPair("balancetreshold", String.valueOf(balanceSpinner.getValue()), "address", Utilities.SingleQuotedString(lastSelectedAddress)));
         
         try (Connection connection = ConnectionDB.getConnection( "properties"))
         {
@@ -1013,7 +1013,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(jSeparator2, gridBagConstraints);
 
                 watchlistsManagerButton.setText("Manage watchlists");
-                watchlistsManagerButton.setToolTipText("Add or remove addresses to your watchlist and choose which of their data to reQord");
+                watchlistsManagerButton.setToolTipText("Add or remove addresses to your watchlist and choose which of their data to ReQord");
                 watchlistsManagerButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1646,6 +1646,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
                 gridBagConstraints.gridwidth = 3;
+                gridBagConstraints.ipadx = 25;
                 gridBagConstraints.insets = new java.awt.Insets(15, 0, 8, 0);
                 watchlistEditor.add(addAddressButton, gridBagConstraints);
 
@@ -1666,6 +1667,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.gridwidth = 3;
+                gridBagConstraints.ipadx = 25;
                 gridBagConstraints.insets = new java.awt.Insets(8, 0, 8, 0);
                 watchlistEditor.add(removeAddressButton, gridBagConstraints);
 
@@ -1684,6 +1686,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 2;
                 gridBagConstraints.gridwidth = 3;
+                gridBagConstraints.ipadx = 25;
                 gridBagConstraints.insets = new java.awt.Insets(8, 0, 8, 0);
                 watchlistEditor.add(saveWatchlistButton, gridBagConstraints);
 
@@ -1882,6 +1885,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 4;
+                gridBagConstraints.ipadx = 25;
                 gridBagConstraints.insets = new java.awt.Insets(20, 0, 7, 0);
                 watchlistsManager.add(applyWatchlistButton, gridBagConstraints);
 
@@ -2572,7 +2576,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         try (Connection connection = ConnectionDB.getConnection( "properties"))
         {
             String address = addressesList.getSelectedValue();
-            int ID = (int) dbManager.GetItemValue(editedWatchlist, "ID", "address", Utilities.ToH2Char(address), connection);
+            int ID = (int) dbManager.GetItemValue(editedWatchlist, "ID", "address", Utilities.SingleQuotedString(address), connection);
             dbManager.ExecuteUpdate("delete from " + editedWatchlist +  " where ID = " + ID, connection);
             connection.close();
             addressListModel.removeElement(address);

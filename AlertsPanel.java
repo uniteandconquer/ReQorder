@@ -100,12 +100,12 @@ public class AlertsPanel extends javax.swing.JPanel
              {
                  //set components value according to values stored in properties database
                  long longValue = ((long) gui.dbManager.GetFirstItem("alerts_settings", "blockchainvalue", connection)) / 1000000000;
-                 chainSizeAlertSpinner.setValue((int) longValue);
+                 chainSizeAlertSpinner.setValue(longValue);
                  longValue = ((long) gui.dbManager.GetFirstItem("alerts_settings", "spaceleftvalue", connection)) / 1000000000;
-                 spaceLeftSpinner.setValue((int) longValue);
-                 long longPrice = ((long) gui.dbManager.GetFirstItem("alerts_settings", "ltcvalue", connection));
+                 spaceLeftSpinner.setValue(longValue);
+                 long longPrice = Math.abs((long) gui.dbManager.GetFirstItem("alerts_settings", "ltcvalue", connection));
                  ltcAlertSpinner.setValue(((double) longPrice / 100000000));
-                 longPrice = ((long) gui.dbManager.GetFirstItem("alerts_settings", "dogevalue", connection));
+                 longPrice = Math.abs((long) gui.dbManager.GetFirstItem("alerts_settings", "dogevalue", connection));
                  dogeAlertSpinner.setValue(((double) longPrice / 100000000));
 
                  JCheckBox checkBox;
@@ -118,8 +118,13 @@ public class AlertsPanel extends javax.swing.JPanel
                      }
                  }
              }
-            chainSizeAlertBox.setSelected((boolean)gui.dbManager.TableExists("blockchain_folder", connection));
-            spaceLeftAlertBox.setSelected(chainSizeAlertBox.isSelected());
+             if((boolean)gui.dbManager.TableExists("blockchain_folder", connection))
+             {
+                 chainSizeAlertBox.setSelected((boolean)gui.dbManager.GetFirstItem("alerts_settings", "blockchainsize", connection));
+                 chainSizeAlertSpinner.setValue((long)gui.dbManager.GetFirstItem("alerts_settings", "blockchainvalue", connection) / 1000000000);
+                 spaceLeftAlertBox.setSelected((boolean)gui.dbManager.GetFirstItem("alerts_settings", "spaceleft", connection));
+                 spaceLeftSpinner.setValue((long)gui.dbManager.GetFirstItem("alerts_settings", "spaceleftvalue", connection) / 1000000000);
+             }
              connection.close();
          }
          catch (NullPointerException | SQLException e)
@@ -179,6 +184,13 @@ public class AlertsPanel extends javax.swing.JPanel
         statusAlertsBox = new javax.swing.JCheckBox();
         outOfSyncBox = new javax.swing.JCheckBox();
         jSeparator14 = new javax.swing.JSeparator();
+        dogeBelowRadio = new javax.swing.JRadioButton();
+        dogeAboveRadio = new javax.swing.JRadioButton();
+        ltcAboveRadio = new javax.swing.JRadioButton();
+        ltcBelowRadio = new javax.swing.JRadioButton();
+        jSeparator15 = new javax.swing.JSeparator();
+        jSeparator16 = new javax.swing.JSeparator();
+        jSeparator17 = new javax.swing.JSeparator();
         alertsSplitpane2 = new javax.swing.JSplitPane();
         alertsListPane = new javax.swing.JScrollPane();
         alertsListPane.getVerticalScrollBar().setUnitIncrement(10);
@@ -286,7 +298,7 @@ public class AlertsPanel extends javax.swing.JPanel
             alertsOptionsPanel.add(deleteAllAlertsBtn, gridBagConstraints);
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 10;
+            gridBagConstraints.gridy = 19;
             gridBagConstraints.gridwidth = 4;
             gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
             gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
@@ -302,12 +314,13 @@ public class AlertsPanel extends javax.swing.JPanel
             gridBagConstraints.insets = new java.awt.Insets(0, 30, 1, 0);
             alertsOptionsPanel.add(reqordingHaltedBox, gridBagConstraints);
 
-            dogeAlertBox.setText("Dogecoin price");
+            dogeAlertBox.setText("Doge price");
             dogeAlertBox.setActionCommand("dogeprice");
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 25;
+            gridBagConstraints.gridy = 24;
             gridBagConstraints.gridwidth = 4;
+            gridBagConstraints.gridheight = 2;
             gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
             gridBagConstraints.insets = new java.awt.Insets(3, 30, 3, 0);
             alertsOptionsPanel.add(dogeAlertBox, gridBagConstraints);
@@ -353,10 +366,10 @@ public class AlertsPanel extends javax.swing.JPanel
             });
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 19;
+            gridBagConstraints.gridy = 28;
             gridBagConstraints.gridwidth = 4;
             gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-            gridBagConstraints.insets = new java.awt.Insets(1, 30, 5, 0);
+            gridBagConstraints.insets = new java.awt.Insets(5, 30, 5, 0);
             alertsOptionsPanel.add(chainSizeAlertBox, gridBagConstraints);
 
             nameRegBox.setText("Name registration");
@@ -369,17 +382,18 @@ public class AlertsPanel extends javax.swing.JPanel
             gridBagConstraints.insets = new java.awt.Insets(1, 30, 1, 0);
             alertsOptionsPanel.add(nameRegBox, gridBagConstraints);
 
-            ltcAlertBox.setText("Litecoin price");
+            ltcAlertBox.setText("LTC price");
             ltcAlertBox.setActionCommand("ltcprice");
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 23;
+            gridBagConstraints.gridy = 20;
             gridBagConstraints.gridwidth = 4;
+            gridBagConstraints.gridheight = 2;
             gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-            gridBagConstraints.insets = new java.awt.Insets(3, 30, 3, 0);
+            gridBagConstraints.insets = new java.awt.Insets(6, 30, 6, 0);
             alertsOptionsPanel.add(ltcAlertBox, gridBagConstraints);
 
-            chainSizeAlertSpinner.setModel(new javax.swing.SpinnerNumberModel(30, 0, 1000, 1));
+            chainSizeAlertSpinner.setModel(new javax.swing.SpinnerNumberModel(Long.valueOf(30L), Long.valueOf(0L), Long.valueOf(1000L), Long.valueOf(1L)));
             chainSizeAlertSpinner.addChangeListener(new javax.swing.event.ChangeListener()
             {
                 public void stateChanged(javax.swing.event.ChangeEvent evt)
@@ -389,7 +403,7 @@ public class AlertsPanel extends javax.swing.JPanel
             });
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 1;
-            gridBagConstraints.gridy = 20;
+            gridBagConstraints.gridy = 29;
             gridBagConstraints.ipadx = 22;
             gridBagConstraints.insets = new java.awt.Insets(1, 32, 1, 0);
             alertsOptionsPanel.add(chainSizeAlertSpinner, gridBagConstraints);
@@ -406,7 +420,7 @@ public class AlertsPanel extends javax.swing.JPanel
             gridBagConstraints.gridx = 1;
             gridBagConstraints.gridy = 26;
             gridBagConstraints.ipadx = 40;
-            gridBagConstraints.insets = new java.awt.Insets(1, 32, 11, 0);
+            gridBagConstraints.insets = new java.awt.Insets(1, 32, 5, 0);
             alertsOptionsPanel.add(dogeAlertSpinner, gridBagConstraints);
 
             ltcAlertSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 0.1d));
@@ -419,7 +433,7 @@ public class AlertsPanel extends javax.swing.JPanel
             });
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 1;
-            gridBagConstraints.gridy = 24;
+            gridBagConstraints.gridy = 22;
             gridBagConstraints.ipadx = 40;
             gridBagConstraints.insets = new java.awt.Insets(1, 32, 1, 0);
             alertsOptionsPanel.add(ltcAlertSpinner, gridBagConstraints);
@@ -427,13 +441,14 @@ public class AlertsPanel extends javax.swing.JPanel
             jLabel9.setText("GB");
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 2;
-            gridBagConstraints.gridy = 22;
+            gridBagConstraints.gridy = 31;
+            gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
             alertsOptionsPanel.add(jLabel9, gridBagConstraints);
 
             jLabel12.setText("QORT");
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 2;
-            gridBagConstraints.gridy = 24;
+            gridBagConstraints.gridy = 22;
             gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
             alertsOptionsPanel.add(jLabel12, gridBagConstraints);
 
@@ -520,13 +535,13 @@ public class AlertsPanel extends javax.swing.JPanel
             });
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 21;
+            gridBagConstraints.gridy = 30;
             gridBagConstraints.gridwidth = 4;
             gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-            gridBagConstraints.insets = new java.awt.Insets(1, 30, 5, 0);
+            gridBagConstraints.insets = new java.awt.Insets(5, 30, 5, 0);
             alertsOptionsPanel.add(spaceLeftAlertBox, gridBagConstraints);
 
-            spaceLeftSpinner.setModel(new javax.swing.SpinnerNumberModel(2, 0, 1000, 1));
+            spaceLeftSpinner.setModel(new javax.swing.SpinnerNumberModel(Long.valueOf(2L), Long.valueOf(0L), Long.valueOf(1000L), Long.valueOf(1L)));
             spaceLeftSpinner.addChangeListener(new javax.swing.event.ChangeListener()
             {
                 public void stateChanged(javax.swing.event.ChangeEvent evt)
@@ -536,20 +551,21 @@ public class AlertsPanel extends javax.swing.JPanel
             });
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 1;
-            gridBagConstraints.gridy = 22;
+            gridBagConstraints.gridy = 31;
             gridBagConstraints.ipadx = 22;
-            gridBagConstraints.insets = new java.awt.Insets(1, 32, 1, 0);
+            gridBagConstraints.insets = new java.awt.Insets(0, 32, 10, 0);
             alertsOptionsPanel.add(spaceLeftSpinner, gridBagConstraints);
 
             jLabel14.setText("GB");
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 2;
-            gridBagConstraints.gridy = 20;
+            gridBagConstraints.gridy = 29;
             alertsOptionsPanel.add(jLabel14, gridBagConstraints);
 
             nodeInfoBox.setText("Show node info");
             nodeInfoBox.setToolTipText("Enabling node info will add the current status of your Qortal node and active minting account to the status alert e-mails");
             nodeInfoBox.setActionCommand("shownodeinfo");
+            nodeInfoBox.setEnabled(false);
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy = 8;
@@ -582,6 +598,7 @@ public class AlertsPanel extends javax.swing.JPanel
             statusAlertsBox.setText("Enable status alerts");
             statusAlertsBox.setToolTipText("Enabling status alerts will send you an e-mail with the current reqording status at the time iterval specified (between 1 and 24 hours)");
             statusAlertsBox.setActionCommand("statusalerts");
+            statusAlertsBox.setEnabled(false);
             statusAlertsBox.addActionListener(new java.awt.event.ActionListener()
             {
                 public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -615,6 +632,92 @@ public class AlertsPanel extends javax.swing.JPanel
             gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
             alertsOptionsPanel.add(jSeparator14, gridBagConstraints);
 
+            dogeBelowRadio.setText("below");
+            dogeBelowRadio.addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(java.awt.event.ActionEvent evt)
+                {
+                    dogeBelowRadioActionPerformed(evt);
+                }
+            });
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.gridy = 25;
+            gridBagConstraints.gridwidth = 2;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+            gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+            alertsOptionsPanel.add(dogeBelowRadio, gridBagConstraints);
+
+            dogeAboveRadio.setSelected(true);
+            dogeAboveRadio.setText("above");
+            dogeAboveRadio.addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(java.awt.event.ActionEvent evt)
+                {
+                    dogeAboveRadioActionPerformed(evt);
+                }
+            });
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.gridy = 24;
+            gridBagConstraints.gridwidth = 2;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+            gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+            alertsOptionsPanel.add(dogeAboveRadio, gridBagConstraints);
+
+            ltcAboveRadio.setSelected(true);
+            ltcAboveRadio.setText("above");
+            ltcAboveRadio.addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(java.awt.event.ActionEvent evt)
+                {
+                    ltcAboveRadioActionPerformed(evt);
+                }
+            });
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.gridy = 20;
+            gridBagConstraints.gridwidth = 2;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+            alertsOptionsPanel.add(ltcAboveRadio, gridBagConstraints);
+
+            ltcBelowRadio.setText("below");
+            ltcBelowRadio.addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(java.awt.event.ActionEvent evt)
+                {
+                    ltcBelowRadioActionPerformed(evt);
+                }
+            });
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.gridy = 21;
+            gridBagConstraints.gridwidth = 2;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+            gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+            alertsOptionsPanel.add(ltcBelowRadio, gridBagConstraints);
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 27;
+            gridBagConstraints.gridwidth = 4;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+            alertsOptionsPanel.add(jSeparator15, gridBagConstraints);
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 10;
+            gridBagConstraints.gridwidth = 4;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+            alertsOptionsPanel.add(jSeparator16, gridBagConstraints);
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 23;
+            gridBagConstraints.gridwidth = 4;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
+            alertsOptionsPanel.add(jSeparator17, gridBagConstraints);
+
             alertsOptionsScrollpane.setViewportView(alertsOptionsPanel);
 
             alertsMainSplitPane.setLeftComponent(alertsOptionsScrollpane);
@@ -643,11 +746,11 @@ public class AlertsPanel extends javax.swing.JPanel
             this.setLayout(layout);
             layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
+                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
             );
             layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
+                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 811, Short.MAX_VALUE)
             );
         }// </editor-fold>//GEN-END:initComponents
 
@@ -763,16 +866,18 @@ public class AlertsPanel extends javax.swing.JPanel
             insertString.add("id");
             insertString.add("0");
             insertString.add("blockchainvalue");
-            long longSize = (long) (((int) chainSizeAlertSpinner.getValue()) * 1000000000L);
+            long longSize = (long) (((long) chainSizeAlertSpinner.getValue()) * 1000000000L);
             insertString.add(String.valueOf(longSize));
             insertString.add("spaceleftvalue");
-            longSize = (long) (((int) spaceLeftSpinner.getValue()) * 1000000000L);
+            longSize = (long) (((long) spaceLeftSpinner.getValue()) * 1000000000L);
             insertString.add(String.valueOf(longSize));
             insertString.add("ltcvalue");
             long longPrice = Double.valueOf((double) ltcAlertSpinner.getValue() * 100000000).longValue();
+            longPrice = ltcAboveRadio.isSelected() ? longPrice : longPrice * -1;
             insertString.add(String.valueOf(longPrice));
             insertString.add("dogevalue");
             longPrice = Double.valueOf((double) dogeAlertSpinner.getValue() * 100000000).longValue();
+            longPrice = dogeAboveRadio.isSelected() ? longPrice : longPrice * -1;
             insertString.add(String.valueOf(longPrice));
             //setting the interval value if this alert is not enabled is not a problem
             insertString.add("statusinterval");
@@ -785,8 +890,6 @@ public class AlertsPanel extends javax.swing.JPanel
                 if (c instanceof JCheckBox)
                 {
                     checkBox = (JCheckBox) c;
-                    if(!checkBox.isEnabled())
-                        continue;
                     
                     insertString.add(checkBox.getActionCommand());
                     insertString.add(String.valueOf(checkBox.isSelected()));
@@ -808,13 +911,14 @@ public class AlertsPanel extends javax.swing.JPanel
 
     private void emailAlertsCheckboxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_emailAlertsCheckboxActionPerformed
     {//GEN-HEADEREND:event_emailAlertsCheckboxActionPerformed
-        statusAlertsBox.setSelected(emailAlertsCheckbox.isSelected());
-        statusAlertsBox.setEnabled(emailAlertsCheckbox.isSelected());
-        nodeInfoBox.setSelected(emailAlertsCheckbox.isSelected());
-        nodeInfoBox.setEnabled(emailAlertsCheckbox.isSelected());
-        
-        if (!emailAlertsCheckbox.isSelected())
+       if (!emailAlertsCheckbox.isSelected())
+        {
+            statusAlertsBox.setSelected(false);
+            statusAlertsBox.setEnabled(false);
+            nodeInfoBox.setSelected(false);
+            nodeInfoBox.setEnabled(false);
             return;
+        }
 
         try (Connection connection = ConnectionDB.getConnection("properties"))
         {
@@ -826,10 +930,22 @@ public class AlertsPanel extends javax.swing.JPanel
                 statusAlertsBox.setEnabled(false);
                 nodeInfoBox.setEnabled(false);
             }
+            else
+            {
+                statusAlertsBox.setEnabled(true);
+                
+                if(gui.dbManager.TableExists("alerts_settings", connection))
+                {
+                    statusAlertsBox.setSelected((boolean)gui.dbManager.GetFirstItem("alerts_settings", "statusalerts", connection));
+                    nodeInfoBox.setSelected((boolean)gui.dbManager.GetFirstItem("alerts_settings", "shownodeinfo", connection));  
+                    nodeInfoBox.setEnabled(statusAlertsBox.isSelected());                       
+                }           
+            }
             connection.close();
         }
         catch (NullPointerException | SQLException e)
         {
+            
             BackgroundService.AppendLog(e);
         }
     }//GEN-LAST:event_emailAlertsCheckboxActionPerformed
@@ -881,6 +997,7 @@ public class AlertsPanel extends javax.swing.JPanel
 
     private void balanceAlertsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_balanceAlertsButtonActionPerformed
     {//GEN-HEADEREND:event_balanceAlertsButtonActionPerformed
+        balanceAlertsPanel.RepopulateDbList();
         balanceAlertsDialog.pack();
         balanceAlertsDialog.setLocation(this.getX() + 25, this.getY() + 40);
         balanceAlertsDialog.setVisible(true);
@@ -904,7 +1021,29 @@ public class AlertsPanel extends javax.swing.JPanel
     private void statusAlertsBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_statusAlertsBoxActionPerformed
     {//GEN-HEADEREND:event_statusAlertsBoxActionPerformed
         nodeInfoBox.setEnabled(statusAlertsBox.isSelected());
+        //if statusalerts are disabled, deselect nodeinfo box
+        nodeInfoBox.setSelected(statusAlertsBox.isSelected() ? nodeInfoBox.isSelected() : false); 
     }//GEN-LAST:event_statusAlertsBoxActionPerformed
+
+    private void ltcAboveRadioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ltcAboveRadioActionPerformed
+    {//GEN-HEADEREND:event_ltcAboveRadioActionPerformed
+        ltcBelowRadio.setSelected(!ltcAboveRadio.isSelected());
+    }//GEN-LAST:event_ltcAboveRadioActionPerformed
+
+    private void ltcBelowRadioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ltcBelowRadioActionPerformed
+    {//GEN-HEADEREND:event_ltcBelowRadioActionPerformed
+        ltcAboveRadio.setSelected(!ltcBelowRadio.isSelected());
+    }//GEN-LAST:event_ltcBelowRadioActionPerformed
+
+    private void dogeAboveRadioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_dogeAboveRadioActionPerformed
+    {//GEN-HEADEREND:event_dogeAboveRadioActionPerformed
+        dogeBelowRadio.setSelected(!dogeAboveRadio.isSelected());
+    }//GEN-LAST:event_dogeAboveRadioActionPerformed
+
+    private void dogeBelowRadioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_dogeBelowRadioActionPerformed
+    {//GEN-HEADEREND:event_dogeBelowRadioActionPerformed
+        dogeAboveRadio.setSelected(!dogeBelowRadio.isSelected());
+    }//GEN-LAST:event_dogeBelowRadioActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -925,8 +1064,10 @@ public class AlertsPanel extends javax.swing.JPanel
     private javax.swing.JButton deleteAllAlertsBtn;
     private javax.swing.JButton deleteReadButton;
     private javax.swing.JButton deleteSelectedAlertBtn;
+    private javax.swing.JRadioButton dogeAboveRadio;
     protected javax.swing.JCheckBox dogeAlertBox;
     private javax.swing.JSpinner dogeAlertSpinner;
+    private javax.swing.JRadioButton dogeBelowRadio;
     private javax.swing.JCheckBox emailAlertsCheckbox;
     private javax.swing.JButton goToSettingsBtn;
     private javax.swing.JLabel jLabel12;
@@ -938,9 +1079,14 @@ public class AlertsPanel extends javax.swing.JPanel
     private javax.swing.JSeparator jSeparator12;
     private javax.swing.JSeparator jSeparator13;
     private javax.swing.JSeparator jSeparator14;
+    private javax.swing.JSeparator jSeparator15;
+    private javax.swing.JSeparator jSeparator16;
+    private javax.swing.JSeparator jSeparator17;
     private javax.swing.JCheckBox levelUpdatesBox;
+    private javax.swing.JRadioButton ltcAboveRadio;
     protected javax.swing.JCheckBox ltcAlertBox;
     private javax.swing.JSpinner ltcAlertSpinner;
+    private javax.swing.JRadioButton ltcBelowRadio;
     private javax.swing.JCheckBox mintingHaltedBox;
     private javax.swing.JCheckBox nameRegBox;
     private javax.swing.JCheckBox nodeInfoBox;

@@ -339,7 +339,10 @@ public class MonitorPanel extends javax.swing.JPanel
                 else
                 {          
                     monitorTreeModel.valueForPathChanged(new TreePath(mintingAccountNode.getPath()),
-                            "No Active Minting Account Found");                       
+                            "No Active Minting Account Found");  
+                    monitorTreeModel.valueForPathChanged(new TreePath(blocksMintedNode.getPath()),"Blocks Minted");                    
+                    monitorTreeModel.valueForPathChanged(new TreePath(balanceNode.getPath()),"Account Balance");                              
+                    monitorTreeModel.valueForPathChanged(new TreePath(levelNode.getPath()),"Account Level");                        
                 }                
                 
                 monitorTreeModel.valueForPathChanged(new TreePath(statusNode.getPath()), "Qortal Core is Online");
@@ -400,7 +403,7 @@ public class MonitorPanel extends javax.swing.JPanel
 
                  String blocksString = myBlockHeight < chainHeight
                         ? String.format("Blockheight node:  %s", NumberFormat.getIntegerInstance().format(myBlockHeight)) + "  |  "
-                        + "Blocks left: " + (chainHeight - myBlockHeight) + estimateString
+                        + "Blocks left: " + NumberFormat.getIntegerInstance().format(chainHeight - myBlockHeight) + estimateString
                         : String.format("Blockheight node:  %s",NumberFormat.getIntegerInstance().format(myBlockHeight));                   
 
                 monitorTreeModel.valueForPathChanged(new TreePath(blockheightNode.getPath()),

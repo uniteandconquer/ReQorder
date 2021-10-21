@@ -37,13 +37,13 @@
         <Component class="javax.swing.JLabel" name="jLabel11">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="bb" green="b4" red="75" type="rgb"/>
+              <Color blue="9f" green="9f" red="9f" type="rgb"/>
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="12" style="3"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="7f" green="36" red="b" type="rgb"/>
+              <Color blue="0" green="0" red="0" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;div style=&apos;text-align: center;&apos;&gt;ReQorder is running in the background&lt;br/&gt;&#xa;Double click on the system tray icon to open the UI&lt;br/&gt;&lt;br/&gt;&#xa;To exit the program, click &apos;Exit&apos; in the menu bar&lt;br/&gt;&#xa;You can also right click the system tray icon and click &apos;Exit&apos;&lt;/div&gt;&lt;html&gt;"/>
@@ -52,15 +52,15 @@
                 <CompoundBorder>
                   <Border PropertyName="outside" info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                     <LineBorder roundedCorners="true" thickness="4">
-                      <Color PropertyName="color" blue="a8" green="7e" red="36" type="rgb"/>
+                      <Color PropertyName="color" blue="0" green="0" red="31" type="rgb"/>
                     </LineBorder>
                   </Border>
                   <Border PropertyName="inside" info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
                     <BevelBorder bevelType="1">
-                      <Color PropertyName="highlightOuter" blue="0" green="ff" red="0" type="rgb"/>
-                      <Color PropertyName="highlightInner" blue="85" green="1" red="8" type="rgb"/>
-                      <Color PropertyName="shadowOuter" blue="23" green="3c" red="2" type="rgb"/>
-                      <Color PropertyName="shadowInner" blue="5c" green="1e" red="5c" type="rgb"/>
+                      <Color PropertyName="highlightOuter" blue="48" green="38" red="36" type="rgb"/>
+                      <Color PropertyName="highlightInner" blue="37" green="37" red="54" type="rgb"/>
+                      <Color PropertyName="shadowOuter" blue="60" green="4d" red="3a" type="rgb"/>
+                      <Color PropertyName="shadowInner" blue="32" green="32" red="48" type="rgb"/>
                     </BevelBorder>
                   </Border>
                 </CompoundBorder>

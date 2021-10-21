@@ -127,7 +127,7 @@ public class DatabaseManager
             //no need to iterate encrypted files list, they are also in this list
             dbFiles.stream().filter(file -> !(file.startsWith("properties"))).forEachOrdered(file ->
             {
-                InsertIntoDB(new String[]{"databases","database",Utilities.ToH2Char(file)},c);
+                InsertIntoDB(new String[]{"databases","database",Utilities.SingleQuotedString(file)},c);
             });
             c.close();
         }
@@ -556,11 +556,11 @@ public class DatabaseManager
         //Find out if selected node is qortal address or name and find it's ID
         Object ID_Object;
         ID_Object = GetItemValue(
-                "my_watchlist", "id", "name", Utilities.ToH2Char(nameOrAddress), connection);
+                "my_watchlist", "id", "name", Utilities.SingleQuotedString(nameOrAddress), connection);
         if (ID_Object == null)
         {
             ID_Object = GetItemValue(
-                    "my_watchlist", "id", "address", Utilities.ToH2Char(nameOrAddress), connection);
+                    "my_watchlist", "id", "address", Utilities.SingleQuotedString(nameOrAddress), connection);
         }
         
         return (int) ID_Object;
@@ -635,6 +635,14 @@ public class DatabaseManager
         return null;
     }  
     
+    /**
+     * Gets the specified item at the first row of the specified table,<br>
+     * Used for tables that have only one row and do not need to change<br>
+     * the value of single items.This way we don't need a key to identify a row.
+     * @param table
+     * @param item
+     * @param c
+     * @return the requested value as an Object*/
     public Object GetFirstItem(String table,String item,Connection c)
     {        
          try 
@@ -709,13 +717,13 @@ public class DatabaseManager
             
             InsertIntoDB(new String[]{"mail_server",
                 "id","0",
-                "username",Utilities.ToH2Char(username),
-                "password",Utilities.ToH2Char(password),
-                "smtp",Utilities.ToH2Char(smtp),
-                "port",Utilities.ToH2Char(port),
-                "recipient",Utilities.ToH2Char(recipient),
-                "key",Utilities.ToH2Char(key),
-                "salt",Utilities.ToH2Char(salt)}, connection);
+                "username",Utilities.SingleQuotedString(username),
+                "password",Utilities.SingleQuotedString(password),
+                "smtp",Utilities.SingleQuotedString(smtp),
+                "port",Utilities.SingleQuotedString(port),
+                "recipient",Utilities.SingleQuotedString(recipient),
+                "key",Utilities.SingleQuotedString(key),
+                "salt",Utilities.SingleQuotedString(salt)}, connection);
             
             connection.close();
         }
@@ -820,7 +828,7 @@ public class DatabaseManager
            //ATTENTION: REMOVE RAM_USAGE,LONG WHEN DONE TESTING MEMORY USAGE??
            CreateTable(new String[]{"buildversion","timestamp","long","buildversion","varchar(50)"},c);
 
-           //since data usage creates 2 seperate columns, we need to check for it seperately
+           //since data usage creates 4 seperate columns, we need to check for it seperately
            boolean dataSelected = false;
            for(int i = 1;i<args.length-1;i++)
            {
@@ -865,6 +873,7 @@ public class DatabaseManager
                             break;
                        }
                    }
+                   
                    boolean itemSelected = Boolean.parseBoolean(args[i+1]);
                    if(args[i].toUpperCase().equals(column))
                    {
@@ -872,7 +881,6 @@ public class DatabaseManager
                        {
                             ExecuteUpdate("alter table node_data drop column " + column,c);                   
                        }
-                       break;
                    }
                }
             }            
@@ -937,11 +945,11 @@ public class DatabaseManager
             //get the registered name for the address, if available
             String jsString = Utilities.ReadStringFromURL("http://localhost:12391/names/address/" + address);
             JSONArray jSONArray = new JSONArray(jsString);
-            String name = Utilities.ToH2Char("");
+            String name = Utilities.SingleQuotedString("");
             if(jSONArray.length() > 0)
             {
                 JSONObject jsObject = jSONArray.getJSONObject(0);          
-                name =  Utilities.ToH2Char(jsObject.getString("name"));                
+                name =  Utilities.SingleQuotedString(jsObject.getString("name"));                
             }
 
             //add address
@@ -1056,8 +1064,8 @@ public class DatabaseManager
                 InsertIntoDB(new String[]{
                     "my_watchlist",
                     "id",String.valueOf(resultSet.getInt("id")),
-                    "address",Utilities.ToH2Char(resultSet.getString("address")),
-                    "name",Utilities.ToH2Char(resultSet.getString("name")),
+                    "address",Utilities.SingleQuotedString(resultSet.getString("address")),
+                    "name",Utilities.SingleQuotedString(resultSet.getString("name")),
                     "balancetreshold",String.valueOf(resultSet.getDouble("balancetreshold")),
                     "alert","false",
                     "alertvalue","0"}, 
@@ -1192,7 +1200,7 @@ public class DatabaseManager
                             System.out.println("Setting blockchainfolder to " + blockChainFolder);
 
                             CreateTable(new String[]{"blockchain_folder","id","tinyint","blockchain_folder","varchar(255)"}, c);
-                            InsertIntoDB(new String[]{"blockchain_folder","id","0","blockchain_folder",Utilities.ToH2Char(blockChainFolder)}, c);
+                            InsertIntoDB(new String[]{"blockchain_folder","id","0","blockchain_folder",Utilities.SingleQuotedString(blockChainFolder)}, c);
                         }
                         else
                         {
@@ -1234,7 +1242,7 @@ public class DatabaseManager
         
         if(System.currentTimeMillis() - lastStatusAlertTime < statusAlertInterval)
             return;
-        
+
         lastStatusAlertTime = System.currentTimeMillis();
         
         String subject = "ReQorder status update";
@@ -1369,10 +1377,10 @@ public class DatabaseManager
                         if(!TableExists("blockchain_folder", c))
                         {
                             CreateTable(new String[]{"blockchain_folder","id","tinyint","blockchain_folder","varchar(255)"}, c);
-                            InsertIntoDB(new String[]{"blockchain_folder","id","0","blockchain_folder",Utilities.ToH2Char(blockChainFolder)}, c);                            
+                            InsertIntoDB(new String[]{"blockchain_folder","id","0","blockchain_folder",Utilities.SingleQuotedString(blockChainFolder)}, c);                            
                         }
                         else
-                            ChangeValue("blockchain_folder", "blockchain_folder", Utilities.ToH2Char(blockChainFolder), "id", "0", c);
+                            ChangeValue("blockchain_folder", "blockchain_folder", Utilities.SingleQuotedString(blockChainFolder), "id", "0", c);
                         
                         BackgroundService.GUI.monitorPanel.blockChainFolder = blockChainFolder;
                     }
@@ -1498,8 +1506,8 @@ public class DatabaseManager
         currentTick = 1;
         lastBlockMintedTime = System.currentTimeMillis();
                 
-//        System.out.println("UPDATE DELTA = " + updateDelta + " , SETTING TO 30000");//FOR TESTING
-//        updateDelta = 30000;
+//        System.out.println("UPDATE DELTA = " + updateDelta + " , SETTING TO 60000");//FOR TESTING
+//        updateDelta = 60000;
         
         startTime = System.currentTimeMillis();
         totalBytesSent = 0;
@@ -1552,7 +1560,7 @@ public class DatabaseManager
                     jsonString = Utilities.ReadStringFromURL("http://localhost:12391/admin/info");
                     jSONObject = new JSONObject(jsonString);
                     uptime = jSONObject.getLong("uptime");
-                    buildVersion = Utilities.ToH2Char(jSONObject.getString("buildVersion"));
+                    buildVersion = Utilities.SingleQuotedString(jSONObject.getString("buildVersion"));
 
                     jsonString = Utilities.ReadStringFromURL("http://localhost:12391/peers/known");
                     JSONArray jsonArray = new JSONArray(jsonString);
@@ -1602,11 +1610,11 @@ public class DatabaseManager
                             {
                                 jSONObject = jsonArray.getJSONObject(0);
                                 String name = jSONObject.getString("name");                            
-                                String nameEntry = (String) GetItemValue("my_watchlist", "name", "address", Utilities.ToH2Char(address), dbConnection);
+                                String nameEntry = (String) GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
                                 if(!name.equals(nameEntry))
                                 {
                                     String update = String.format("Changing registered name entry from '%s' to '%s'", nameEntry,name);
-                                    ChangeValue("my_watchlist", "name", name, "address", Utilities.ToH2Char(address), dbConnection);
+                                    ChangeValue("my_watchlist", "name", name, "address", Utilities.SingleQuotedString(address), dbConnection);
                                     System.out.println(update);
                                     BackgroundService.AppendLog(update); 
                                      //check if alert enabled, no need for alertsent flag (update should only happen once, if at all)
@@ -1671,7 +1679,7 @@ public class DatabaseManager
                     //surviving generations time to re-stabilize before the next gc (due to minor collections?)
                     if(System.currentTimeMillis() - lastGCTime > GC_INTERVAL)
                     {
-                        BackgroundService.AppendLog("COLLECTING GARBAGE @ " + Utilities.DateFormat(System.currentTimeMillis()));
+//                        BackgroundService.AppendLog("COLLECTING GARBAGE @ " + Utilities.DateFormat(System.currentTimeMillis()));
                         lastGCTime = System.currentTimeMillis();
                         System.gc();
                     }
@@ -1687,7 +1695,8 @@ public class DatabaseManager
                     if ((boolean) GetFirstItem("alerts_settings", "reqording",propertiesConnection))
                     {
                         PoolAlert("WARNING: ReQording session was halted", 
-                            "ReQorder has stopped reqording, the following error was encountered:\n\n"  + e.toString());                        
+                            "ReQorder has stopped reqording, the following error was encountered:\n\n"  + e.toString());      
+                        SendAlertPool();
                     }
                     if(BackgroundService.GUI == null)
                     {
@@ -1712,7 +1721,8 @@ public class DatabaseManager
                     if ((boolean) GetFirstItem("alerts_settings", "reqording",propertiesConnection))
                     {
                         PoolAlert("WARNING: ReQording session was halted", 
-                            "ReQorder has stopped reqording, the following error was encountered:\n\n"  + e.toString());                        
+                            "ReQorder has stopped reqording, the following error was encountered:\n\n"  + e.toString());      
+                        SendAlertPool();
                     }
                     if(BackgroundService.GUI == null)
                     {
@@ -1955,6 +1965,14 @@ public class DatabaseManager
         
     }
     
+    /**
+     * ATTENTION: When inserting a string (varchar) into a H2 database it needs to be
+     * encapsulated by single quotes.<br>
+     * This means that adding single quotes into the string that we're inserting
+     * will cause an SQL exception due to <br>
+     * invalid parsing of the statement. Always use double quotes or two single
+     * quotes when using quotes here.
+     */
     private void SendAlertToGUI(String recipient,String subject,String message, Connection c)
     {
          if(!TableExists("alerts", c))
@@ -1962,7 +1980,7 @@ public class DatabaseManager
                     "subject","varchar(255)","message","varchar(MAX)","read","boolean"}, c);
             
             InsertIntoDB(new String[]{"alerts","timestamp",String.valueOf(System.currentTimeMillis()),
-                "recipient",Utilities.ToH2Char(recipient),"subject",Utilities.ToH2Char(subject),"message",Utilities.ToH2Char(message),"read","false"}, c); 
+                "recipient",Utilities.SingleQuotedString(recipient),"subject",Utilities.SingleQuotedString(subject),"message",Utilities.SingleQuotedString(message),"read","false"}, c); 
             
             if(BackgroundService.GUI != null)
                 BackgroundService.GUI.alertsPanel.PopuateAlertsList();
@@ -2009,11 +2027,13 @@ public class DatabaseManager
                     if (timeNotMinted > WARNING_TIME && !alertedBlockAddresses.contains(address))
                     {
                         alertedBlockAddresses.add(address);
-                        String name = (String) GetItemValue("my_watchlist", "name", "address", Utilities.ToH2Char(address), dbConnection);
+                        String name = (String) GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
                         name = name.isEmpty() ? address : name;
                         PoolAlert("Minting has halted",
-                                String.format("ReQorder has detected that Qortal account '%s' has not been minting for "
-                                        + "%s.\n\nYou might want to check if your Qortal core is running, or alert the owner of that account.",
+                                String.format("ReQorder has detected that Qortal account ''%s'' has not been minting for "
+                                        + "%s.\n\nYou might want to check if your Qortal core is running, or alert the owner of that account.\n\n"
+                                        + "If this account is not a minting account, de-select the ''blocks minted'' checkbox for it\n"
+                                        + "in the watchlist editor to stop receiving this alert.",
                                         name, Utilities.MillisToDayHrMin(WARNING_TIME)));
                     }
                 }
@@ -2083,12 +2103,12 @@ public class DatabaseManager
                     ExecuteUpdate(sql,dbConnection);  
                 }       
             }
-            if((boolean)GetItemValue("my_watchlist", "alert", "address", Utilities.ToH2Char(address), dbConnection))
+            if((boolean)GetItemValue("my_watchlist", "alert", "address", Utilities.SingleQuotedString(address), dbConnection))
             {
-                String name = (String)GetItemValue("my_watchlist", "name", "address", Utilities.ToH2Char(address), dbConnection);
+                String name = (String)GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
                 name = name.isEmpty() ? address : name;
                 
-                double alertValue = (double)GetItemValue("my_watchlist", "alertvalue", "address", Utilities.ToH2Char(address), dbConnection);
+                double alertValue = (double)GetItemValue("my_watchlist", "alertvalue", "address", Utilities.SingleQuotedString(address), dbConnection);
                 //alertvalue is stored as a negative value if alerting for below indicated value
                 boolean alertForExceed = alertValue >= 0;
                 alertValue = Math.abs(alertValue);
@@ -2100,7 +2120,7 @@ public class DatabaseManager
                                     + "The current balance for this account is %.5f QORT.\n\nThis balance alert has automatically been disabled.", 
                                     name,alertValue,balance));
                     //disable alert
-                    ChangeValue("my_watchlist", "alert", "false", "address", Utilities.ToH2Char(address), dbConnection);
+                    ChangeValue("my_watchlist", "alert", "false", "address", Utilities.SingleQuotedString(address), dbConnection);
                 }
                 if(!alertForExceed && balance <= alertValue)
                 {
@@ -2109,7 +2129,7 @@ public class DatabaseManager
                                     + "The current balance for this account is %.5f QORT.\n\nThis balance alert has automatically been disabled.", 
                                     name,alertValue,balance));
                     //disable alert
-                    ChangeValue("my_watchlist", "alert", "false", "address", Utilities.ToH2Char(address), dbConnection);
+                    ChangeValue("my_watchlist", "alert", "false", "address", Utilities.SingleQuotedString(address), dbConnection);
                 }                
             }
         }        
@@ -2138,7 +2158,7 @@ public class DatabaseManager
                 sql = "insert into " + table + " (timestamp,level) values (" + 
                         timestamp + "," + level + ")";
                 ExecuteUpdate(sql,dbConnection);  
-                String name = (String) GetItemValue("my_watchlist", "name", "address", Utilities.ToH2Char(address), dbConnection);
+                String name = (String) GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
                 name = name.isEmpty() ? address : name;
                    //check if alert enabled, no need for alertsent flag (update should only happen once, if at all)
                 if ((boolean) GetFirstItem("alerts_settings", "levelling",propertiesConnection))
@@ -2169,7 +2189,7 @@ public class DatabaseManager
         }
         else
         {
-            String oldversion = Utilities.ToH2Char(rs.getString("buildversion"));
+            String oldversion = Utilities.SingleQuotedString(rs.getString("buildversion"));
             if (!buildVersion.equals(oldversion))
             {
                 sql = "insert into buildversion (timestamp,buildversion) values ("
@@ -2219,25 +2239,26 @@ public class DatabaseManager
             }
             //will only be triggered once, after which user will have to set a new alert
             if((boolean)GetFirstItem("alerts_settings", "ltcprice",propertiesConnection))
-            {
+            {                
                 long alertValue = (long)GetFirstItem("alerts_settings", "ltcvalue",propertiesConnection);
-                //if alertvalue is smaller than the lastknown price, we send an alert when current price is larger than alertvalue
-                //otherwise we send an alert when price is smaller than alertvalue
-                boolean alertForIncrease = lastPrice < alertValue;
+                //if stored alert value is negative, it means the user wants to be informed that the price has 
+                //gone below specified (absolute) value, this saves us keeping an extra flag for increase/decrease
+                boolean alertForExceed = alertValue >= 0;
+                alertValue = Math.abs(alertValue);
                 
                 boolean sendAlert = false;
                 
-                if(alertForIncrease && LTCprice - alertValue > 0)//ltcprice has increased above alertvalue
+                if(alertForExceed && LTCprice - alertValue > 0)//ltcprice has increased above alertvalue
                     sendAlert = true;
-                if(!alertForIncrease && LTCprice - alertValue < 0)//ltcprice has decreased below alertvalue
+                if(!alertForExceed && LTCprice - alertValue < 0)//ltcprice has decreased below alertvalue
                     sendAlert = true;
                 
                 if(sendAlert)
                 {
                     PoolAlert("Litecoin price alert", String.format(
                             "ReQorder has detected that the Litecoin price %s the value set in your alerts settings.\n\n"
-                                    + "Previous price: %.5f QORT\nCurrent price: %.5f QORT\nAlert price %.5f QORT\n\n"
-                                    + "This alert has automatically been disabled",alertForIncrease?"has exceeded":"is now lower than",
+                                    + "Last ReQorded price: %.5f QORT\nCurrent price: %.5f QORT\nAlert price %.5f QORT\n\n"
+                                    + "This alert has automatically been disabled",alertForExceed?"has exceeded":"is now lower than",
                                     ((double)lastPrice/100000000),((double)LTCprice/100000000),((double)alertValue/100000000)));
                     //disable alert
                     ChangeValue("alerts_settings", "ltcprice", "false", "id", "0", propertiesConnection);
@@ -2280,25 +2301,26 @@ public class DatabaseManager
             }
             //will only be triggered once, after which user will have to set a new alert
             if((boolean)GetFirstItem("alerts_settings", "dogeprice",propertiesConnection))
-            {
+            {   
                 long alertValue = (long)GetFirstItem("alerts_settings", "dogevalue",propertiesConnection);
-                //if alertvalue is smaller than the lastknown price, we send an alert when price is larger than alertvalue
-                //otherwise we send an alert when price is smaller than alertvalue
-                boolean alertForIncrease = lastPrice < alertValue;
+                //if stored alert value is negative, it means the user wants to be informed that the price has 
+                //gone below specified (absolute) value, this saves us keeping an extra flag for increase/decrease
+                boolean alertForExceed = alertValue >= 0;
+                alertValue = Math.abs(alertValue);
                 
                 boolean sendAlert = false;
                 
-                if(alertForIncrease && DogePrice - alertValue > 0)//DogePrice has increased above alertvalue
+                if(alertForExceed && DogePrice - alertValue > 0)//DogePrice has increased above alertvalue
                     sendAlert = true;
-                if(!alertForIncrease && DogePrice - alertValue < 0)//DogePrice has decreased below alertvalue
+                if(!alertForExceed && DogePrice - alertValue < 0)//DogePrice has decreased below alertvalue
                     sendAlert = true;                
                 
                 if(sendAlert)
                 {
                     PoolAlert("Dogecoin price alert", String.format(
                             "ReQorder has detected that the Dogecoin price %s the value set in your alerts settings.\n\n"
-                                    + "Previous price: %.5f QORT\nCurrent price: %.5f QORT\nAlert price %.5f QORT\n\n"
-                                    + "This alert has automatically been disabled",alertForIncrease?"has exceeded":"is now lower than",
+                                    + "Last ReQorded price: %.5f QORT\nCurrent price: %.5f QORT\nAlert price %.5f QORT\n\n"
+                                    + "This alert has automatically been disabled",alertForExceed?"has exceeded":"is now lower than",
                                     ((double)lastPrice/100000000),((double)DogePrice/100000000),((double)alertValue/100000000)));
                     //disable alert
                     ChangeValue("alerts_settings", "dogeprice", "false", "id", "0", propertiesConnection);

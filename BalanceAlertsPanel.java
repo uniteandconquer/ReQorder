@@ -52,6 +52,17 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
         });            
     }
     
+    protected void RepopulateDbList()
+    {
+        dbListModel.clear();
+        
+        dbManager.GetDbFiles().stream().map(file -> file).filter(dbName -> 
+                !(dbName.equals("properties"))).forEachOrdered(dbName ->
+        {
+            dbListModel.addElement(dbName);
+        });    
+    }
+    
     private void DbSelected()
     {
         try (Connection connection = ConnectionDB.getConnection( databasesList.getSelectedValue()))
@@ -78,7 +89,7 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
             
             addresses.forEach(address ->
             {
-                String name = (String)dbManager.GetItemValue("my_watchlist", "name", "address", Utilities.ToH2Char(address.toString()), connection);
+                String name = (String)dbManager.GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address.toString()), connection);
                 if(name.isEmpty())
                     addressesListModel.addElement(address);
                 else

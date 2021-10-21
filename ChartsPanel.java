@@ -1104,7 +1104,7 @@ public class ChartsPanel extends javax.swing.JPanel
             }
 
             chartPanel = chartMaker.createChartPanel(
-                    Utilities.ToH2Char(selectedTable) + " from " + Utilities.ToH2Char(database), resultSets, selectedItems);
+                    Utilities.SingleQuotedString(selectedTable) + " from " + Utilities.SingleQuotedString(database), resultSets, selectedItems);
             chartsUISplitpane.setRightComponent(chartPanel);
             connection.close();
         }
@@ -1179,7 +1179,7 @@ public class ChartsPanel extends javax.swing.JPanel
             resultSets.add(statement.executeQuery("select timestamp,blocksminted from WL_ADDRESS_" + ID + "_BLOCKS"));
 
             chartPanel = chartMaker.createChartPanel(
-                Utilities.ToH2Char(selectedTable) + " from " + Utilities.ToH2Char(database),resultSets, selectedItems);
+                Utilities.SingleQuotedString(selectedTable) + " from " + Utilities.SingleQuotedString(database),resultSets, selectedItems);
             chartsUISplitpane.setRightComponent(chartPanel);
             connection.close();
         }

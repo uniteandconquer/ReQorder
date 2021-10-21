@@ -446,12 +446,12 @@ public class GUI extends javax.swing.JFrame
 
         trayPopup.setUndecorated(true);
 
-        jLabel11.setBackground(new java.awt.Color(117, 180, 187));
+        jLabel11.setBackground(new java.awt.Color(159, 159, 159));
         jLabel11.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(11, 54, 127));
+        jLabel11.setForeground(new java.awt.Color(0, 0, 0));
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel11.setText("<html><div style='text-align: center;'>ReQorder is running in the background<br/>\nDouble click on the system tray icon to open the UI<br/><br/>\nTo exit the program, click 'Exit' in the menu bar<br/>\nYou can also right click the system tray icon and click 'Exit'</div><html>");
-        jLabel11.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(54, 126, 168), 4, true), new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED, new java.awt.Color(0, 255, 0), new java.awt.Color(8, 1, 133), new java.awt.Color(2, 60, 35), new java.awt.Color(92, 30, 92))));
+        jLabel11.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(49, 0, 0), 4, true), new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED, new java.awt.Color(54, 56, 72), new java.awt.Color(84, 55, 55), new java.awt.Color(58, 77, 96), new java.awt.Color(72, 50, 50))));
         jLabel11.setOpaque(true);
         jLabel11.setPreferredSize(new java.awt.Dimension(380, 120));
 
