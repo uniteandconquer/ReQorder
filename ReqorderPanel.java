@@ -515,7 +515,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         NodeInfo ni = (NodeInfo) node.getUserObject();
         ni.SetIconName("reqording.png");
         databasesTreeModel.nodeChanged(node);       
-        
+        dbManager.retries = -1;
         dbManager.Reqord(selectedDatabase);
         
         sessionTimer = new Timer();

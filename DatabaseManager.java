@@ -62,6 +62,9 @@ public class DatabaseManager
     protected static ArrayList<String> encryptedFiles;
     protected static boolean logDbEntries;
     protected boolean backupEnabled = true;
+    private String database;
+    protected int retries;
+    
     /** 
      * using char[]  for possible future implementation of clearing password from heap<br>
      * to implement that we'd need to encrypt these then decrypt for every use in a separate<br>
@@ -1454,7 +1457,7 @@ public class DatabaseManager
     long avrgReceivedPerMinute;
     long avrgSentPerMinute;  
     private int updateDelta;
-    //for some alerts (like blocksminted, we want to check more often than 
+    //for we want to check more often than 
     //the updatedelta, which could be as long as 24 hours
     private final int alertsDelta = 60000;
     private int currentTick;
@@ -1467,57 +1470,65 @@ public class DatabaseManager
     private long lastStatusAlertTime;
     
     public void StopReqording()
-    {        
+    {     
+        retries = -1;
         timer.cancel();
         System.out.println("ReQording Session has stopped");        
         System.gc();
     }
     
-    public void Reqord(String database)
-    {
+    public void Reqord(String selectedDatabase)
+    {        
+//        System.out.println("RESTORE ALERTSDELTA TO 60000");//FOR TESTING  
+        
         timer = new Timer();
-        alertedBlockAddresses = new ArrayList<>();
-        alertsPool = new ArrayList<>();
-        chainSizeAlertSent = false;
-        spaceLeftAlertSent = false;
-        outOfSyncAlertSent = false;
-        lastStatusAlertTime = System.currentTimeMillis();
         
-//        System.out.println("RESTORE ALERTSDELTA TO 60000");//FOR TESTING 
+        //Initialisation of these variables should only happen on user initiated reqord (as opposed to retry)
+        if(retries == -1)
+        {            
+            retries = 0;
+            database = selectedDatabase;
+            alertedBlockAddresses = new ArrayList<>();
+            alertsPool = new ArrayList<>();
+            chainSizeAlertSent = false;
+            spaceLeftAlertSent = false;
+            outOfSyncAlertSent = false;
+            lastStatusAlertTime = System.currentTimeMillis();    
         
-        //get the items to update and update delta
-        try
-        {
-            dbConnection = ConnectionDB.getConnection(database);
-            nodeDataColumns = GetColumnHeaders("node_data",dbConnection);
-            updateDelta = (int) GetItemValue("node_prefs", "updatedelta", "id", "0",dbConnection);            
-            dbConnection.close();
-            propertiesConnection = ConnectionDB.getConnection("properties");
-            if(!TableExists("alerts_settings", propertiesConnection))
-                CreateAlertsSettingsTable(propertiesConnection);
-            propertiesConnection.close();
-        }
-        catch (NullPointerException | SQLException e)
-        {
-            BackgroundService.AppendLog(e);
-        }    
-                
-        //updates to the database only occur on tick 1, alert checks occur every tick
-        currentTick = 1;
-        lastBlockMintedTime = System.currentTimeMillis();
-                
-//        System.out.println("UPDATE DELTA = " + updateDelta + " , SETTING TO 60000");//FOR TESTING
-//        updateDelta = 60000;
-        
-        startTime = System.currentTimeMillis();
-        totalBytesSent = 0;
-        totalBytesReceived = 0;
-        for(NetworkIF nif : interfaces)
-        {
-            nif.updateAttributes();
-            lastBytesSent += nif.getBytesSent();
-            lastBytesReceived += nif.getBytesRecv();
-        }  
+            //get the items to update and update delta
+            try
+            {
+                dbConnection = ConnectionDB.getConnection(database);
+                nodeDataColumns = GetColumnHeaders("node_data",dbConnection);
+                updateDelta = (int) GetItemValue("node_prefs", "updatedelta", "id", "0",dbConnection);            
+                dbConnection.close();
+                propertiesConnection = ConnectionDB.getConnection("properties");
+                if(!TableExists("alerts_settings", propertiesConnection))
+                    CreateAlertsSettingsTable(propertiesConnection);
+                propertiesConnection.close();
+            }
+            catch (NullPointerException | SQLException e)
+            {
+                BackgroundService.AppendLog(e);
+            }   
+            
+            //updates to the database only occur on tick 1, alert checks occur every tick
+            currentTick = 1;
+            lastBlockMintedTime = System.currentTimeMillis();
+
+//            System.out.println("UPDATE DELTA = " + updateDelta + " , SETTING TO 5000");//FOR TESTING
+//            updateDelta = 5000;
+
+            startTime = System.currentTimeMillis();
+            totalBytesSent = 0;
+            totalBytesReceived = 0;
+            for(NetworkIF nif : interfaces)
+            {
+                nif.updateAttributes();
+                lastBytesSent += nif.getBytesSent();
+                lastBytesReceived += nif.getBytesRecv();
+            }             
+        }          
         
         timer.scheduleAtFixedRate(new TimerTask() 
         {
@@ -1686,36 +1697,19 @@ public class DatabaseManager
                     
                     currentTick++;
                     currentTick = (alertsDelta * currentTick) >= updateDelta ? 1 : currentTick;
-                        
+                    retries = 0; //if no exceptions were thrown we can reset  retries to 0                       
                 }
-                catch(JSONException | ConnectException e)
+                catch (IOException | NullPointerException | NumberFormatException | SQLException | TimeoutException | JSONException e) 
                 {
-                    BackgroundService.AppendLog(e);
-                    //check if alert enabled, no need for alertsent flag (update should only happen once, if at all)
-                    if ((boolean) GetFirstItem("alerts_settings", "reqording",propertiesConnection))
+                    if(retries < 5)
                     {
-                        PoolAlert("WARNING: ReQording session was halted", 
-                            "ReQorder has stopped reqording, the following error was encountered:\n\n"  + e.toString());      
-                        SendAlertPool();
+                        timer.cancel();//important to close the timer (thread)
+                        Retry();
+                        SendAlertToGUI(null, "ReQording retry attempt " + (retries + 1), 
+                                "An exception was thrown during your ReQording session, attempting a retry in 30 seconds.\n\n"
+                                        + "The following error was thrown:\n\n" + e.toString(), propertiesConnection);
+                        return;
                     }
-                    if(BackgroundService.GUI == null)
-                    {
-                        System.out.println(
-                                "Stopped reqording @ " + Utilities.DateFormat(System.currentTimeMillis())
-                                        + "\\n" + e.toString() + "\\nIs your Qortal core running?");
-                        StopReqording();                        
-                    }
-                    else
-                    {
-                        BackgroundService.GUI.StopReqording();
-                        JOptionPane.showMessageDialog(BackgroundService.GUI, 
-                                "Stopped reqording @ " + Utilities.DateFormat(System.currentTimeMillis()) + "\n" 
-                                        + e.toString()+ "\nIs your Qortal core running?",
-                                "Error while reqording", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-                catch (IOException | NullPointerException | NumberFormatException | SQLException | TimeoutException e) 
-                {
                     BackgroundService.AppendLog(e);
                     //check if alert enabled, no need for alertsent flag (update should only happen once, if at all)
                     if ((boolean) GetFirstItem("alerts_settings", "reqording",propertiesConnection))
@@ -1742,6 +1736,29 @@ public class DatabaseManager
             }          
             
         }, 0, alertsDelta); 
+    }
+    
+    /**
+     * The Qortal API will sometimes take too long (more than alertsDelta time)<br>
+     * Utilities.ReadStringFromURL will TimeOut after 45 seconds. This will cause<br>
+     * the ReQording session to halt, inconveniencing the user. To mitigate this,<br> 
+     * we retry reqording 30 seconds after an exception is thrown. If 5 consecutive<br> 
+     * exceptions are thrown, we halt the Reqording session and send the user an<br>
+     * alert (if enabled)
+     */
+    private void Retry()
+    {
+        Timer retryTimer = new Timer();
+        TimerTask popupTask = new TimerTask()
+            {                
+                @Override
+                public void run()
+                {
+                    retries++;
+                    Reqord(database);
+                }
+            };    
+            retryTimer.schedule(popupTask, 30000); 
     }
     
     /**creates a string arraylist that is populated with the args for InsertIntoDB() method*/

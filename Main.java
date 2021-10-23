@@ -16,7 +16,7 @@ public class Main
 {          
      public static void main(String args[])
     {          
-        File dir = new File(System.getProperty("user.dir"));
+        File dir = new File(System.getProperty("user.home"));
         if(!dir.exists())
             dir.mkdir();
         
@@ -45,6 +45,7 @@ public class Main
                     break;
                 case "-cli":
                     CheckLaunch();
+                    //Implementation pending
                     //ATTENTION: ADD CONSOLE FEEDBACK
                     BackgroundService bgs = new BackgroundService(false);
                     break;
@@ -53,7 +54,7 @@ public class Main
                     bgs = new BackgroundService(true);
                     break;
                 default:
-                    //blocks user from starting the jar without using commandline args
+                    //blocks user from starting the jar without using the proper commandline args
                     JOptionPane.showMessageDialog(null, "Invalid command line argument: " + args[0]);
                     System.out.println("Invalid command line argument: " + args[0]);
                     break;

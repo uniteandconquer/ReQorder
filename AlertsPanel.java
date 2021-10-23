@@ -117,6 +117,8 @@ public class AlertsPanel extends javax.swing.JPanel
                          checkBox.setSelected((boolean) gui.dbManager.GetFirstItem("alerts_settings", checkBox.getActionCommand(), connection));
                      }
                  }
+                 statusAlertsBox.setEnabled(emailAlertsCheckbox.isSelected());
+                 nodeInfoBox.setEnabled(statusAlertsBox.isSelected());
              }
              if((boolean)gui.dbManager.TableExists("blockchain_folder", connection))
              {
@@ -746,11 +748,11 @@ public class AlertsPanel extends javax.swing.JPanel
             this.setLayout(layout);
             layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
+                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
             );
             layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 811, Short.MAX_VALUE)
+                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
             );
         }// </editor-fold>//GEN-END:initComponents
 

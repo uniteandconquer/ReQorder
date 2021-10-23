@@ -75,7 +75,7 @@ public class Utilities
     }
     
     private static String ReadString(String requestURL) throws  ConnectException, IOException
-    {    
+    {   
         try (Scanner scanner = new Scanner(new URL(requestURL).openStream(),StandardCharsets.UTF_8.toString()))
         {
             scanner.useDelimiter("\\A");
@@ -598,7 +598,8 @@ public class Utilities
     }
     
     public static boolean SendEmail(String recipient, String username,String password,String smtp, String port,String subject, String message)
-    {          
+    {      
+        
         message += "\n\n\nThank you for using ReQorder. If you find the application useful and want to contribute to its further "
                 + "development you can donate some QORT, Litecoin, Dogecoin or Bitcoin at http://www.reqorder.org/Donate.html\n\n\n";
 
