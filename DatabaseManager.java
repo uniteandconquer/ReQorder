@@ -251,12 +251,12 @@ public class DatabaseManager
         
         //dba and properties files are in this list but should not be moved or
         //checked (which will create a new database in CanConnect)
-        encryptedFiles.stream().filter(database -> 
-                !(database.equals("dba"))).filter(database -> 
-                !(database.equals("properties"))).filter(database -> 
-                        (!ConnectionDB.CanConnect(database, dbPassword))).forEachOrdered(database ->
+        encryptedFiles.stream().filter(db -> 
+                !(db.equals("dba"))).filter(db -> 
+                !(db.equals("properties"))).filter(db -> 
+                        (!ConnectionDB.CanConnect(db, dbPassword))).forEachOrdered(db ->
         {
-            removeFiles.add(database);
+            removeFiles.add(db);
         });
         removeFiles.forEach(file ->
         {
@@ -1122,52 +1122,53 @@ public class DatabaseManager
     protected void CheckAlertsValidity(String database)
     {
         try(Connection propsConnection = ConnectionDB.getConnection("properties"))
-        {
-            if(TableExists("alerts_settings", propsConnection))
+        {            
+            if(!TableExists("alerts_settings", propsConnection))
+                CreateAlertsSettingsTable(propsConnection);
+            
+            ArrayList<String> invalids = new ArrayList<>();
+
+            try (Connection dbConn = ConnectionDB.getConnection(database))
             {
-                ArrayList<String> invalids = new ArrayList<>();
-                
-                try (Connection dbConn = ConnectionDB.getConnection(database))
+                if ((boolean) GetFirstItem("alerts_settings", "blockchainsize", propsConnection))
                 {
-                    if ((boolean) GetFirstItem("alerts_settings", "blockchainsize", propsConnection))
+                    if (!(boolean) GetFirstItem("node_prefs", "blockchainsize", dbConn))
                     {
-                        if (!(boolean) GetFirstItem("node_prefs", "blockchainsize", dbConn))
-                            {
-                                invalids.add("Blockchain size (blockchain folder not set)");
-                                invalids.add("Space left (blockchain folder not set)");
-                            }           
-                    }
-                     if ((boolean) GetFirstItem("alerts_settings", "ltcprice", propsConnection))
-                    {
-                        if (!(boolean) GetFirstItem("node_prefs", "ltcprice", dbConn))
-                            invalids.add("LTC price");              
-                    }
-                     if ((boolean) GetFirstItem("alerts_settings", "dogeprice", propsConnection))
-                    {
-                        if (!(boolean) GetFirstItem("node_prefs", "dogeprice", dbConn))
-                            invalids.add("Doge price");              
-                    }
-                     if (!TableExists(" my_watchlist", dbConn))  //GetFirstItem("my_watchlist", "id", dbConn) == null)//if table is empty
-                    {
-                        if ((boolean) GetFirstItem("alerts_settings", "minting", propsConnection))
-                            invalids.add("Minting halted (no watchlist applied)");
-                        if ((boolean) GetFirstItem("alerts_settings", "levelling", propsConnection))
-                            invalids.add("Levelling updates (no watchlist applied)");
-                        if ((boolean) GetFirstItem("alerts_settings", "name_reg", propsConnection))
-                            invalids.add("Name registration (no watchlist applied)");                 
-                    }
+                        invalids.add("Blockchain size (blockchain folder not set)");
+                        invalids.add("Space left (blockchain folder not set)");
+                    }           
                 }
-                
-                if(invalids.isEmpty())
-                    return;
-                
-                String paneMessage = "The following alerts are enabled but can not be triggered:<br/><br/>";
-                paneMessage = invalids.stream().map(invalid -> invalid + "<br/>").reduce(paneMessage, String::concat);
-                paneMessage += "<br/>In order to receive these alerts you'll<br/>need to reqord the corresponding data.";
-                
-                JOptionPane.showMessageDialog(BackgroundService.GUI, 
-                        Utilities.AllignCenterHTML(paneMessage), "Alerts warning", JOptionPane.WARNING_MESSAGE);
+                 if ((boolean) GetFirstItem("alerts_settings", "ltcprice", propsConnection))
+                {
+                    if (!(boolean) GetFirstItem("node_prefs", "ltcprice", dbConn))
+                        invalids.add("LTC price");              
+                }
+                 if ((boolean) GetFirstItem("alerts_settings", "dogeprice", propsConnection))
+                {
+                    if (!(boolean) GetFirstItem("node_prefs", "dogeprice", dbConn))
+                        invalids.add("Doge price");              
+                }
+                 if (!TableExists(" my_watchlist", dbConn))  //GetFirstItem("my_watchlist", "id", dbConn) == null)//if table is empty
+                {
+                    if ((boolean) GetFirstItem("alerts_settings", "minting", propsConnection))
+                        invalids.add("Minting halted (no watchlist applied)");
+                    if ((boolean) GetFirstItem("alerts_settings", "levelling", propsConnection))
+                        invalids.add("Levelling updates (no watchlist applied)");
+                    if ((boolean) GetFirstItem("alerts_settings", "name_reg", propsConnection))
+                        invalids.add("Name registration (no watchlist applied)");                 
+                }
             }
+
+            if(invalids.isEmpty())
+                return;
+
+            String paneMessage = "The following alerts are enabled but can not be triggered:<br/><br/>";
+            paneMessage = invalids.stream().map(invalid -> invalid + "<br/>").reduce(paneMessage, String::concat);
+            paneMessage += "<br/>In order to receive these alerts you'll<br/>need to reqord the corresponding data.";
+
+            JOptionPane.showMessageDialog(BackgroundService.GUI, 
+                    Utilities.AllignCenterHTML(paneMessage), "Alerts warning", JOptionPane.WARNING_MESSAGE);
+           
             
         }
         catch (Exception e)
@@ -1457,7 +1458,7 @@ public class DatabaseManager
     long avrgReceivedPerMinute;
     long avrgSentPerMinute;  
     private int updateDelta;
-    //for we want to check more often than 
+    //for alerts we want to check more often than 
     //the updatedelta, which could be as long as 24 hours
     private final int alertsDelta = 60000;
     private int currentTick;
@@ -1502,10 +1503,6 @@ public class DatabaseManager
                 nodeDataColumns = GetColumnHeaders("node_data",dbConnection);
                 updateDelta = (int) GetItemValue("node_prefs", "updatedelta", "id", "0",dbConnection);            
                 dbConnection.close();
-                propertiesConnection = ConnectionDB.getConnection("properties");
-                if(!TableExists("alerts_settings", propertiesConnection))
-                    CreateAlertsSettingsTable(propertiesConnection);
-                propertiesConnection.close();
             }
             catch (NullPointerException | SQLException e)
             {
@@ -1705,7 +1702,7 @@ public class DatabaseManager
                     {
                         timer.cancel();//important to close the timer (thread)
                         Retry();
-                        SendAlertToGUI(null, "ReQording retry attempt " + (retries + 1), 
+                        SendAlertToGUI("", "ReQording retry attempt " + (retries + 1), 
                                 "An exception was thrown during your ReQording session, attempting a retry in 30 seconds.\n\n"
                                         + "The following error was thrown:\n\n" + e.toString(), propertiesConnection);
                         return;
@@ -1769,11 +1766,16 @@ public class DatabaseManager
         insertStringList.add("node_data");
         insertStringList.add("TIMESTAMP");
         insertStringList.add(String.valueOf(timestamp));
-        insertStringList.add("RAM_USAGE");
         
-        //ATTENTION: REMOVE RAM USAGE WHEN DONE TESTING                        
-        systemInfo.getOperatingSystem().getProcess(myProcessID).updateAttributes();
-        insertStringList.add(String.valueOf(systemInfo.getOperatingSystem().getProcess(myProcessID).getResidentSetSize()));
+        insertStringList.add("RAM_USAGE");
+        //ATTENTION: REMOVE RAM USAGE WHEN DONE TESTING     
+        if(systemInfo.getOperatingSystem().getProcess(myProcessID) != null) //causing null pointers for some (running jdk 16)
+        {
+            systemInfo.getOperatingSystem().getProcess(myProcessID).updateAttributes();
+            insertStringList.add(String.valueOf(systemInfo.getOperatingSystem().getProcess(myProcessID).getResidentSetSize()));            
+        }
+        else
+            insertStringList.add("0");
         
         for(String columnHeader : nodeDataColumns)
         {

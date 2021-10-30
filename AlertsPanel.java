@@ -213,7 +213,7 @@ public class AlertsPanel extends javax.swing.JPanel
                     alertsTextPane.setText(ae.message);
                     try(Connection connection = ConnectionDB.getConnection("properties"))
                     {
-
+                        //opted not to check if is read, more code/sql queries without much gain
                         gui.dbManager.ChangeValue("alerts", "read", "true", "timestamp", String.valueOf(ae.timestamp), connection);
                         connection.close();
                     }
@@ -748,11 +748,11 @@ public class AlertsPanel extends javax.swing.JPanel
             this.setLayout(layout);
             layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
+                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
             );
             layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                .addComponent(alertsMainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
             );
         }// </editor-fold>//GEN-END:initComponents
 

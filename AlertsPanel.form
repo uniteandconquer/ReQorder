@@ -47,12 +47,12 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="alertsMainSplitPane" alignment="1" pref="489" max="32767" attributes="0"/>
+          <Component id="alertsMainSplitPane" alignment="1" pref="730" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="alertsMainSplitPane" alignment="0" pref="466" max="32767" attributes="0"/>
+          <Component id="alertsMainSplitPane" alignment="0" pref="506" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -604,7 +604,7 @@
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList(new DefaultListModel())"/>
-                    <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="alertsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() &#xd;&#xa;{&#xd;&#xa;            @Override&#xd;&#xa;            public void valueChanged(javax.swing.event.ListSelectionEvent event)&#xd;&#xa;            {&#xd;&#xa;                //Don&apos;t trigger event for the item that was deselected&#xd;&#xa;                if(event.getValueIsAdjusting())&#xd;&#xa;                    return;&#xd;&#xa;               if(alertsList.getSelectedIndex() &lt; 0)&#xd;&#xa;                    return;&#xd;&#xa;&#xd;&#xa;                var ae = (reqorder.AlertItem) alertsListModel.get(alertsList.getSelectedIndex());&#xd;&#xa;                ae.read = true;                &#xd;&#xa;                alertsTextPane.setText(ae.message);&#xd;&#xa;                try(Connection connection = ConnectionDB.getConnection(&quot;properties&quot;))&#xd;&#xa;                {&#xd;&#xa;                    &#xd;&#xa;                    gui.dbManager.ChangeValue(&quot;alerts&quot;, &quot;read&quot;, &quot;true&quot;, &quot;timestamp&quot;, String.valueOf(ae.timestamp), connection);&#xd;&#xa;                    connection.close();&#xd;&#xa;                }&#xd;&#xa;                catch(Exception e)&#xd;&#xa;                {&#xd;&#xa;                    BackgroundService.AppendLog(e);&#xd;&#xa;                }&#xd;&#xa;            }&#xd;&#xa;        });"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="alertsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() &#xd;&#xa;{&#xd;&#xa;            @Override&#xd;&#xa;            public void valueChanged(javax.swing.event.ListSelectionEvent event)&#xd;&#xa;            {&#xd;&#xa;                //Don&apos;t trigger event for the item that was deselected&#xd;&#xa;                if(event.getValueIsAdjusting())&#xd;&#xa;                    return;&#xd;&#xa;               if(alertsList.getSelectedIndex() &lt; 0)&#xd;&#xa;                    return;&#xd;&#xa;&#xd;&#xa;                var ae = (reqorder.AlertItem) alertsListModel.get(alertsList.getSelectedIndex());&#xd;&#xa;                ae.read = true;                &#xd;&#xa;                alertsTextPane.setText(ae.message);&#xd;&#xa;                try(Connection connection = ConnectionDB.getConnection(&quot;properties&quot;))&#xd;&#xa;                {&#xd;&#xa;                    //opted not to check if is read, more code/sql queries without much gain&#xd;&#xa;                    gui.dbManager.ChangeValue(&quot;alerts&quot;, &quot;read&quot;, &quot;true&quot;, &quot;timestamp&quot;, String.valueOf(ae.timestamp), connection);&#xd;&#xa;                    connection.close();&#xd;&#xa;                }&#xd;&#xa;                catch(Exception e)&#xd;&#xa;                {&#xd;&#xa;                    BackgroundService.AppendLog(e);&#xd;&#xa;                }&#xd;&#xa;            }&#xd;&#xa;        });"/>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
                 </Component>

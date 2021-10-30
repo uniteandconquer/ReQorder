@@ -1988,6 +1988,14 @@ public class ReqorderPanel extends javax.swing.JPanel
 
     private void saveDbPrefsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_saveDbPrefsButtonActionPerformed
     {//GEN-HEADEREND:event_saveDbPrefsButtonActionPerformed
+        if(GUI.REQORDING)
+        {
+            JOptionPane.showMessageDialog(gui,Utilities.AllignCenterHTML(
+                    "Cannot save preferences while ReQording session is active<br/><br/>"
+                            + "Please stop the session before saving"));
+            return;
+        }
+        
         if(savedDbPrefs())
             PopulateDatabasesTree();
     }//GEN-LAST:event_saveDbPrefsButtonActionPerformed
@@ -2226,6 +2234,11 @@ public class ReqorderPanel extends javax.swing.JPanel
         if (dbName.equals(""))
         {
             JOptionPane.showMessageDialog(null, "The database name should have at least one character");
+            return;
+        }
+        if(dbName.contains("."))
+        {
+            JOptionPane.showMessageDialog(null, "The database name should not contain any periods'");
             return;
         }
         if (dbName.equals("properties"))
