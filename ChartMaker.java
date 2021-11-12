@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Ellipse2D;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.NumberFormat;
@@ -36,7 +37,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.chart.ui.RectangleAnchor;
 import org.jfree.data.time.Hour;
-import org.jfree.data.time.MovingAverage;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.Year;
 
@@ -52,18 +52,29 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
     public boolean showCrosshairs = true;
     public boolean showDialog = true;
     public boolean interpolateEnabled = true;
-    public boolean movingAverageEnabled;
+    public boolean snapshotsEnabled = true;
+    public int averagingPeriod = 5;
+    protected boolean movingAverageEnabled = false;
+    protected boolean showRawData = true;
+    protected boolean averageAll = false;
     public String chartTitle;
     private XYLineAndShapeRenderer[] linerenders;
     private XYStepRenderer[] stepRenderers;
     private TimeSeriesCollection maCollection;
     protected Crosshair maCrosshair;
+    private CrosshairOverlay crosshairOverlay;
     
     public ChartMaker(String title,GUI gui)
     {
         super(title);
-        colors = new Color[]{Color.BLACK,Color.RED,Color.CYAN, Color.GREEN,Color.MAGENTA,Color.ORANGE,
-            Color.PINK,Color.GRAY,Color.YELLOW,Color.BLUE,Color.WHITE,Color.CYAN,Color.ORANGE,Color.YELLOW};
+        Color color1 = new Color(60,8,119);
+        Color color2 = new Color(91,0,0);
+        Color color3 = new Color(60,109,232);
+        Color color4 = new Color(0,93,36).brighter().brighter();
+        Color color5 = new Color(203,109,35).brighter();
+        Color color6 = Color.cyan.darker().darker();
+        colors = new Color[]{Color.BLACK,color1,color2,color3,color4,color5,color6,Color.GRAY,
+            color1,color2,color3,color4,color5,Color.GRAY};
         
         chartDialog = new javax.swing.JDialog(gui);
         chartDialog.setUndecorated(true);         
@@ -158,7 +169,8 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
     
     public void SetInterpolation(boolean interpolate)
     {        
-        if(chartPanel.getChart().getXYPlot().getRangeAxis(1).getLabel().equals("moving average"))
+        //moving average only exists if user has selected just one dataset
+        if(chartPanel.getChart().getXYPlot().getRangeAxisCount() == 1) 
         {
             XYPlot plot = chartPanel.getChart().getXYPlot();       
             if(interpolate)
@@ -179,23 +191,50 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         }
     }
     
+    public void ToggleSnapshots()
+    {
+        for(XYLineAndShapeRenderer r : linerenders)
+        {
+            r.setSeriesShapesVisible(0, snapshotsEnabled);
+        }
+    }
+    
     public void SetMovingAverage(boolean isEnabled)
     {
-        if(!chartPanel.getChart().getXYPlot().getRangeAxis(1).getLabel().equals("moving average"))
+        //if more than one rangeaxis exist, there's no moving average
+        if(chartPanel.getChart().getXYPlot().getRangeAxisCount() != 1)
             return;
         
         if(isEnabled)
         {
             chartPanel.getChart().getXYPlot().setDataset(1,maCollection);
-            chartPanel.getChart().getXYPlot().getRangeAxis(1).setVisible(true);
             maCrosshair.setVisible(true);
         }
         else
         {
             chartPanel.getChart().getXYPlot().setDataset(1,null);
-            chartPanel.getChart().getXYPlot().getRangeAxis(1).setVisible(false);
             maCrosshair.setVisible(false);            
         }
+    }
+    
+    public void ShowRawData(boolean show)
+    {
+        //if more than one rangeaxis exist, there's no moving average
+        if(chartPanel.getChart().getXYPlot().getRangeAxisCount() != 1)
+            return;
+        
+        if(show) 
+        {
+            chartPanel.getChart().getXYPlot().setDataset(0,datasets.get(0));
+            Crosshair c = (Crosshair)crosshairOverlay.yCrosshairs.get(0);
+            c.setVisible(show);
+        }
+        else
+        {
+            chartPanel.getChart().getXYPlot().setDataset(0,null);
+            Crosshair c = (Crosshair)crosshairOverlay.yCrosshairs.get(0);
+            c.setVisible(show);
+        }  
     }
     
     private JFreeChart createChart(String title,ArrayList<ResultSet> resultSets,ArrayList<String> axes)
@@ -204,6 +243,9 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         
         //First range axis always uses first resultset
         XYDataset dataset1 = createDataset(axes.get(0), resultSets.get(0));
+        
+        if(axes.size() > 1 && averageAll)
+            dataset1 = CreateAverageDataset(dataset1);
         
         title = dataset1 == null ? "NOT ENOUGH DATA TO PLOT CHART" : title;
         
@@ -218,6 +260,7 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         
         //needs to be numberaxis for the numberformatter (not valueaxis)
         NumberAxis firstYAxis = (NumberAxis) plot.getRangeAxis();
+        firstYAxis.setAutoRangeIncludesZero(false);
         if(AxisToInteger(firstYAxis.getLabel()))//check if integer needed from local method
             firstYAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         else
@@ -233,9 +276,11 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         
         //only show moving average if there is one rangeaxis
         if(axes.size() == 1 && dataset1 != null)
-            CreateMovingAverageAxis(axes.get(0), dataset1, plot);
+            CreateMovingAverage(dataset1, plot);
         
         CreateAxisRenderers(0);
+        linerenders[0].setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
+        linerenders[0].setSeriesShapesVisible(0, snapshotsEnabled);
 
         String firstAxis = axes.get(0);
         //if the first resultset is for level, levelling or buildversion we  enable the steprenderers
@@ -250,8 +295,8 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         }
         //otherwise we enable the linerenderers
         else
-            plot.setRenderer(0,linerenders[0]);        
-
+            plot.setRenderer(0,linerenders[0]);    
+            
         //if resultsets.size > 1, all resultsets should only have one column
         int currentResultset = resultSets.size() > 1 ? 1 : 0;
 
@@ -269,20 +314,22 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
                     i%2==0 ? AxisLocation.BOTTOM_OR_LEFT: AxisLocation.BOTTOM_OR_RIGHT);
 
             XYDataset dataset = createDataset(axes.get(i),resultSets.get(currentResultset));
+            
+            if(averageAll)
+                dataset = CreateAverageDataset(dataset);
+            
             plot.setDataset(i, dataset);
             plot.mapDatasetToRangeAxis(i, i);
 
             CreateAxisRenderers(i);
-
+            linerenders[i].setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
+            linerenders[i].setSeriesShapesVisible(0, snapshotsEnabled);
+            
             if(interpolateEnabled)
-            {
-                plot.setRenderer(i,linerenders[i]);                
-            }
+                plot.setRenderer(i,linerenders[i]);   
             else
-            {
-                plot.setRenderer(i,stepRenderers[i]);     
-            }
-//            plot.getRendererForDataset(plot.getDataset(i)).setSeriesPaint(0,colors[i]);
+                plot.setRenderer(i,stepRenderers[i]);  
+            
             axis.setLabelPaint(colors[i]);
             //due to timestamp being a long in milisecs in the dataset. Setting different value
             //in dataset will prevent coherent date formatting in crosshair and dialog labels, so we hide it
@@ -314,36 +361,8 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         linerenders[rangeIndex] = new XYLineAndShapeRenderer();
         linerenders[rangeIndex].setSeriesStroke(0, new BasicStroke(2f));
         linerenders[rangeIndex].setSeriesPaint(0, colors[rangeIndex]);
-    }
-    
-    private void CreateMovingAverageAxis(String coupledAxis, XYDataset dataset,XYPlot plot)
-    {
-        NumberAxis axis = new NumberAxis("moving average");
-        axis.setAutoRangeIncludesZero(false);
-        if(AxisToInteger(coupledAxis))
-            axis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        else
-            axis.setNumberFormatOverride(GetDoubleFormat());
-
-        plot.setRangeAxis(1, axis);
-        plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
-        TimeSeries ts = CreateMovingAverageTimeSeries("", dataset);
-        TimeSeries maDataset = MovingAverage.createMovingAverage(ts, "moving average", 49, 49);
-        maCollection = new TimeSeriesCollection();
-        maCollection.addSeries(maDataset);
-        datasets.add(maCollection);        
-
-        plot.setDataset(1, maCollection);
-        plot.mapDatasetToRangeAxis(1, 1);
-        axis.setLabelPaint(colors[1]);
-        axis.setTickLabelPaint(colors[1]);  
-
-        StandardXYItemRenderer maRenderer = new StandardXYItemRenderer();
-        maRenderer.setSeriesStroke(0, new BasicStroke(4));
-        maRenderer.setSeriesPaint(0, colors[1]);
-        plot.setRenderer(1, maRenderer);
-    }
-    
+    }    
+       
     private boolean  AxisToInteger(String axis)
     {
         if(axis.endsWith("price"))
@@ -762,19 +781,77 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         return null;        
     }    
     
-    private TimeSeries CreateMovingAverageTimeSeries(String title, XYDataset sourceDataset)
+    private void CreateMovingAverage(XYDataset sourceDataset, XYPlot plot)
     {
-        TimeSeries ts = new TimeSeries(title + " - Moving average");
+        maCollection = (TimeSeriesCollection) CreateAverageDataset(sourceDataset);        
+        datasets.add(maCollection);        
+
+        plot.setDataset(1, maCollection);
+        plot.mapDatasetToRangeAxis(1, 0); 
+
+        StandardXYItemRenderer maRenderer = new StandardXYItemRenderer();
+        maRenderer.setSeriesStroke(0, new BasicStroke(2));
+        maRenderer.setSeriesPaint(0, Color.RED);
+        plot.setRenderer(1, maRenderer);        
+    }
+    
+    private XYDataset CreateAverageDataset(XYDataset sourceDataset)
+    {
+        TimeSeries series = new TimeSeries("moving average");
         RegularTimePeriod time;
-        for(int i = 0; i < sourceDataset.getItemCount(0); i++)
+        
+        for(int i = sourceDataset.getItemCount(0) - 1; i >= 0; i--)
         {
             time = new Second(new Date((long)sourceDataset.getX(0, i)));
-            ts.add(time,sourceDataset.getY(0, i));
-//            System.out.println("x = " + sourceDataset.getX(0, i) + " , y = " + sourceDataset.getY(0, i));
-        }
+            
+            if(i - averagingPeriod >= 0)
+            {
+                if(sourceDataset.getY(0, i) instanceof  Double)
+                {                   
+                    double sum = 0;
+                    for(int y = 0; y < averagingPeriod; y++)
+                    {
+                        sum += (double)sourceDataset.getY(0, i - y);
+                    }     
+                    double aveage = sum / averagingPeriod;
+                    series.addOrUpdate(time,aveage);
+                }
+                else if(sourceDataset.getY(0, i) instanceof  Byte)
+                {                 
+                    int sum = 0;
+                    for(int y = 0; y < averagingPeriod; y++)
+                    {
+                        sum += (byte)sourceDataset.getY(0, i - y);
+                    } 
+                    int average = sum / averagingPeriod;
+                    series.addOrUpdate(time,average);
+                }
+                else if(sourceDataset.getY(0, i) instanceof  Integer)
+                {                 
+                    int sum = 0;
+                    for(int y = 0; y < averagingPeriod; y++)
+                    {
+                        sum += (int)sourceDataset.getY(0, i - y);
+                    } 
+                    int average = sum / averagingPeriod;
+                    series.addOrUpdate(time,average);
+                }
+                else if(sourceDataset.getY(0, i) instanceof  Long)
+                {                 
+                    long sum = 0;
+                    for(int y = 0; y < averagingPeriod; y++)
+                    {
+                        sum += (long)sourceDataset.getY(0, i - y);
+                    } 
+                    long average = sum / averagingPeriod;
+                    series.addOrUpdate(time,average);
+                }
+            }
+        }   
         
-        return  ts;
-        
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(series);
+        return dataset;
     }
 
     public JPanel createChartPanel(String title,ArrayList<ResultSet> resultSets, ArrayList<String> axes)
@@ -783,7 +860,7 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         JFreeChart chart = createChart(title,resultSets,axes);
         chartPanel = new ChartPanel(chart);
         chartPanel.addChartMouseListener(this);
-        CrosshairOverlay crosshairOverlay = new CrosshairOverlay(this);
+        crosshairOverlay = new CrosshairOverlay(this);
         xCrosshair = new Crosshair(Double.NaN, Color.DARK_GRAY, new BasicStroke(.5f));
         xCrosshair.setLabelVisible(true);
         xCrosshair.setLabelGenerator((Crosshair crshr) ->
@@ -803,13 +880,9 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
             if(i%4 == 3)
                 crosshair.setLabelAnchor(RectangleAnchor.TOP_RIGHT);
             if(i%4 == 2)
-                crosshair.setLabelAnchor(RectangleAnchor.TOP_LEFT);
-             
-            String lbl = plot.getRangeAxis(i).getLabel();
-            if(lbl.equals("moving average"))
-                maCrosshair = crosshair;
-            //for moving average crosshair label use the format of the axis it's coupled to
-            final String label = lbl.equals("moving average") ? axes.get(0) : lbl;
+                crosshair.setLabelAnchor(RectangleAnchor.TOP_LEFT);        
+            
+            String label = plot.getRangeAxis(i).getLabel();
             
             crosshair.setLabelGenerator((Crosshair crshr) ->
             {
@@ -817,6 +890,20 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
             });
             crosshairOverlay.addRangeCrosshair(crosshair);
         } 
+        //setup moving average crosshair
+        if(axes.size() == 1)
+        {
+            maCrosshair = new Crosshair(Double.NaN, Color.RED, new BasicStroke(.5f));
+            maCrosshair.setLabelVisible(true);
+            maCrosshair.setLabelAnchor(RectangleAnchor.BOTTOM_RIGHT);
+            
+            maCrosshair.setLabelGenerator((Crosshair crshr) ->
+            {
+                //for moving average crosshair label use the format of the axis it's coupled to (first dataset)
+                return Utilities.GenerateLabelString(axes.get(0), crshr.getValue());
+            });
+            crosshairOverlay.addRangeCrosshair(maCrosshair);
+        }
         chart.setBackgroundPaint(Color.DARK_GRAY);
         chartPanel.addOverlay(crosshairOverlay);
         chartPanel.setMouseWheelEnabled(true);
@@ -844,12 +931,29 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
             @Override public void mouseExited(MouseEvent me){}
             @Override public void mouseClicked(MouseEvent me){}
         });
-        chartDialog.setSize(dialogSize.x, dialogSize.y * (rangeAxisCount + 1) + 10);
+        chartDialog.setSize(dialogSize.x, dialogSize.y * (datasets.size() + 1) + 10);
         
         //must be done after chart is initialized, 
-        //make sure there is a dataset plotted to MA (in case not enough data for rangeAxis[0]
-        if(axes.size() == 1 && plot.getRangeAxis(1) != null)
+        //make sure there is a dataset plotted to MA (in case not enough data for rangeAxis[0] //old version
+        if(axes.size() == 1) // && plot.getRangeAxis(1) != null)
+        {
             SetMovingAverage(movingAverageEnabled);
+            ShowRawData(showRawData);
+        }
+        
+//        if(axes.size() > 1 && averageAll)
+//        {
+//            ArrayList<TimeSeriesCollection> tempList = new ArrayList<>();
+//            
+//            for(int i = 0; i < datasets.size();i++)
+//            {
+//                TimeSeriesCollection current = new TimeSeriesCollection();
+//                current.addSeries(CreateAverageDataset(datasets.get(i)));
+//                tempList.add(current);
+//            }
+//            datasets.clear();
+//            tempList.forEach(c ->{datasets.add(c);});
+//        }
         
         return chartPanel;
     } 

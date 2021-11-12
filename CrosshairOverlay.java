@@ -40,7 +40,7 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
         PropertyChangeListener, PublicCloneable, Cloneable, Serializable
 {
     private List xCrosshairs;
-    private List yCrosshairs;
+    protected List yCrosshairs;
     private final ChartMaker chartMaker;
     private String dialogString; 
     private final int[] levels = { 0, 7200, 72000 , 201600 , 374400 ,618400 , 964000 , 1482400 , 2173600 , 3037600 , 4074400 };
@@ -222,13 +222,27 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
         
         String lastLabel = "";
         long millis = (long) x;
-        for (int i = 0; i < chartMaker.datasets.size(); i++)
-        {               
-            ValueAxis yAxis = plot.getRangeAxis(i);
+        for (int i = 0; i <  chartMaker.datasets.size(); i++)
+        {      
+            boolean isMovingAverage;
             
-            if(yAxis.getLabel().equals("moving average") && !chartMaker.maCrosshair.isVisible())
-                continue;
+            ValueAxis yAxis; //
             
+            //if 2 datasets and 1 range axis on 2nd iteration -> moving average range axis = dataset 0 range axis
+            if(i == 1 && chartMaker.datasets.size() == 2 && plot.getRangeAxisCount() == 1)
+            {
+                isMovingAverage = true;
+                yAxis = plot.getRangeAxis(0);
+                
+                if(!chartMaker.movingAverageEnabled)
+                    continue;
+            }
+            else
+            {
+                isMovingAverage = false;
+                yAxis = plot.getRangeAxis(i);
+            }
+
             boolean stepRenderer = chartPanel.getChart().getXYPlot().getRenderer(i) instanceof XYStepRenderer;   
             dataArea = chartPanel.getScreenDataArea();
             g2.clip(dataArea);
@@ -275,7 +289,7 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
             if(chartMaker.showDialog)
             {
                 //for moving average dialog label use the format of the axis it's coupled to
-                String label = yAxis.getLabel().equals("moving average") ? lastLabel : yAxis.getLabel();
+                String label = isMovingAverage ? lastLabel : yAxis.getLabel();
                 
                 switch(label)
                 {
@@ -286,7 +300,9 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
                     case "allOnlineMinters":
                     case "blocks":
                     case "level":
-                        dialogString += String.format("%s : %s<br/>",yAxis.getLabel(),NumberFormat.getIntegerInstance().format((int) y));
+                        //change label only after it was used as the switch flag
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s : %s<br/>",label,NumberFormat.getIntegerInstance().format((int) y));
                         break;
                     case "levelling":
                         dialogString += String.format("%s : %d<br/>%s blocks","level",
@@ -302,42 +318,51 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
                     case "bytes_rec_avg_day":
                     case "ram_usage":
                     case "blockchainsize":
-                        dialogString += String.format("%s : %.2fMb<br/>",yAxis.getLabel(), y );
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s : %.2fMb<br/>",label, y );
                         break;  
                     case "ltc_to_qort_price":
                     case "doge_to_qort_price":
                     case "balance":
-                        dialogString += String.format("%s : %.5f QORT<br/>",yAxis.getLabel(), (double) y);
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s : %.5f QORT<br/>",label, (double) y);
                         break;   
-                    case "qort_to_ltc_price":    
-                        dialogString += String.format("%s : %.5f LTC<br/>",yAxis.getLabel(), (double) y);
+                    case "qort_to_ltc_price":  
+                        label = isMovingAverage ? "moving average" : label;  
+                        dialogString += String.format("%s : %.5f LTC<br/>",label, (double) y);
                         break;     
                     case "qort_to_doge_price": 
-                        dialogString += String.format("%s : %.5f Doge<br/>",yAxis.getLabel(), (double) y);
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s : %.5f Doge<br/>",label, (double) y);
                         break;           
                     case "uptime":
-                        dialogString += String.format("%s:<br/>%s<br/>",yAxis.getLabel(), Utilities.MillisToDayHrMinShortFormat((long)y));
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s:<br/>%s<br/>",label, Utilities.MillisToDayHrMinShortFormat((long)y));
                         break;
                     case "buildversion":
-                        dialogString += String.format("%s:<br/>%.6f<br/>",yAxis.getLabel(), (double) y);
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s:<br/>%.6f<br/>",label, (double) y);
                         break;
                     case "mintingrate":
-                        dialogString += String.format("%s : %d B/Hr<br/>",yAxis.getLabel(), (int) y );
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s : %d B/Hr<br/>",label, (int) y );
                         break;
                     case "balancedelta":
-                        dialogString += String.format("%s : %.3f Q/Hr<br/>",yAxis.getLabel(), (double) y);
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s : %.3f Q/Hr<br/>",label, (double) y);
                         break; 
                     case "efficiency":
-                        dialogString += String.format("%s : %.2f%%<br/>",yAxis.getLabel(), (double) y);
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s : %.2f%%<br/>",label, (double) y);
                         break; 
                     case "cpu_temp":
-                        dialogString += String.format("%s : %.1f °C<br/>",yAxis.getLabel(), (double) y);
+                        label = isMovingAverage ? "moving average" : label;
+                        dialogString += String.format("%s : %.1f °C<br/>",label, (double) y);
                         break; 
                 }
             }   
             lastLabel = yAxis.getLabel();
         }
-        
         chartMaker.chartDialogLabel.setText(Utilities.AllignCenterHTML(dialogString));
         g2.setClip(savedClip);       
     }
