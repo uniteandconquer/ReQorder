@@ -22,6 +22,9 @@ These include, but are not limited to:
 -node out of sync alerts
 
 
-ReQorder is a lightweight, cross-platform and low footprint application, which means it can run parallel with your Qortal core on Windows, Mac or Linux systems without using much system resources (CPU, RAM, internet data, disk space). 
+ReQorder is a lightweight, cross-platform and low footprint application, which means it can run parallel with your Qortal core on Windows, Mac or Linux systems without using much system resources (CPU, RAM, internet data, disk space).
+ 
+ For more info visit the ReQorder website at www.reqorder.org or the ReQorder Telegram group at https://t.me/reqorder 
+ 
 
  Enjoy!  
