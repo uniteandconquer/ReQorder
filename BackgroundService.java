@@ -32,7 +32,7 @@ public class BackgroundService
     protected char [] password;
     private static final Logger logger = Logger.getLogger("debug_log");  
     private FileHandler fileHandler;  
-    protected static final String BUILDVERSION = "ReQorder 1.0-beta.5";    
+    protected static final String BUILDVERSION = "ReQorder 1.0-beta.6";    
     
     public BackgroundService(boolean GUI_enabled)
     {  

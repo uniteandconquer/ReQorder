@@ -64,6 +64,9 @@ public class DatabaseManager
     protected boolean backupEnabled = true;
     private String database;
     protected int retries;
+    protected String customIP = "localhost";
+    protected String customPort = "12391";
+    protected String socket = customIP + ":" + customPort;
     
     /** 
      * using char[]  for possible future implementation of clearing password from heap<br>
@@ -266,6 +269,23 @@ public class DatabaseManager
         //if login was successfull and all databases were accessible, make a backup of auth files and databases
         if(backupEnabled && removeFiles.isEmpty())
             AccountBackup();        
+    }
+    
+    protected void SetSocket()
+    {
+        try (Connection connection = ConnectionDB.getConnection( "properties"))
+        {
+           if(TableExists("socket", connection))
+           {
+               customIP = (String)GetFirstItem("socket", "ip", connection);
+               customPort = (String) GetFirstItem("socket","port", connection);
+               socket = customIP + ":" + customPort;
+           }
+        }
+        catch (Exception e)
+        {
+            BackgroundService.AppendLog(e);
+        }
     }
     
     private void AccountBackup()
@@ -921,7 +941,7 @@ public class DatabaseManager
         try (Connection c = ConnectionDB.getConnection("properties")) 
         {             
             //we need to check with Qortal API if the entered address is valid, no string variable needed
-             Utilities.ReadStringFromURL("http://localhost:12391/addresses/" + address);   
+             Utilities.ReadStringFromURL("http://" + socket + "/addresses/" + address);   
 
             //check if address exists, using the merge statement in h2 would be cleaner 
             //but this way we can notify the user that the address already exists
@@ -946,7 +966,7 @@ public class DatabaseManager
             }
 
             //get the registered name for the address, if available
-            String jsString = Utilities.ReadStringFromURL("http://localhost:12391/names/address/" + address);
+            String jsString = Utilities.ReadStringFromURL("http://" + socket + "/names/address/" + address);
             JSONArray jSONArray = new JSONArray(jsString);
             String name = Utilities.SingleQuotedString("");
             if(jSONArray.length() > 0)
@@ -1287,15 +1307,15 @@ public class DatabaseManager
 
             try
             {        
-                String jsString = Utilities.ReadStringFromURL("http://localhost:12391/admin/mintingaccounts");
+                String jsString = Utilities.ReadStringFromURL("http://" + socket + "/admin/mintingaccounts");
                 JSONArray jSONArray = new JSONArray(jsString);
                 //If there's no minting account set we'll get a nullpointer exception
                 if (jSONArray.length() > 0)
                 {
                     JSONObject jso = jSONArray.getJSONObject(0);
                     String myMintingAddress = jso.getString("mintingAccount");
-                    double myBalance = Double.parseDouble(Utilities.ReadStringFromURL("http://localhost:12391/addresses/balance/" + myMintingAddress));
-                    jsString = Utilities.ReadStringFromURL("http://localhost:12391/addresses/" + myMintingAddress);
+                    double myBalance = Double.parseDouble(Utilities.ReadStringFromURL("http://" + socket + "/addresses/balance/" + myMintingAddress));
+                    jsString = Utilities.ReadStringFromURL("http://" + socket + "/addresses/" + myMintingAddress);
                     jso = new JSONObject(jsString);
                     int myLevel = jso.getInt("level");
                     blocksMinted = jso.getInt("blocksMinted");
@@ -1557,7 +1577,7 @@ public class DatabaseManager
                     
                     //We get all the variables regardless of if the user selected them, this is not very costly and saves us from
                     //checking for every  variable, which would probably result in more lines of code
-                    jsonString = Utilities.ReadStringFromURL("http://localhost:12391/admin/status"); 
+                    jsonString = Utilities.ReadStringFromURL("http://" + socket + "/admin/status"); 
                     jSONObject = new JSONObject(jsonString);
 
                     timestamp = System.currentTimeMillis();
@@ -1565,15 +1585,15 @@ public class DatabaseManager
                     numberofconnections = jSONObject.getInt("numberOfConnections");
                     blockHeight = Utilities.FindChainHeight();
 
-                    jsonString = Utilities.ReadStringFromURL("http://localhost:12391/admin/info");
+                    jsonString = Utilities.ReadStringFromURL("http://" + socket + "/admin/info");
                     jSONObject = new JSONObject(jsonString);
                     uptime = jSONObject.getLong("uptime");
                     buildVersion = Utilities.SingleQuotedString(jSONObject.getString("buildVersion"));
 
-                    jsonString = Utilities.ReadStringFromURL("http://localhost:12391/peers/known");
+                    jsonString = Utilities.ReadStringFromURL("http://" + socket + "/peers/known");
                     JSONArray jsonArray = new JSONArray(jsonString);
                     allKnownPeers = jsonArray.length();
-                    jsonString = Utilities.ReadStringFromURL("http://localhost:12391/addresses/online");
+                    jsonString = Utilities.ReadStringFromURL("http://" + socket + "/addresses/online");
                     //sometimes the Qortal API returns a file not found exception for addresses/online query
                     if(jsonString == null)
                         allOnlineMinters = 0;
@@ -1586,13 +1606,13 @@ public class DatabaseManager
                     //Prices will return a long (probably due to floating point accuracy issues) which will have to be divided by
                     //100.000.000 to get the amount of QORT one LTC buys, to get the $ to QORT ratio we need to know the 
                     //LTC/$ ratio and extrapolate that to QORT
-                    jsonString = Utilities.ReadStringFromURL("http://localhost:12391/crosschain/price/LITECOIN?maxtrades=10");
+                    jsonString = Utilities.ReadStringFromURL("http://" + socket + "/crosschain/price/LITECOIN?maxtrades=10");
                     LTCprice = Long.parseLong(jsonString);                    
-                    jsonString = Utilities.ReadStringFromURL("http://localhost:12391/crosschain/price/DOGECOIN?maxtrades=10");
+                    jsonString = Utilities.ReadStringFromURL("http://" + socket + "/crosschain/price/DOGECOIN?maxtrades=10");
                     DogePrice = Long.parseLong(jsonString);
 //                        this url returns the price based on the last 10 trades, which apparently took place when btc was around
 //                        $70.000. Until btc trades are re-instated we should not register the btc/qort ratio
-//                        jsonString = Utilities.ReadStringFromURL("http://localhost:12391/crosschain/price/BITCOIN?maxtrades=10");
+//                        jsonString = Utilities.ReadStringFromURL("http://" + socket + "/crosschain/price/BITCOIN?maxtrades=10");
 //                        BTCprice = Long.parseLong(jsonString);  
                     
                     StatusAlert();
@@ -1612,7 +1632,7 @@ public class DatabaseManager
                         for(Object addressObj : GetColumn("my_watchlist", "address","","", dbConnection))
                         {
                             String address = addressObj.toString();
-                            jsonString = Utilities.ReadStringFromURL("http://localhost:12391/names/address/" + address);
+                            jsonString = Utilities.ReadStringFromURL("http://" + socket + "/names/address/" + address);
                             jsonArray = new JSONArray(jsonString);
                             if(jsonArray.length() > 0)
                             {
@@ -1648,7 +1668,7 @@ public class DatabaseManager
                             {
                                 ID = table.substring(11, table.length() - 7); //extract ID from table name
                                 address = (String) GetItemValue("my_watchlist", "address", "ID", ID,dbConnection);
-                                jsonString = Utilities.ReadStringFromURL("http://localhost:12391/addresses/" + address);
+                                jsonString = Utilities.ReadStringFromURL("http://" + socket + "/addresses/" + address);
                                 jSONObject = new JSONObject(jsonString);
                                 timestamp = System.currentTimeMillis();
                                 blocksMinted = jSONObject.getInt("blocksMinted");
@@ -1658,7 +1678,7 @@ public class DatabaseManager
                             {
                                 ID = table.substring(11, table.length() - 6);
                                 address = (String) GetItemValue("my_watchlist", "address", "ID", ID,dbConnection);
-                                jsonString = Utilities.ReadStringFromURL("http://localhost:12391/addresses/" + address);
+                                jsonString = Utilities.ReadStringFromURL("http://" + socket + "/addresses/" + address);
                                 jSONObject = new JSONObject(jsonString);
                                 timestamp = System.currentTimeMillis();
                                 level = jSONObject.getInt("level");
@@ -1668,7 +1688,7 @@ public class DatabaseManager
                             {
                                 ID = table.substring(11, table.length() - 8);
                                 address = (String) GetItemValue("my_watchlist", "address", "ID", ID,dbConnection);
-                                balance = Double.parseDouble(Utilities.ReadStringFromURL("http://localhost:12391/addresses/balance/" + address));
+                                balance = Double.parseDouble(Utilities.ReadStringFromURL("http://" + socket + "/addresses/balance/" + address));
                                 timestamp = System.currentTimeMillis();
                                 balanceUpdateTreshold = (double)GetItemValue("my_watchlist", "balancetreshold", "ID", ID,dbConnection);
                                 BalanceUpdate(table,address);                                    

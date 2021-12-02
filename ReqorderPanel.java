@@ -482,7 +482,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         online = true;
         try
         {       
-            Utilities.ReadStringFromURL("http://localhost:12391/admin/status");        
+            Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/admin/status");        
         }
         catch (IOException | TimeoutException e)
         {     
@@ -599,6 +599,11 @@ public class ReqorderPanel extends javax.swing.JPanel
                             
                             passwordField.setText("");
                             retrievePasswordButton.setEnabled(true);                    
+                        }
+                        if(dbManager.TableExists("socket", connection))
+                        {
+                            api_IP_inputField.setText((String)dbManager.GetFirstItem("socket", "ip", connection));
+                            apiPortInputField.setText((String)dbManager.GetFirstItem("socket", "port", connection));
                         }
                         connection.close();
                     }
@@ -754,6 +759,13 @@ public class ReqorderPanel extends javax.swing.JPanel
         backupAccountCheckbox = new javax.swing.JCheckBox();
         buildVersionLabel = new javax.swing.JLabel();
         importAccountButton = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        apiPortInputField = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        api_IP_inputField = new javax.swing.JTextField();
+        jSeparator12 = new javax.swing.JSeparator();
+        saveSocketButton = new javax.swing.JButton();
+        resetDefaultButton = new javax.swing.JButton();
         showPropsTablePanel = new javax.swing.JPanel();
         deleteTableButton = new javax.swing.JButton();
         watchlistEditor = new javax.swing.JPanel();
@@ -864,7 +876,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 );
                 guidePanelLayout.setVerticalGroup(
                     guidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(guideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(guideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 931, Short.MAX_VALUE)
                 );
 
                 mainOptionsPanel.add(guidePanel, "guidePanel");
@@ -1305,7 +1317,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 );
                 tableOptionsPanelLayout.setVerticalGroup(
                     tableOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 622, Short.MAX_VALUE)
+                    .addGap(0, 921, Short.MAX_VALUE)
                 );
 
                 mainOptionsPanel.add(tableOptionsPanel, "tableOptionsPanel");
@@ -1320,7 +1332,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 );
                 itemsOptionsPanelLayout.setVerticalGroup(
                     itemsOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 622, Short.MAX_VALUE)
+                    .addGap(0, 921, Short.MAX_VALUE)
                 );
 
                 mainOptionsPanel.add(itemsOptionsPanel, "itemsOptionsPanel");
@@ -1350,9 +1362,9 @@ public class ReqorderPanel extends javax.swing.JPanel
                 propertiesOptionsPanel.add(setBlockchainFolderButton, gridBagConstraints);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 5;
+                gridBagConstraints.gridy = 21;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+                gridBagConstraints.insets = new java.awt.Insets(5, 0, 15, 0);
                 propertiesOptionsPanel.add(jSeparator11, gridBagConstraints);
 
                 smtpServerTextfield.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -1425,7 +1437,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(usernameTextfield, gridBagConstraints);
 
-                saveMailServerButton.setText("Save");
+                saveMailServerButton.setText("Save mail settings");
                 saveMailServerButton.setEnabled(false);
                 saveMailServerButton.addActionListener(new java.awt.event.ActionListener()
                 {
@@ -1589,6 +1601,73 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 7, 0);
                 propertiesOptionsPanel.add(importAccountButton, gridBagConstraints);
+
+                jLabel9.setText("Custom API IP address");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 22;
+                propertiesOptionsPanel.add(jLabel9, gridBagConstraints);
+
+                apiPortInputField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                apiPortInputField.setMinimumSize(new java.awt.Dimension(250, 22));
+                apiPortInputField.setPreferredSize(new java.awt.Dimension(175, 30));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 25;
+                gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+                propertiesOptionsPanel.add(apiPortInputField, gridBagConstraints);
+
+                jLabel10.setText("Custom API port");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 24;
+                propertiesOptionsPanel.add(jLabel10, gridBagConstraints);
+
+                api_IP_inputField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                api_IP_inputField.setMinimumSize(new java.awt.Dimension(250, 22));
+                api_IP_inputField.setPreferredSize(new java.awt.Dimension(175, 30));
+                api_IP_inputField.setSelectionStart(0);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 23;
+                gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+                propertiesOptionsPanel.add(api_IP_inputField, gridBagConstraints);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 5;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+                propertiesOptionsPanel.add(jSeparator12, gridBagConstraints);
+
+                saveSocketButton.setText("Save");
+                saveSocketButton.addActionListener(new java.awt.event.ActionListener()
+                {
+                    public void actionPerformed(java.awt.event.ActionEvent evt)
+                    {
+                        saveSocketButtonActionPerformed(evt);
+                    }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 26;
+                gridBagConstraints.ipadx = 37;
+                gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+                propertiesOptionsPanel.add(saveSocketButton, gridBagConstraints);
+
+                resetDefaultButton.setText("Reset to default");
+                resetDefaultButton.addActionListener(new java.awt.event.ActionListener()
+                {
+                    public void actionPerformed(java.awt.event.ActionEvent evt)
+                    {
+                        resetDefaultButtonActionPerformed(evt);
+                    }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 27;
+                gridBagConstraints.ipadx = 37;
+                gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+                propertiesOptionsPanel.add(resetDefaultButton, gridBagConstraints);
 
                 propOptionsScrollpane.setViewportView(propertiesOptionsPanel);
 
@@ -1913,7 +1992,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 DB_chooserPanel.setLayout(DB_chooserPanelLayout);
                 DB_chooserPanelLayout.setHorizontalGroup(
                     DB_chooserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 719, Short.MAX_VALUE)
+                    .addComponent(mainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
                 );
                 DB_chooserPanelLayout.setVerticalGroup(
                     DB_chooserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1969,13 +2048,13 @@ public class ReqorderPanel extends javax.swing.JPanel
                 this.setLayout(layout);
                 layout.setHorizontalGroup(
                     layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 719, Short.MAX_VALUE)
+                    .addGap(0, 768, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(reqorderPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
                 layout.setVerticalGroup(
                     layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 648, Short.MAX_VALUE)
+                    .addGap(0, 947, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(reqorderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
@@ -2920,6 +2999,70 @@ public class ReqorderPanel extends javax.swing.JPanel
         }
     }//GEN-LAST:event_importAccountButtonActionPerformed
 
+    private void saveSocketButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_saveSocketButtonActionPerformed
+    {//GEN-HEADEREND:event_saveSocketButtonActionPerformed
+        if(api_IP_inputField.getText().isBlank() || apiPortInputField.getText().isBlank())
+        {
+            JOptionPane.showMessageDialog(this, "Please enter an IP address and port");
+            return;
+        }
+        
+        if(JOptionPane.showConfirmDialog(this,
+                "This is an advanced feature, are you sure you want to continue?","Warning",
+                JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+            return;
+        
+        try (Connection connection = ConnectionDB.getConnection( "properties"))
+        {
+            if(!dbManager.TableExists("socket", connection))
+                dbManager.CreateTable(new String[]{"socket","ip","varchar(50)","port","varchar(10)"}, connection);
+            
+            dbManager.ExecuteUpdate("delete from socket", connection);
+            
+            dbManager.InsertIntoDB(new String[]{"socket",
+                "ip", Utilities.SingleQuotedString(api_IP_inputField.getText()),
+                "port", Utilities.SingleQuotedString(apiPortInputField.getText())}, connection);
+            
+            dbManager.customIP = api_IP_inputField.getText();
+            dbManager.customPort = apiPortInputField.getText();
+            dbManager.socket = dbManager.customIP + ":" + dbManager.customPort;
+            
+            JOptionPane.showMessageDialog(this, "Settings saved");
+        }
+        catch (Exception e)
+        {
+            BackgroundService.AppendLog(e);
+        }
+    }//GEN-LAST:event_saveSocketButtonActionPerformed
+
+    private void resetDefaultButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_resetDefaultButtonActionPerformed
+    {//GEN-HEADEREND:event_resetDefaultButtonActionPerformed
+        try (Connection connection = ConnectionDB.getConnection( "properties"))
+        {            
+            if(!dbManager.TableExists("socket", connection))
+                dbManager.CreateTable(new String[]{"socket","ip","varchar(50)","port","varchar(10)"}, connection);
+            
+            dbManager.ExecuteUpdate("delete from socket", connection);
+            
+            api_IP_inputField.setText("localhost");
+            apiPortInputField.setText("12391");
+            
+            dbManager.InsertIntoDB(new String[]{"socket",
+                "ip", Utilities.SingleQuotedString(api_IP_inputField.getText()),
+                "port", Utilities.SingleQuotedString(apiPortInputField.getText())}, connection);            
+            
+            dbManager.customIP = api_IP_inputField.getText();
+            dbManager.customPort = apiPortInputField.getText();
+            dbManager.socket = dbManager.customIP + ":" + dbManager.customPort;
+            
+            JOptionPane.showMessageDialog(this, "IP and port settings reset to default");
+        }
+        catch (Exception e)
+        {
+            BackgroundService.AppendLog(e);
+        }
+    }//GEN-LAST:event_resetDefaultButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel DB_chooserPanel;
@@ -2928,6 +3071,8 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JScrollPane addressesListPane;
     private javax.swing.JCheckBox allKnownPeersBox;
     private javax.swing.JCheckBox allOnlineMintersBox;
+    private javax.swing.JTextField apiPortInputField;
+    private javax.swing.JTextField api_IP_inputField;
     private javax.swing.JButton applyWatchlistButton;
     private javax.swing.JCheckBox backupAccountCheckbox;
     private javax.swing.JCheckBox balanceBox;
@@ -2966,15 +3111,18 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JTable itemsTable;
     private javax.swing.JScrollPane itemsTableScrollPane;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator11;
+    private javax.swing.JSeparator jSeparator12;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
@@ -3005,9 +3153,11 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JButton removeAddressButton;
     private javax.swing.JButton reqordButton;
     private javax.swing.JPanel reqorderPanel;
+    private javax.swing.JButton resetDefaultButton;
     private javax.swing.JButton retrievePasswordButton;
     private javax.swing.JButton saveDbPrefsButton;
     private javax.swing.JButton saveMailServerButton;
+    private javax.swing.JButton saveSocketButton;
     private javax.swing.JButton saveWatchlistButton;
     private javax.swing.JLabel sessionTimeLabel;
     private javax.swing.JButton setBlockchainFolderButton;

@@ -194,6 +194,7 @@ public class GUI extends javax.swing.JFrame
     {       
         //must be done after login, password has to be initialised
         dbManager.CheckDbFiles();
+        dbManager.SetSocket();
         
         //returns false if databases were not initialised
         if(!InitDB(LOCAL_MODE))

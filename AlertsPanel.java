@@ -99,6 +99,7 @@ public class AlertsPanel extends javax.swing.JPanel
              if (gui.dbManager.TableExists("alerts_settings", connection))
              {
                  //set components value according to values stored in properties database
+                 statusAlertsSpinner.setValue((byte)gui.dbManager.GetFirstItem("alerts_settings", "statusinterval", connection));
                  long longValue = ((long) gui.dbManager.GetFirstItem("alerts_settings", "blockchainvalue", connection)) / 1000000000;
                  chainSizeAlertSpinner.setValue(longValue);
                  longValue = ((long) gui.dbManager.GetFirstItem("alerts_settings", "spaceleftvalue", connection)) / 1000000000;

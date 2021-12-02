@@ -11,6 +11,7 @@ import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -51,6 +52,8 @@ public class MonitorPanel extends javax.swing.JPanel
     private boolean coreOnline;
     private boolean priceButtonReady = true;
     protected String blockChainFolder;
+    private boolean mintingChecked = false;
+    private int mintingAccount = 0;
 
     public MonitorPanel()
     {
@@ -273,7 +276,7 @@ public class MonitorPanel extends javax.swing.JPanel
             try
             {
                 //If ReadStringFromURL throws an error, coreOnline will be set to false
-                String jsonString = Utilities.ReadStringFromURL("http://localhost:12391/admin/status");
+                String jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/admin/status");
                 
                 //only expand tree if status switched from offline to online, expand before setting coreOnline to true
                 if(!coreOnline)
@@ -299,15 +302,15 @@ public class MonitorPanel extends javax.swing.JPanel
                 myBlockHeight = jSONObject.getInt("height");
                 numberOfConnections = jSONObject.getInt("numberOfConnections");
                 
-                jsonString = Utilities.ReadStringFromURL("http://localhost:12391/admin/info");
+                jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/admin/info");
                 jSONObject = new JSONObject(jsonString);
                 uptime = jSONObject.getLong("uptime");
                 buildVersion = jSONObject.getString("buildVersion");    
 
-                jsonString = Utilities.ReadStringFromURL("http://localhost:12391/peers/known");
+                jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/peers/known");
                 jSONArray = new JSONArray(jsonString);
                 allKnownPeers = jSONArray.length();
-                jsonString = Utilities.ReadStringFromURL("http://localhost:12391/addresses/online");
+                jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/addresses/online");
                 if(jsonString == null)
                     mintersOnline = 0;
                 else
@@ -316,15 +319,18 @@ public class MonitorPanel extends javax.swing.JPanel
                     mintersOnline = jSONArray.length();                      
                 }              
                 
-                jsonString = Utilities.ReadStringFromURL("http://localhost:12391/admin/mintingaccounts");
+                jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/admin/mintingaccounts");
                 jSONArray = new JSONArray(jsonString);
                 //If there's no minting account set we'll get a nullpointer exception
                 if(jSONArray.length() > 0)
                 {
-                    jSONObject = jSONArray.getJSONObject(0);
+                    if(jSONArray.length() > 1 && !mintingChecked)
+                        SetMintingAccount(jSONArray);
+                    
+                    jSONObject = jSONArray.getJSONObject(mintingAccount);
                     myMintingAddress = jSONObject.getString("mintingAccount");
-                    myBalance =  Double.parseDouble(Utilities.ReadStringFromURL("http://localhost:12391/addresses/balance/" + myMintingAddress));
-                    jsonString = Utilities.ReadStringFromURL("http://localhost:12391/addresses/" + myMintingAddress);
+                    myBalance =  Double.parseDouble(Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/addresses/balance/" + myMintingAddress));
+                    jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/addresses/" + myMintingAddress);
                     jSONObject = new JSONObject(jsonString);
 
                     monitorTreeModel.valueForPathChanged(new TreePath(mintingAccountNode.getPath()),
@@ -435,7 +441,8 @@ public class MonitorPanel extends javax.swing.JPanel
                 pricesButton.setEnabled(false);
                 monitorTreeModel.valueForPathChanged(new TreePath(statusNode.getPath()),
                         Utilities.AllignCenterHTML("<br/>Cannot connect to Qortal core<br/>"
-                   + "Check if your core and/or SSH tunnel are running<br/><br/>"));   
+                   + "Check if your core and/or SSH tunnel are running<br/>"
+                   + "and if your IP and port settings are correct<br/><br/>"));   
                 ClearMonitorTree();
             }
             catch (IOException | NumberFormatException | TimeoutException | JSONException e)
@@ -449,6 +456,32 @@ public class MonitorPanel extends javax.swing.JPanel
             monitorTree.setSelectionPath(selected);
             
         });   //end executor    
+    }
+    
+    private void SetMintingAccount(JSONArray jsonArray)
+    {
+        mintingChecked = true;
+        
+        String[] accounts = new String[jsonArray.length()];
+        for(int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jso = jsonArray.getJSONObject(i);
+            accounts[i] = jso.getString("mintingAccount");
+        }        
+        
+        String choice = (String)JOptionPane.showInputDialog(this, 
+                Utilities.AllignCenterHTML("Multiple minting accounts were found<br/>Please select your active minting account<br/><br/>"),
+            "Select minting account", JOptionPane.QUESTION_MESSAGE, null, accounts, accounts[0]); 
+        
+        for(int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject jso = jsonArray.getJSONObject(i);
+            if(jso.getString("mintingAccount").equals(choice))
+            {
+                mintingAccount = i;     
+                break;
+            }
+        }        
     }
     
     private void RefreshDataNode()
@@ -652,9 +685,9 @@ public class MonitorPanel extends javax.swing.JPanel
         {
             try
             {
-                 String jsonString = Utilities.ReadStringFromURL("http://localhost:12391/crosschain/price/LITECOIN?maxtrades=10");
+                 String jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/crosschain/price/LITECOIN?maxtrades=10");
                  double LTCprice = ((double)Long.parseLong(jsonString) / 100000000);
-                 jsonString = Utilities.ReadStringFromURL("http://localhost:12391/crosschain/price/DOGECOIN?maxtrades=10");
+                 jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/crosschain/price/DOGECOIN?maxtrades=10");
                  double DogePrice = ((double) Long.parseLong(jsonString) / 100000000);
                  
                  //update swing components in EDT

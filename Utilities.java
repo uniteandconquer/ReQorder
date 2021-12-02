@@ -238,7 +238,7 @@ public class Utilities
     {    
         try
         {
-            JSONArray jSONArray = new JSONArray(ReadStringFromURL("http://localhost:12391/peers"));
+            JSONArray jSONArray = new JSONArray(ReadStringFromURL("http://" + BackgroundService.GUI.dbManager.socket + "/peers"));
             int highest = 0;
             int current = 0;
 
