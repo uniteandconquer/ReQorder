@@ -373,6 +373,7 @@ public class Utilities
             case "bytes_rec_avg_day":
             case "ram_usage":
             case "blockchainsize":
+            case "qortal_ram":
                 returnString = String.format("%.2fMb", value);
                 break;   
             case "ltc_to_qort_price":
@@ -399,6 +400,7 @@ public class Utilities
                 returnString = String.format("%.5f QORT per hour", value);
                 break;
             case "efficiency":
+            case "cpu_usage":
                 returnString = String.format("%.2f%%", value);
                 break;
             case "cpu_temp":

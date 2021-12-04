@@ -467,6 +467,8 @@ public class ReqorderPanel extends javax.swing.JPanel
             "dogeprice",String.valueOf(dogePriceBox.isSelected()),
             "data_usage",String.valueOf(dataUsageBox.isSelected()),
             "cpu_temp",String.valueOf(cpu_tempBox.isSelected()),
+            "cpu_usage",String.valueOf(cpu_usageBox.isSelected()),
+            "qortal_ram",String.valueOf(qortalRamBox.isSelected()),
             "blockchainsize",String.valueOf(blockchainSizeBox.isSelected()),
             "updatedelta",String.valueOf(updatedelta) });        
     }    
@@ -722,6 +724,8 @@ public class ReqorderPanel extends javax.swing.JPanel
         sessionTimeLabel = new javax.swing.JLabel();
         dogePriceBox = new javax.swing.JCheckBox();
         encryptDbButton = new javax.swing.JButton();
+        qortalRamBox = new javax.swing.JCheckBox();
+        cpu_usageBox = new javax.swing.JCheckBox();
         dbModePanel = new javax.swing.JPanel();
         localButton = new javax.swing.JButton();
         remoteButton = new javax.swing.JButton();
@@ -897,7 +901,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 23;
+                gridBagConstraints.gridy = 25;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 dbOptionsPanel.add(saveDbPrefsButton, gridBagConstraints);
@@ -912,7 +916,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 24;
+                gridBagConstraints.gridy = 26;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 dbOptionsPanel.add(deleteDbButton, gridBagConstraints);
@@ -1011,7 +1015,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 blockchainSizeBox.setActionCommand("blockchainsize");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 17;
+                gridBagConstraints.gridy = 19;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(blockchainSizeBox, gridBagConstraints);
@@ -1040,7 +1044,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(watchlistsManagerButton, gridBagConstraints);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 18;
+                gridBagConstraints.gridy = 20;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -1059,7 +1063,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 19;
+                gridBagConstraints.gridy = 21;
                 gridBagConstraints.ipadx = 14;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
@@ -1068,7 +1072,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 hourIntervalLabel.setText("Snapshot interval in hours :");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 20;
+                gridBagConstraints.gridy = 22;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
@@ -1077,7 +1081,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 minuteIntervalLabel.setText("Snapshot interval in minutes : ");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 19;
+                gridBagConstraints.gridy = 21;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
@@ -1087,7 +1091,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 timeIntervalLabel1.setToolTipText("The time interval that will be used between reQorder snapshots");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 21;
+                gridBagConstraints.gridy = 23;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
@@ -1104,14 +1108,14 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 20;
+                gridBagConstraints.gridy = 22;
                 gridBagConstraints.ipadx = 14;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
                 dbOptionsPanel.add(hourSpinner, gridBagConstraints);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 22;
+                gridBagConstraints.gridy = 24;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -1179,10 +1183,32 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 25;
+                gridBagConstraints.gridy = 27;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 dbOptionsPanel.add(encryptDbButton, gridBagConstraints);
+
+                qortalRamBox.setSelected(true);
+                qortalRamBox.setText("Qortal RAM usage");
+                qortalRamBox.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
+                qortalRamBox.setActionCommand("qortal_ram");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 18;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
+                dbOptionsPanel.add(qortalRamBox, gridBagConstraints);
+
+                cpu_usageBox.setSelected(true);
+                cpu_usageBox.setText("CPU usage");
+                cpu_usageBox.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
+                cpu_usageBox.setActionCommand("cpu_usage");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 17;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
+                dbOptionsPanel.add(cpu_usageBox, gridBagConstraints);
 
                 dbOptionsScrollPane.setViewportView(dbOptionsPanel);
 
@@ -1626,7 +1652,6 @@ public class ReqorderPanel extends javax.swing.JPanel
                 api_IP_inputField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
                 api_IP_inputField.setMinimumSize(new java.awt.Dimension(250, 22));
                 api_IP_inputField.setPreferredSize(new java.awt.Dimension(175, 30));
-                api_IP_inputField.setSelectionStart(0);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 23;
@@ -3084,6 +3109,7 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JLabel buildVersionLabel;
     private javax.swing.JButton changePasswordButton;
     private javax.swing.JCheckBox cpu_tempBox;
+    private javax.swing.JCheckBox cpu_usageBox;
     private javax.swing.JButton createDbButton;
     private javax.swing.JButton createPropertiesBtn;
     private javax.swing.JPanel createPropertiesPanel;
@@ -3147,6 +3173,7 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JScrollPane propOptionsScrollpane;
     private javax.swing.JLabel propertiesLabel;
     private javax.swing.JPanel propertiesOptionsPanel;
+    private javax.swing.JCheckBox qortalRamBox;
     private javax.swing.JCheckBox receivedMailCheckbox;
     private javax.swing.JTextField recipientTextbox;
     private javax.swing.JButton remoteButton;

@@ -318,6 +318,7 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
                     case "bytes_rec_avg_day":
                     case "ram_usage":
                     case "blockchainsize":
+                    case "qortal_ram":
                         label = isMovingAverage ? "moving average" : label;
                         dialogString += String.format("%s : %.2fMb<br/>",label, y );
                         break;  
@@ -352,6 +353,7 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
                         dialogString += String.format("%s : %.3f Q/Hr<br/>",label, (double) y);
                         break; 
                     case "efficiency":
+                    case "cpu_usage":
                         label = isMovingAverage ? "moving average" : label;
                         dialogString += String.format("%s : %.2f%%<br/>",label, (double) y);
                         break; 

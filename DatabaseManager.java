@@ -40,6 +40,8 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.NetworkIF;
 import oshi.hardware.Sensors;
+import oshi.software.os.OSProcess;
+import oshi.software.os.OperatingSystem;
 
 public class DatabaseManager 
 {    
@@ -50,10 +52,16 @@ public class DatabaseManager
     private String sql;
     private JSONObject jSONObject;
     private String jsonString;
+    
     private final SystemInfo systemInfo;
     private List<NetworkIF> interfaces;
     private final CentralProcessor processor;
+    private final OperatingSystem os;
     private final Sensors sensors;
+    private double cpu_usage;
+    private double qortalRAM;
+    private long [] oldTicks;
+    
     protected static String dbFolderOS;
     private final int myProcessID;
     protected final String myOS;
@@ -80,12 +88,14 @@ public class DatabaseManager
     public DatabaseManager()
     {    
         systemInfo = new SystemInfo();
+        os = systemInfo.getOperatingSystem();
         interfaces = new LinkedList<>();
         interfaces = systemInfo.getHardware().getNetworkIFs();
         myProcessID = systemInfo.getOperatingSystem().getProcessId();
         processor = systemInfo.getHardware().getProcessor();
         sensors = systemInfo.getHardware().getSensors();   
         myOS = systemInfo.getOperatingSystem().getFamily();
+        oldTicks = processor.getSystemCpuLoadTicks();
         
         CreateDatabasesFolder();     
     } 
@@ -160,13 +170,13 @@ public class DatabaseManager
             
             ArrayList<String> removedFiles = new ArrayList<>();
 
-            for(String database : encryptedFiles)
+            for(String db : encryptedFiles)
             {
                 //don't move or delete db access file
-                if(database.equals("dba"))
+                if(db.equals("dba"))
                     continue;
                 
-                File file = new File(dbFolderOS + "/" + database + ".mv.db");
+                File file = new File(dbFolderOS + "/" + db + ".mv.db");
                 if(file.exists())
                 {
                     if(saveFiles)
@@ -181,13 +191,13 @@ public class DatabaseManager
                     
                     if(file.exists())
                         file.delete();
-                    removedFiles.add(database);
+                    removedFiles.add(db);
                 }
             }
-            removedFiles.forEach(database ->
+            removedFiles.forEach(db ->
             {
-                encryptedFiles.remove(database);
-                dbFiles.remove(database);
+                encryptedFiles.remove(db);
+                dbFiles.remove(db);
             }); 
         }
         catch (IOException e)
@@ -306,13 +316,13 @@ public class DatabaseManager
         backupFiles.add(new File(System.getProperty("user.dir") + "/bin/auth"));
         backupFiles.add(new File(System.getProperty("user.dir") + "/bin/dba.mv.db"));
         
-         for(String database : dbFiles)
+         for(String db : dbFiles)
          {
              //added above (different folder)
-             if(database.equals("dba"))
+             if(db.equals("dba"))
                  continue;
              
-             backupFiles.add(new File(dbFolderOS + "/" + database + ".mv.db"));
+             backupFiles.add(new File(dbFolderOS + "/" + db + ".mv.db"));
          }
          
          File dir = new File(System.getProperty("user.dir") + "/restore");
@@ -829,7 +839,8 @@ public class DatabaseManager
             {
                 CreateTable(new String[]{"node_prefs","id","tinyint","blockheight","boolean","myblockheight","boolean",
                     "numberofconnections","boolean","uptime","boolean","allknownpeers","boolean","allonlineminters","boolean",
-                    "ltcprice","boolean","dogeprice","boolean","data_usage","boolean","cpu_temp","boolean","blockchainsize","boolean","updatedelta","int"},c);
+                    "ltcprice","boolean","dogeprice","boolean","data_usage","boolean","cpu_temp","boolean","cpu_usage","boolean",
+                    "qortal_ram","boolean","blockchainsize","boolean","updatedelta","int"},c);
             }
 
            //insert new row if table did not exist or if settings have changed
@@ -847,7 +858,8 @@ public class DatabaseManager
            CreateTable(new String[]{"node_data","timestamp","long","blockheight","int","myblockheight","int",
                "numberofconnections","tinyint","uptime","long","allknownpeers","int","allonlineminters","int",
                "bytes_sent","long","bytes_received","long","avg_bytes_sent","long","avg_bytes_received","long",
-               "cpu_temp","double","blockchainsize","long","RAM_USAGE","LONG"},c);
+               "cpu_temp","double","cpu_usage","double","qortal_ram","double","blockchainsize","long",
+               "RAM_USAGE","LONG"},c);
            //ATTENTION: REMOVE RAM_USAGE,LONG WHEN DONE TESTING MEMORY USAGE??
            CreateTable(new String[]{"buildversion","timestamp","long","buildversion","varchar(50)"},c);
 
@@ -864,7 +876,7 @@ public class DatabaseManager
 
            //get all column headers of node_data and compare them to the settings, if matched and setting not selected -> drop column
             for(String column : GetColumnHeaders("node_data",c))
-            {   
+            {  
                 //dont remove timestamp, will always have a column
                 if(column.equals("TIMESTAMP"))
                     continue;            
@@ -890,10 +902,7 @@ public class DatabaseManager
                                    break;
                            }
     //                        System.out.println("DROPPING COLUMN  " + column);
-    //                        System.out.println(String.format("%s , %s", column,args[i].toUpperCase()));
-    
-                            //break from for args[] iterations
-                            break;
+    //                        System.out.println(String.format("%s , %s", column,args[i].toUpperCase()));    
                        }
                    }
                    
@@ -1565,6 +1574,7 @@ public class DatabaseManager
 //                System.out.println("Starting update @ " + Utilities.TimeFormat(System.currentTimeMillis()));
                   
                 FindBandwidthUsage();
+                FindQortalUsage();
                 
 //                System.out.println("Mb sent = " + (double) bytesSent / 1000000);
 //                System.out.println("Mb received = " + (double) bytesReceived / 1000000); 
@@ -1865,6 +1875,18 @@ public class DatabaseManager
                 insertStringList.add(String.valueOf(sensors.getCpuTemperature()));                
                 continue;
             }                           
+            if(columnHeader.equals("CPU_USAGE"))
+            {                
+                insertStringList.add("CPU_USAGE");
+                insertStringList.add(String.valueOf(cpu_usage));                
+                continue;
+            }                           
+            if(columnHeader.equals("QORTAL_RAM"))
+            {                
+                insertStringList.add("QORTAL_RAM");
+                insertStringList.add(String.valueOf(qortalRAM));                
+                continue;
+            }                           
             if(columnHeader.equals("BLOCKCHAINSIZE"))
             {
                 insertStringList.add("BLOCKCHAINSIZE");
@@ -2112,6 +2134,31 @@ public class DatabaseManager
         avrgSentPerMinute = (long) tempRec * 60000;          
     }
     
+    private void FindQortalUsage()
+    {           
+        double d = processor.getSystemCpuLoadBetweenTicks(oldTicks);
+        oldTicks = processor.getSystemCpuLoadTicks();        
+        cpu_usage = (double) (100d * d);  
+        //round to 2 decimals
+        double scale = Math.pow(10, 2);
+        cpu_usage = Math.round(cpu_usage * scale) / scale;
+        
+        List<OSProcess> processes = os.getProcesses(0, null);
+
+        for (OSProcess process : processes)
+        {
+            if (process.getName().equals("java"))
+            {
+                String dir = process.getCurrentWorkingDirectory();
+                if (dir != null && dir.contains("qortal"))
+                {
+                    process.updateAttributes();
+                    qortalRAM = process.getResidentSetSize() / 1000000;
+                }
+
+            }
+        }
+    }
     
     private void BalanceUpdate(String table,String address) throws SQLException
     {            

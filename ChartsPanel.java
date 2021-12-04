@@ -444,6 +444,8 @@ public class ChartsPanel extends javax.swing.JPanel
         averagingSlider = new javax.swing.JSlider();
         showDataBox = new javax.swing.JCheckBox();
         averageAllBox = new javax.swing.JCheckBox();
+        qortalRamBox = new javax.swing.JCheckBox();
+        cpu_usageBox = new javax.swing.JCheckBox();
 
         chartsSplitPane.setDividerLocation(200);
 
@@ -473,7 +475,7 @@ public class ChartsPanel extends javax.swing.JPanel
         );
         chartsUIPanelLayout.setVerticalGroup(
             chartsUIPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 514, Short.MAX_VALUE)
+            .addGap(0, 1056, Short.MAX_VALUE)
         );
 
         chartsUISplitpane.setRightComponent(chartsUIPanel);
@@ -559,7 +561,7 @@ public class ChartsPanel extends javax.swing.JPanel
         blockchainSizeBox1.setActionCommand("blockchainsize");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 43;
+        gridBagConstraints.gridy = 45;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(blockchainSizeBox1, gridBagConstraints);
@@ -607,7 +609,7 @@ public class ChartsPanel extends javax.swing.JPanel
         ramUsageBox1.setActionCommand("ram_usage");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 44;
+        gridBagConstraints.gridy = 46;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 10, 10);
         chartsOptionsPanel.add(ramUsageBox1, gridBagConstraints);
@@ -622,7 +624,7 @@ public class ChartsPanel extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 45;
+        gridBagConstraints.gridy = 47;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
         chartsOptionsPanel.add(selectButton, gridBagConstraints);
@@ -637,7 +639,7 @@ public class ChartsPanel extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 46;
+        gridBagConstraints.gridy = 48;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 12, 0);
         chartsOptionsPanel.add(deselectButton, gridBagConstraints);
@@ -971,6 +973,26 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
         chartsOptionsPanel.add(averageAllBox, gridBagConstraints);
 
+        qortalRamBox.setText("Qortal RAM usage");
+        qortalRamBox.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
+        qortalRamBox.setActionCommand("qortal_ram");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 44;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
+        chartsOptionsPanel.add(qortalRamBox, gridBagConstraints);
+
+        cpu_usageBox.setText("CPU usage");
+        cpu_usageBox.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
+        cpu_usageBox.setActionCommand("cpu_usage");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 43;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
+        chartsOptionsPanel.add(cpu_usageBox, gridBagConstraints);
+
         ChartOptionsScrollpane.setViewportView(chartsOptionsPanel);
 
         javax.swing.GroupLayout ChartOptionsMainLayout = new javax.swing.GroupLayout(ChartOptionsMain);
@@ -983,9 +1005,9 @@ public class ChartsPanel extends javax.swing.JPanel
         );
         ChartOptionsMainLayout.setVerticalGroup(
             ChartOptionsMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 494, Short.MAX_VALUE)
+            .addGap(0, 1056, Short.MAX_VALUE)
             .addGroup(ChartOptionsMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(ChartOptionsScrollpane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE))
+                .addComponent(ChartOptionsScrollpane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1056, Short.MAX_VALUE))
         );
 
         chartsUISplitpane.setLeftComponent(ChartOptionsMain);
@@ -1000,7 +1022,7 @@ public class ChartsPanel extends javax.swing.JPanel
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(chartsSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
+            .addComponent(chartsSplitPane)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1341,6 +1363,7 @@ public class ChartsPanel extends javax.swing.JPanel
     private javax.swing.JPanel chartsUIPanel;
     private javax.swing.JSplitPane chartsUISplitpane;
     private javax.swing.JCheckBox cpu_tempBox1;
+    private javax.swing.JCheckBox cpu_usageBox;
     protected javax.swing.JButton createChartButton;
     private javax.swing.JCheckBox crosshairsCheckbox;
     private javax.swing.JButton deselectButton;
@@ -1361,6 +1384,7 @@ public class ChartsPanel extends javax.swing.JPanel
     private javax.swing.JCheckBox numberOfConnectionsBox1;
     private javax.swing.JCheckBox qort2DogeBox;
     private javax.swing.JCheckBox qort2LtcBox;
+    private javax.swing.JCheckBox qortalRamBox;
     private javax.swing.JCheckBox ramUsageBox1;
     private javax.swing.JCheckBox recPerDayBox;
     private javax.swing.JCheckBox recPerHourBox;

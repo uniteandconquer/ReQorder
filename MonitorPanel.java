@@ -20,7 +20,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
 import oshi.hardware.NetworkIF;
+import oshi.software.os.OperatingSystem;
 
 public class MonitorPanel extends javax.swing.JPanel
 {
@@ -35,6 +37,7 @@ public class MonitorPanel extends javax.swing.JPanel
     private long lastOnlineTime;
     private long lastPingTime;
     private final SystemInfo systemInfo;
+    private CentralProcessor processor;
     private final List<NetworkIF> interfaces; 
     private long totalBytesSent = 0;
     private long totalBytesReceived = 0;   
@@ -60,6 +63,7 @@ public class MonitorPanel extends javax.swing.JPanel
         initComponents();
         
         systemInfo = new SystemInfo();
+        processor = systemInfo.getHardware().getProcessor();
         interfaces = systemInfo.getHardware().getNetworkIFs();
 
         for (NetworkIF nif : interfaces)
@@ -272,9 +276,9 @@ public class MonitorPanel extends javax.swing.JPanel
     {
 //        ReadStringFromURL was causing hiccups in GUI timer, using seperate thread
         executor.execute(() ->
-        {             
+        {     
             try
-            {
+            {                
                 //If ReadStringFromURL throws an error, coreOnline will be set to false
                 String jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/admin/status");
                 
