@@ -283,18 +283,22 @@ public class DatabaseManager
     
     protected void SetSocket()
     {
-        try (Connection connection = ConnectionDB.getConnection( "properties"))
+        File checkFile = new File(System.getProperty("user.dir") + "/databases/properties.mv.db");
+        if(checkFile.exists())
         {
-           if(TableExists("socket", connection))
-           {
-               customIP = (String)GetFirstItem("socket", "ip", connection);
-               customPort = (String) GetFirstItem("socket","port", connection);
-               socket = customIP + ":" + customPort;
-           }
-        }
-        catch (Exception e)
-        {
-            BackgroundService.AppendLog(e);
+            try (Connection connection = ConnectionDB.getConnection( "properties"))
+            {
+               if(TableExists("socket", connection))
+               {
+                   customIP = (String)GetFirstItem("socket", "ip", connection);
+                   customPort = (String) GetFirstItem("socket","port", connection);
+                   socket = customIP + ":" + customPort;
+               }
+            }
+            catch (Exception e)
+            {
+                BackgroundService.AppendLog(e);
+            }
         }
     }
     
