@@ -4,6 +4,10 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -315,6 +319,23 @@ public class GUI extends javax.swing.JFrame
         while (currentNode != null);
     }
     
+    
+    private void pasteToLabel(String coin)
+    {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable t = clipboard.getContents(this);
+        if (t == null)
+            return;
+        try
+        {
+            clipboardLabel.setText(coin + " address copied to clipboard: " + (String) t.getTransferData(DataFlavor.stringFlavor));
+        }
+        catch (UnsupportedFlavorException | IOException e)
+        {
+            BackgroundService.AppendLog(e);
+        }
+    }
+    
     protected void ExpandNode(JTree tree, DefaultMutableTreeNode currentNode,int nodeLevel)
     {        
         DefaultMutableTreeNode original = currentNode;
@@ -428,6 +449,22 @@ public class GUI extends javax.swing.JFrame
         monitorPanel = new reqorder.MonitorPanel();
         monitorPanel.Initialise(this);
         logPanel = new reqorder.LogPanel();
+        tipJarScrollPane = new javax.swing.JScrollPane();
+        tipJarScrollPane.getVerticalScrollBar().setUnitIncrement(10);
+        tipJarPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        btcField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        dogeField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        ltcField = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        qortField = new javax.swing.JTextField();
+        jSeparator1 = new javax.swing.JSeparator();
+        jSeparator2 = new javax.swing.JSeparator();
+        jSeparator3 = new javax.swing.JSeparator();
+        clipboardLabel = new javax.swing.JLabel();
 
         appearanceMenu.addMouseListener(new java.awt.event.MouseAdapter()
         {
@@ -626,6 +663,152 @@ public class GUI extends javax.swing.JFrame
                 mainPanel.add(monitorPanel, "monitorPanel");
                 mainPanel.add(logPanel, "logPanel");
 
+                tipJarPanel.setLayout(new java.awt.GridBagLayout());
+
+                jLabel1.setFont(new java.awt.Font("Bahnschrift", 1, 18)); // NOI18N
+                jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                jLabel1.setText("Leave a tip for the developer");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.insets = new java.awt.Insets(0, 0, 20, 0);
+                tipJarPanel.add(jLabel1, gridBagConstraints);
+
+                jLabel2.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+                jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                jLabel2.setText("Bitcoin");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 14;
+                tipJarPanel.add(jLabel2, gridBagConstraints);
+
+                btcField.setEditable(false);
+                btcField.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+                btcField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                btcField.setText("1MCFEd5dpGLRqJxGhqLTMA2vf9GuvrpT7P");
+                btcField.addMouseListener(new java.awt.event.MouseAdapter()
+                {
+                    public void mouseReleased(java.awt.event.MouseEvent evt)
+                    {
+                        btcFieldMouseReleased(evt);
+                    }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 15;
+                gridBagConstraints.ipadx = 150;
+                gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+                tipJarPanel.add(btcField, gridBagConstraints);
+
+                jLabel3.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+                jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                jLabel3.setText("Dogecoin");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 10;
+                tipJarPanel.add(jLabel3, gridBagConstraints);
+
+                dogeField.setEditable(false);
+                dogeField.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+                dogeField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                dogeField.setText("DSbtx8q9hNzgzKUEKvrXRXtY8udjCnki1T");
+                dogeField.addMouseListener(new java.awt.event.MouseAdapter()
+                {
+                    public void mouseReleased(java.awt.event.MouseEvent evt)
+                    {
+                        dogeFieldMouseReleased(evt);
+                    }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 11;
+                gridBagConstraints.ipadx = 150;
+                gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+                tipJarPanel.add(dogeField, gridBagConstraints);
+
+                jLabel4.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+                jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                jLabel4.setText("Litecoin");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 6;
+                tipJarPanel.add(jLabel4, gridBagConstraints);
+
+                ltcField.setEditable(false);
+                ltcField.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+                ltcField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                ltcField.setText("LU5mPptunXYmqx9iDwsEeSFAfJZ9RFafyF");
+                ltcField.addMouseListener(new java.awt.event.MouseAdapter()
+                {
+                    public void mouseReleased(java.awt.event.MouseEvent evt)
+                    {
+                        ltcFieldMouseReleased(evt);
+                    }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 7;
+                gridBagConstraints.ipadx = 150;
+                gridBagConstraints.insets = new java.awt.Insets(11, 0, 11, 0);
+                tipJarPanel.add(ltcField, gridBagConstraints);
+
+                jLabel5.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+                jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                jLabel5.setText("QORT");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                tipJarPanel.add(jLabel5, gridBagConstraints);
+
+                qortField.setEditable(false);
+                qortField.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+                qortField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                qortField.setText("Qa672e3FktYjMRRiSZP2sJ8fyqHt3kx68Y");
+                qortField.addMouseListener(new java.awt.event.MouseAdapter()
+                {
+                    public void mouseReleased(java.awt.event.MouseEvent evt)
+                    {
+                        qortFieldMouseReleased(evt);
+                    }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.ipadx = 150;
+                gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+                tipJarPanel.add(qortField, gridBagConstraints);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 5;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.insets = new java.awt.Insets(11, 0, 10, 0);
+                tipJarPanel.add(jSeparator1, gridBagConstraints);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 9;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+                tipJarPanel.add(jSeparator2, gridBagConstraints);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 13;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
+                tipJarPanel.add(jSeparator3, gridBagConstraints);
+
+                clipboardLabel.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+                clipboardLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                clipboardLabel.setText("Click on an address to copy it to your clipboard");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.insets = new java.awt.Insets(0, 0, 20, 0);
+                tipJarPanel.add(clipboardLabel, gridBagConstraints);
+
+                tipJarScrollPane.setViewportView(tipJarPanel);
+
+                mainPanel.add(tipJarScrollPane, "tipJarPanel");
+
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
@@ -717,8 +900,40 @@ public class GUI extends javax.swing.JFrame
 
     private void donateButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_donateButtonActionPerformed
     {//GEN-HEADEREND:event_donateButtonActionPerformed
-        reqorderPanel.GoToDonatePage();
+        clipboardLabel.setText("Click on an address to copy it to your clipboard");
+        
+        CardLayout card = (CardLayout) mainPanel.getLayout();
+        currentCard = "tipJarPanel";
+        card.show(mainPanel, currentCard);
+        if (monitorPanel.timer != null)
+            monitorPanel.timer.cancel();   
+        //on slow systems, the dialog may not have been triggered to invisible on leaving the chart
+        chartsPanel.chartMaker.chartDialog.setVisible(false);
     }//GEN-LAST:event_donateButtonActionPerformed
+
+    private void btcFieldMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btcFieldMouseReleased
+    {//GEN-HEADEREND:event_btcFieldMouseReleased
+        Utilities.copyToClipboard(btcField.getText());
+        pasteToLabel("Bitcoin");
+    }//GEN-LAST:event_btcFieldMouseReleased
+
+    private void dogeFieldMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_dogeFieldMouseReleased
+    {//GEN-HEADEREND:event_dogeFieldMouseReleased
+        Utilities.copyToClipboard(dogeField.getText());
+        pasteToLabel("Dogecoin");
+    }//GEN-LAST:event_dogeFieldMouseReleased
+
+    private void ltcFieldMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_ltcFieldMouseReleased
+    {//GEN-HEADEREND:event_ltcFieldMouseReleased
+        Utilities.copyToClipboard(ltcField.getText());
+        pasteToLabel("Litecoin");
+    }//GEN-LAST:event_ltcFieldMouseReleased
+
+    private void qortFieldMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_qortFieldMouseReleased
+    {//GEN-HEADEREND:event_qortFieldMouseReleased
+        Utilities.copyToClipboard(qortField.getText());
+        pasteToLabel("QORT");
+    }//GEN-LAST:event_qortFieldMouseReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -727,24 +942,39 @@ public class GUI extends javax.swing.JFrame
     private javax.swing.JButton appearanceButton;
     private javax.swing.ButtonGroup appearanceGroup;
     private javax.swing.JPopupMenu appearanceMenu;
+    private javax.swing.JTextField btcField;
     private javax.swing.JButton chartsButton;
     private reqorder.ChartsPanel chartsPanel;
+    private javax.swing.JLabel clipboardLabel;
+    private javax.swing.JTextField dogeField;
     private javax.swing.JButton donateButton;
     private javax.swing.JButton exitButton;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JButton logButton;
     protected reqorder.LogPanel logPanel;
     private reqorder.LoginPanel loginPanel;
     private javax.swing.JLabel logoLabel;
+    private javax.swing.JTextField ltcField;
     protected javax.swing.JPanel mainPanel;
     protected javax.swing.JToolBar mainToolbar;
     protected reqorder.MonitorPanel monitorPanel;
     private reqorder.NewUserPanel newUserPanel;
     private javax.swing.JButton nodeMonitorButton;
+    private javax.swing.JTextField qortField;
     private javax.swing.JButton reqorderButton;
     private reqorder.ReqorderPanel reqorderPanel;
     private javax.swing.JPanel splashPanel;
     protected javax.swing.JLabel statusLabel;
+    private javax.swing.JPanel tipJarPanel;
+    private javax.swing.JScrollPane tipJarScrollPane;
     public javax.swing.JDialog trayPopup;
     // End of variables declaration//GEN-END:variables
 

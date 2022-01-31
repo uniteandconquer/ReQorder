@@ -1,5 +1,8 @@
 package reqorder;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -282,6 +285,13 @@ public class Utilities
             BackgroundService.AppendLog(e);
         }
     } 
+    
+    public static void copyToClipboard(String text)
+    {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection selection = new StringSelection(text);
+        clipboard.setContents(selection, selection);
+    }
     
     public static DefaultTableModel BuildTableModel(String table,ResultSet rs)
     {
