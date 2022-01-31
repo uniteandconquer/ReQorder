@@ -10,12 +10,21 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ResourceBundle;
 import oshi.SystemInfo;
 
 public class Main 
-{          
+{  
+    protected static ResourceBundle BUNDLE;
+    
      public static void main(String args[])
-    {          
+    {    
+//        Locale locale = new Locale("nl", "NL");
+//        Locale.setDefault(locale);
+//        JOptionPane.setDefaultLocale(locale);
+//        BUNDLE = ResourceBundle.getBundle("i18n/Language",locale); 
+        BUNDLE = ResourceBundle.getBundle("i18n/Language"); 
+        
         File dir = new File(System.getProperty("user.home"));
         if(!dir.exists())
             dir.mkdir();
@@ -25,8 +34,7 @@ public class Main
         {
             if(args.length == 0)
             {
-                String message = "Invalid lauch. Please start the program using the launcher.\n"
-                        + "'ReQorder.exe' for Windows, 'launch.sh' for linux and Mac.";
+                String message = BUNDLE.getString("invalidLaunch");
                 JOptionPane.showMessageDialog(null, message);
                 System.out.println(message);
                 System.exit(0);
@@ -37,10 +45,10 @@ public class Main
                     if(new SystemInfo().getOperatingSystem().getFamily().equals("Windows"))
                     {
                          if(WinSetup.SetupLancher())
-                            JOptionPane.showMessageDialog(null, "Setup complete. You can run the program with the 'ReQorder' link file.");
+                            JOptionPane.showMessageDialog(null, BUNDLE.getString("setupComplete"));
                     }                   
                     else                        
-                        JOptionPane.showMessageDialog(null, "Setup failed");
+                        JOptionPane.showMessageDialog(null, BUNDLE.getString("setupFailed"));
                     System.exit(0);
                     break;
                 case "-cli":
@@ -54,9 +62,10 @@ public class Main
                     bgs = new BackgroundService(true);
                     break;
                 default:
+                    String message = BUNDLE.getString("invalidCommandLine");
                     //blocks user from starting the jar without using the proper commandline args
-                    JOptionPane.showMessageDialog(null, "Invalid command line argument: " + args[0]);
-                    System.out.println("Invalid command line argument: " + args[0]);
+                    JOptionPane.showMessageDialog(null, message + args[0]);
+                    System.out.println(message + args[0]);
                     break;
             }
         }
@@ -64,10 +73,10 @@ public class Main
         {
             //If another instance of app is running, show a message dialog for x seconds, then close the dialog and app, or close app on close of dialog
             JOptionPane jOptionPane = new JOptionPane(
-                    Utilities.AllignCenterHTML("ReQorder is already running on this machine<br/>You can open the UI by double clicking the ReQorder icon in the system tray"), 
+                    Utilities.AllignCenterHTML(BUNDLE.getString("alreadyRunningMessage")), 
                     JOptionPane.INFORMATION_MESSAGE);
             
-            JDialog dlg = jOptionPane.createDialog("Already running");
+            JDialog dlg = jOptionPane.createDialog(BUNDLE.getString("alreadyRunningTitle"));
             dlg.addComponentListener(new ComponentAdapter()
             {
                 @Override
@@ -96,15 +105,15 @@ public class Main
         {
             if(new SystemInfo().getOperatingSystem().getFamily().equals("Windows"))
             {
-                JOptionPane.showMessageDialog(null, Utilities.AllignCenterHTML(
-                     "Invalid launch detected.<br/><br/>Use the 'ReQorder' launcher found in the ReQorder folder"));
-                System.out.println( "Invalid launch detected.\nUse the 'ReQorder' launcher found in the ReQorder folder");
+                String message = BUNDLE.getString("invalidLaunchWin");
+                JOptionPane.showMessageDialog(null, Utilities.AllignCenterHTML(message));
+                System.out.println( message);
             }
             else
             {
-                System.out.println( "Invalid launch detected.\nUse the 'launch.sh' file found in the ReQorder folder");                
-                JOptionPane.showMessageDialog(null, Utilities.AllignCenterHTML(
-                     "Invalid launch detected.<br/><br/>Use the 'launch.sh' file found in the ReQorder folder"));
+                String message = BUNDLE.getString("invalidLaunchOther");
+                System.out.println(message);                
+                JOptionPane.showMessageDialog(null, Utilities.AllignCenterHTML(message));
             }                
             System.exit(0);
         }
@@ -133,7 +142,8 @@ public class Main
                         }
                         catch (IOException e)
                         {
-                            JOptionPane.showMessageDialog(null, "Unable to remove lock file: " + lockFile + "\n" +  e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, BUNDLE.getString("removeLockFail") 
+                                    + lockFile + "\n" +  e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 });
@@ -143,7 +153,7 @@ public class Main
         catch (IOException e)
         {
                 JOptionPane.showMessageDialog(null, 
-                        "Unable to create and/or lock file: "  + lockFile + "\n" +  e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                        BUNDLE.getString("lockFileError") + lockFile + "\n" +  e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         return false;
     }

@@ -40,7 +40,9 @@
             <Component class="javax.swing.JLabel" name="mainTextLabel">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;div style=&apos;margin: 5px 20px 0px 20px;&apos;&gt;Welcome!&lt;br/&gt;&lt;br/&gt;&#xa;&#xa;This appears to be your first time using ReQorder. In this menu you can&lt;br/&gt;&#xa;choose whether you want to setup a password for using this program. &lt;br/&gt;&lt;br/&gt;&#xa;&#xa;Unless you intend to use e-mail alerts, ReQorder will not store any personal&lt;br/&gt;&#xa;identifiable information about you. It can however store a lot of data related to&lt;br/&gt;&#xa;your interest in the Qortal network. If you wish to keep this information private&lt;br/&gt;&#xa;it is recommended that you setup a password.&lt;br/&gt;&lt;br/&gt;&#xa;&#xa;If you wish to utilize e-mail alerts it is HIGHLY recommended to setup a password,&lt;br/&gt;&#xa;as the program will need to store your mail server credentials in order to send you&lt;br/&gt;&#xa;alerts. Your mail server password will be encrypted either way, but locking the&lt;br/&gt;&#xa;ReQorder app will keep it a lot safer.&lt;br/&gt;&lt;br/&gt;&#xa;&#xa;The program will not store a copy of your ReQorder password, so there is no way to&lt;br/&gt;&#xa;retrieve it in case you forget it.&lt;/div&gt;&lt;html/&gt;"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="i18n/Language.properties" key="mainTextLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="verticalAlignment" type="int" value="1"/>
               </Properties>
               <AuxValues>
@@ -52,9 +54,11 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel16">
+            <Component class="javax.swing.JLabel" name="enterPasswordLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Enter password"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="i18n/Language.properties" key="enterPasswordLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -80,7 +84,9 @@
             </Component>
             <Component class="javax.swing.JLabel" name="passwordStatusLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Waiting for input..."/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="i18n/Language.properties" key="passwordStatusLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -109,7 +115,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="savePasswordButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save password"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="i18n/Language.properties" key="savePasswordButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -126,7 +134,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="noPasswordButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Continue without a password"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="i18n/Language.properties" key="noPasswordButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="noPasswordButtonActionPerformed"/>
@@ -137,9 +147,11 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel19">
+            <Component class="javax.swing.JLabel" name="reEnterPasswordLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Re-enter password"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="i18n/Language.properties" key="reEnterPasswordLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -174,7 +186,9 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="28" green="0" red="a1" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="CAPSLOCK IS ON"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="i18n/Language.properties" key="capsLockLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="capsLockLabel.setVisible(false);"/>
@@ -188,7 +202,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="importAccountButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import account"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="i18n/Language.properties" key="importAccountButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importAccountButtonActionPerformed"/>
@@ -201,7 +217,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="backButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Back"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="i18n/Language.properties" key="backButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backButtonActionPerformed"/>

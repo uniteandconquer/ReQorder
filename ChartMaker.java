@@ -247,12 +247,12 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         if(axes.size() > 1 && averageAll)
             dataset1 = CreateAverageDataset(dataset1);
         
-        title = dataset1 == null ? "NOT ENOUGH DATA TO PLOT CHART" : title;
+        title = dataset1 == null ? Main.BUNDLE.getString("notEnoughData") : title;
         
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                title,"Time of Day",axes.get(0),dataset1,true,true,false);
+                title,Main.BUNDLE.getString("timeOfDay"),axes.get(0),dataset1,true,true,false);
         
-        chart.addSubtitle(new TextTitle("Mousewheel = zoom | Ctrl + mouse drag = pan\nLasso with mouse to select period"));
+        chart.addSubtitle(new TextTitle(Main.BUNDLE.getString("chartSubtitle")));
         XYPlot plot = (XYPlot) chart.getPlot();
         plot.setOrientation(PlotOrientation.VERTICAL);
         plot.setDomainPannable(true);
@@ -797,7 +797,7 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
     
     private XYDataset CreateAverageDataset(XYDataset sourceDataset)
     {
-        TimeSeries series = new TimeSeries("moving average");
+        TimeSeries series = new TimeSeries(Main.BUNDLE.getString("movingAverage"));
         RegularTimePeriod time;
         
         for(int i = sourceDataset.getItemCount(0) - 1; i >= 0; i--)

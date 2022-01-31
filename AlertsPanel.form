@@ -4,7 +4,9 @@
   <NonVisualComponents>
     <Container class="javax.swing.JDialog" name="balanceAlertsDialog">
       <Properties>
-        <Property name="title" type="java.lang.String" value="Set balance alerts for active watchlists"/>
+        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="i18n/Language.properties" key="balanceAlertsDialog" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="balanceAlertsDialog.setModal(true);"/>
@@ -52,7 +54,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="alertsMainSplitPane" alignment="0" pref="506" max="32767" attributes="0"/>
+          <Component id="alertsMainSplitPane" alignment="0" pref="926" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -92,7 +94,9 @@
               <SubComponents>
                 <Component class="javax.swing.JButton" name="goToSettingsBtn">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Go to mail settings"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="goToSettingsBtn" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="goToSettingsBtnActionPerformed"/>
@@ -112,7 +116,9 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="deleteSelectedAlertBtn">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Delete selected"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="deleteSelectedAlertBtn" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteSelectedAlertBtnActionPerformed"/>
@@ -125,7 +131,9 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="deleteAllAlertsBtn">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Delete all"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="deleteAllAlertsBtn" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteAllAlertsBtnActionPerformed"/>
@@ -145,7 +153,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="reqordingHaltedBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="ReQording halted"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="reqordingHaltedBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="reqording"/>
                   </Properties>
                   <Constraints>
@@ -156,7 +166,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="dogeAlertBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Doge price"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="dogeAlertBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="dogeprice"/>
                   </Properties>
                   <AuxValues>
@@ -170,7 +182,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="levelUpdatesBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Levelling updates"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="levelUpdatesBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="levelling"/>
                   </Properties>
                   <Constraints>
@@ -181,7 +195,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="coreUpdatesBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Qortal core updates"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="coreUpdatesBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="core_update"/>
                   </Properties>
                   <Constraints>
@@ -192,7 +208,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="mintingHaltedBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Minting halted"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="mintingHaltedBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="minting"/>
                   </Properties>
                   <Constraints>
@@ -203,7 +221,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="chainSizeAlertBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Blockchain size"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="chainSizeAlertBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="blockchainsize"/>
                   </Properties>
                   <Events>
@@ -217,7 +237,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="nameRegBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Name registration"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="nameRegBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="name_reg"/>
                   </Properties>
                   <Constraints>
@@ -228,7 +250,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="ltcAlertBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="LTC price"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="ltcAlertBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="ltcprice"/>
                   </Properties>
                   <AuxValues>
@@ -287,7 +311,9 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel9">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="GB"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="gbLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -295,9 +321,11 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JLabel" name="jLabel12">
+                <Component class="javax.swing.JLabel" name="qortLabel">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="QORT"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="qortLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -307,7 +335,9 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel13">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="QORT"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="qortLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -320,7 +350,9 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI" size="12" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Save alerts settings"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="saveAlertsButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAlertsButtonActionPerformed"/>
@@ -333,7 +365,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="emailAlertsCheckbox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Enable e-mail alerts"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="emailAlertsCheckbox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="emailalerts"/>
                   </Properties>
                   <Events>
@@ -347,7 +381,9 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="deleteReadButton">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Delete read"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="deleteReadButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteReadButtonActionPerformed"/>
@@ -360,7 +396,9 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="balanceAlertsButton">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Balance alerts"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="balanceAlertsButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="balanceAlertsButtonActionPerformed"/>
@@ -373,7 +411,9 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="spaceLeftAlertBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Disk space left"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="spaceLeftAlertBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="spaceleft"/>
                     <Property name="autoscrolls" type="boolean" value="true"/>
                   </Properties>
@@ -403,7 +443,9 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel14">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="GB"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="gbLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -413,8 +455,12 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="nodeInfoBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Show node info"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Enabling node info will add the current status of your Qortal node and active minting account to the status alert e-mails"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="nodeInfoBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
+                    <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="nodeInfoBoxTooltip" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="shownodeinfo"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
@@ -436,9 +482,11 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JLabel" name="jLabel15">
+                <Component class="javax.swing.JLabel" name="everyLabel">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Every"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="everyLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -446,9 +494,11 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JLabel" name="jLabel16">
+                <Component class="javax.swing.JLabel" name="hoursLabel">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="hours"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="hoursLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -458,8 +508,12 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="statusAlertsBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Enable status alerts"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Enabling status alerts will send you an e-mail with the current reqording status at the time iterval specified (between 1 and 24 hours)"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="statusAlertsBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
+                    <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="statusAlertsBoxTooltip" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="statusalerts"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
@@ -474,8 +528,12 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="outOfSyncBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Out of sync"/>
-                    <Property name="toolTipText" type="java.lang.String" value="ReQorder will send you an alert if the blockheight of your node is lagging 30 blocks or more behind the blockheight of the chain"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="outOfSyncBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
+                    <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="outOfSyncBoxTooltip" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                     <Property name="actionCommand" type="java.lang.String" value="out_of_sync"/>
                   </Properties>
                   <Constraints>
@@ -493,7 +551,9 @@
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="dogeBelowRadio">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="below"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="belowRadio" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dogeBelowRadioActionPerformed"/>
@@ -507,7 +567,9 @@
                 <Component class="javax.swing.JRadioButton" name="dogeAboveRadio">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="above"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="aboveRadio" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dogeAboveRadioActionPerformed"/>
@@ -521,7 +583,9 @@
                 <Component class="javax.swing.JRadioButton" name="ltcAboveRadio">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="above"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="aboveRadio" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ltcAboveRadioActionPerformed"/>
@@ -534,7 +598,9 @@
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="ltcBelowRadio">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="below"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="i18n/Language.properties" key="belowRadio" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ltcBelowRadioActionPerformed"/>
@@ -605,6 +671,7 @@
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList(new DefaultListModel())"/>
                     <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="alertsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() &#xd;&#xa;{&#xd;&#xa;            @Override&#xd;&#xa;            public void valueChanged(javax.swing.event.ListSelectionEvent event)&#xd;&#xa;            {&#xd;&#xa;                //Don&apos;t trigger event for the item that was deselected&#xd;&#xa;                if(event.getValueIsAdjusting())&#xd;&#xa;                    return;&#xd;&#xa;               if(alertsList.getSelectedIndex() &lt; 0)&#xd;&#xa;                    return;&#xd;&#xa;&#xd;&#xa;                var ae = (reqorder.AlertItem) alertsListModel.get(alertsList.getSelectedIndex());&#xd;&#xa;                ae.read = true;                &#xd;&#xa;                alertsTextPane.setText(ae.message);&#xd;&#xa;                try(Connection connection = ConnectionDB.getConnection(&quot;properties&quot;))&#xd;&#xa;                {&#xd;&#xa;                    //opted not to check if is read, more code/sql queries without much gain&#xd;&#xa;                    gui.dbManager.ChangeValue(&quot;alerts&quot;, &quot;read&quot;, &quot;true&quot;, &quot;timestamp&quot;, String.valueOf(ae.timestamp), connection);&#xd;&#xa;                    connection.close();&#xd;&#xa;                }&#xd;&#xa;                catch(Exception e)&#xd;&#xa;                {&#xd;&#xa;                    BackgroundService.AppendLog(e);&#xd;&#xa;                }&#xd;&#xa;            }&#xd;&#xa;        });"/>
+                    <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="AlertsPanel_alertsList"/>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
                 </Component>

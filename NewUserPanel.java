@@ -44,12 +44,10 @@ public class NewUserPanel extends javax.swing.JPanel
         }
         catch (SQLException e)
         {
+            String[] split = Main.BUNDLE.getString("connectWarning").split("%%");
             BackgroundService.AppendLog(e);
             JOptionPane.showMessageDialog(null,
-                    Utilities.AllignCenterHTML(String.format("Cannot connect to database '%s'. Possible causes:<br/><br/>"
-                            + "The database login credentials are invalid<br/>"
-                            + "The database does not exist<br/>"
-                            + "The database is in use by another process", "dba")));
+                    Utilities.AllignCenterHTML(String.format(split[0] + "%s" + split[1], "dba")));
             throw new NullPointerException();
         }
     }
@@ -85,9 +83,11 @@ public class NewUserPanel extends javax.swing.JPanel
             CreateDBA_file(DatabaseManager.dbPassword);
             
             if(!String.copyValueOf(newPassword).equals(String.copyValueOf(currentPassword)))
-                JOptionPane.showMessageDialog(this, "Password successfully changed", "Success", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("passwordChanged"), 
+                        Main.BUNDLE.getString("success"), JOptionPane.PLAIN_MESSAGE);
             else                
-                JOptionPane.showMessageDialog(this, "No change detected, password stays the same", "Success", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("noChangeDetected"), 
+                        Main.BUNDLE.getString("success"), JOptionPane.PLAIN_MESSAGE);
         }
         catch (NullPointerException | SQLException e)
         {
@@ -134,13 +134,13 @@ public class NewUserPanel extends javax.swing.JPanel
         scrollPane.getHorizontalScrollBar().setUnitIncrement(10);
         container = new javax.swing.JPanel();
         mainTextLabel = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
+        enterPasswordLabel = new javax.swing.JLabel();
         passwordField1 = new javax.swing.JPasswordField();
         passwordStatusLabel = new javax.swing.JLabel();
         passwordField2 = new javax.swing.JPasswordField();
         savePasswordButton = new javax.swing.JButton();
         noPasswordButton = new javax.swing.JButton();
-        jLabel19 = new javax.swing.JLabel();
+        reEnterPasswordLabel = new javax.swing.JLabel();
         changePasswordText = new javax.swing.JLabel();
         changePasswordText.setVisible(false);
         capsLockLabel = new javax.swing.JLabel();
@@ -152,7 +152,8 @@ public class NewUserPanel extends javax.swing.JPanel
         container.setLayout(new java.awt.GridBagLayout());
 
         mainTextLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        mainTextLabel.setText("<html><div style='margin: 5px 20px 0px 20px;'>Welcome!<br/><br/>\n\nThis appears to be your first time using ReQorder. In this menu you can<br/>\nchoose whether you want to setup a password for using this program. <br/><br/>\n\nUnless you intend to use e-mail alerts, ReQorder will not store any personal<br/>\nidentifiable information about you. It can however store a lot of data related to<br/>\nyour interest in the Qortal network. If you wish to keep this information private<br/>\nit is recommended that you setup a password.<br/><br/>\n\nIf you wish to utilize e-mail alerts it is HIGHLY recommended to setup a password,<br/>\nas the program will need to store your mail server credentials in order to send you<br/>\nalerts. Your mail server password will be encrypted either way, but locking the<br/>\nReQorder app will keep it a lot safer.<br/><br/>\n\nThe program will not store a copy of your ReQorder password, so there is no way to<br/>\nretrieve it in case you forget it.</div><html/>");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("i18n/Language"); // NOI18N
+        mainTextLabel.setText(bundle.getString("mainTextLabel")); // NOI18N
         mainTextLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -160,12 +161,12 @@ public class NewUserPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 15, 0);
         container.add(mainTextLabel, gridBagConstraints);
 
-        jLabel16.setText("Enter password");
+        enterPasswordLabel.setText(bundle.getString("enterPasswordLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-        container.add(jLabel16, gridBagConstraints);
+        container.add(enterPasswordLabel, gridBagConstraints);
 
         passwordField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         passwordField1.addKeyListener(new java.awt.event.KeyAdapter()
@@ -182,7 +183,7 @@ public class NewUserPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         container.add(passwordField1, gridBagConstraints);
 
-        passwordStatusLabel.setText("Waiting for input...");
+        passwordStatusLabel.setText(bundle.getString("passwordStatusLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -204,7 +205,7 @@ public class NewUserPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         container.add(passwordField2, gridBagConstraints);
 
-        savePasswordButton.setText("Save password");
+        savePasswordButton.setText(bundle.getString("savePasswordButton")); // NOI18N
         savePasswordButton.setEnabled(false);
         savePasswordButton.addActionListener(new java.awt.event.ActionListener()
         {
@@ -219,7 +220,7 @@ public class NewUserPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         container.add(savePasswordButton, gridBagConstraints);
 
-        noPasswordButton.setText("Continue without a password");
+        noPasswordButton.setText(bundle.getString("noPasswordButton")); // NOI18N
         noPasswordButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -233,12 +234,12 @@ public class NewUserPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         container.add(noPasswordButton, gridBagConstraints);
 
-        jLabel19.setText("Re-enter password");
+        reEnterPasswordLabel.setText(bundle.getString("reEnterPasswordLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-        container.add(jLabel19, gridBagConstraints);
+        container.add(reEnterPasswordLabel, gridBagConstraints);
 
         changePasswordText.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         changePasswordText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -252,14 +253,14 @@ public class NewUserPanel extends javax.swing.JPanel
 
         capsLockLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         capsLockLabel.setForeground(new java.awt.Color(161, 0, 40));
-        capsLockLabel.setText("CAPSLOCK IS ON");
+        capsLockLabel.setText(bundle.getString("capsLockLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         container.add(capsLockLabel, gridBagConstraints);
 
-        importAccountButton.setText("Import account");
+        importAccountButton.setText(bundle.getString("importAccountButton")); // NOI18N
         importAccountButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -273,7 +274,7 @@ public class NewUserPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         container.add(importAccountButton, gridBagConstraints);
 
-        backButton.setText("Back");
+        backButton.setText(bundle.getString("backButton")); // NOI18N
         backButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -308,21 +309,21 @@ public class NewUserPanel extends javax.swing.JPanel
         if(passwordField1.getPassword().length == 0 && passwordField2.getPassword().length == 0)
         {
             savePasswordButton.setEnabled(false);
-            passwordStatusLabel.setText("Waiting for input...");
+            passwordStatusLabel.setText(Main.BUNDLE.getString("passwordStatusLabel"));
             return;
         }
 
         if(String.copyValueOf(passwordField1.getPassword()).equals(String.copyValueOf(passwordField2.getPassword())))
         {
             savePasswordButton.setEnabled(true);
-            passwordStatusLabel.setText("Passwords are identical");
+            passwordStatusLabel.setText(Main.BUNDLE.getString("passwordsIdentical"));
             if(evt.getKeyCode() == KeyEvent.VK_ENTER)
                 savePasswordButtonActionPerformed(null);
         }
         else
         {
             savePasswordButton.setEnabled(false);
-            passwordStatusLabel.setText("Passwords are NOT identical");
+            passwordStatusLabel.setText(Main.BUNDLE.getString("passwordsNotIdentical"));
         }
     }//GEN-LAST:event_passwordField1KeyReleased
 
@@ -371,7 +372,7 @@ public class NewUserPanel extends javax.swing.JPanel
         if(String.copyValueOf(passwordField1.getPassword()).contains(" "))
         {
             JOptionPane.showMessageDialog(this, Utilities.AllignCenterHTML(
-                    "The password can not contain any spaces<br/><br/>Please try again"), "Try again", JOptionPane.WARNING_MESSAGE);
+                    Main.BUNDLE.getString("tryAgainPw")), Main.BUNDLE.getString("tryAgainPwTitle"), JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -456,14 +457,14 @@ public class NewUserPanel extends javax.swing.JPanel
     protected javax.swing.JLabel capsLockLabel;
     protected javax.swing.JLabel changePasswordText;
     private javax.swing.JPanel container;
+    private javax.swing.JLabel enterPasswordLabel;
     private javax.swing.JButton importAccountButton;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel19;
     protected javax.swing.JLabel mainTextLabel;
     private javax.swing.JButton noPasswordButton;
     protected javax.swing.JPasswordField passwordField1;
     protected javax.swing.JPasswordField passwordField2;
     protected javax.swing.JLabel passwordStatusLabel;
+    private javax.swing.JLabel reEnterPasswordLabel;
     protected javax.swing.JButton savePasswordButton;
     private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables

@@ -22,7 +22,6 @@ import org.json.JSONObject;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.NetworkIF;
-import oshi.software.os.OperatingSystem;
 
 public class MonitorPanel extends javax.swing.JPanel
 {
@@ -106,69 +105,69 @@ public class MonitorPanel extends javax.swing.JPanel
         monitorTreeModel = (DefaultTreeModel) monitorTree.getModel(); 
         root = (DefaultMutableTreeNode) monitorTreeModel.getRoot();
         
-        statusRoot = new DefaultMutableTreeNode(new NodeInfo("Core Status","status.png"));
-        statusNode = new DefaultMutableTreeNode("Status");
+        statusRoot = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("coreStatus"),"status.png"));
+        statusNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("statusDefault"));
         statusRoot.add(statusNode);
         root.add(statusRoot);
         
-        nodeNode = new DefaultMutableTreeNode(new NodeInfo("Node","node.png"));
+        nodeNode = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("node"),"node.png"));
         root.add(nodeNode);        
-        syncNode = new DefaultMutableTreeNode("Synchronization Status");
+        syncNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("syncStatusDefault"));
         nodeNode.add(syncNode);
-        blockheightNode = new DefaultMutableTreeNode("Blockheight (node)");
+        blockheightNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("nodeHeightDefault"));
         nodeNode.add(blockheightNode);
-        chainHeighNode = new DefaultMutableTreeNode("Blockheight (chain)");
+        chainHeighNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("chainHeightDefault"));
         nodeNode.add(chainHeighNode);        
         if(blockChainFolder != null)
         {            
-            blockchainNode = new DefaultMutableTreeNode("Blockchain size");
+            blockchainNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("chainSizeDefault"));
             nodeNode.add(blockchainNode);
-            spaceLeftNode = new DefaultMutableTreeNode("Disk space left");
+            spaceLeftNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("spaceLeftDefault"));
             nodeNode.add(spaceLeftNode);
         }
-        uptimeNode = new DefaultMutableTreeNode("Uptime");
+        uptimeNode = new DefaultMutableTreeNode("uptimeDefault");
         nodeNode.add(uptimeNode);
-        buildversionNode = new DefaultMutableTreeNode("Build version");
+        buildversionNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("buildVersionDefault"));
         nodeNode.add(buildversionNode);        
         
-        peers = new DefaultMutableTreeNode(new NodeInfo("Peers","peers.png"));
+        peers = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("peersDefault"),"peers.png"));
         root.add(peers);
-        peersNode = new DefaultMutableTreeNode("Peers");
+        peersNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("peersDefault"));
         peers.add(peersNode);
-        allMintersNode = new DefaultMutableTreeNode("All Online Minters");
+        allMintersNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("allMintersDefault"));
         peers.add(allMintersNode);        
-        knownPeersNode = new DefaultMutableTreeNode("All Known Peers");
+        knownPeersNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("allPeersDefault"));
         peers.add(knownPeersNode);     
         
-        mintingNode = new DefaultMutableTreeNode(new NodeInfo("Minting Account","account.png"));
+        mintingNode = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("mintingAccNode"),"account.png"));
         root.add(mintingNode);
-        mintingAccountNode = new DefaultMutableTreeNode("Minting Account Address");
+        mintingAccountNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("mintingAddressDefault"));
         mintingNode.add(mintingAccountNode);
-        blocksMintedNode = new DefaultMutableTreeNode("Blocks Minted");
+        blocksMintedNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("blocksMintedDefault"));
         mintingNode.add(blocksMintedNode);
-        balanceNode = new DefaultMutableTreeNode("Account Balance");
+        balanceNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("balanceDefault"));
         mintingNode.add(balanceNode);
-        levelNode = new DefaultMutableTreeNode("Account Level");
+        levelNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("levelDefault"));
         mintingNode.add(levelNode);
         
-        pricesNode = new DefaultMutableTreeNode(new NodeInfo("Prices (last 10 trades averaged)","prices.png"));  
+        pricesNode = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("pricesNode"),"prices.png"));  
         root.add(pricesNode);
-        qortToLtcNode = new DefaultMutableTreeNode("QORT to Litecoin price");
-        ltcToQortNode = new DefaultMutableTreeNode("Litecoin to QORT price");
-        qortToDogeNode = new DefaultMutableTreeNode("QORT to Dogecoin price");
-        dogeToQortNode = new DefaultMutableTreeNode("Dogecoin to QORT price");
+        qortToLtcNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("q2litePriceDefault"));
+        ltcToQortNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("lite2qPriceDefault"));
+        qortToDogeNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("q2dogePriceDefault"));
+        dogeToQortNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("doge2qPriceDefault"));
         pricesNode.add(qortToLtcNode);
         pricesNode.add(ltcToQortNode);
         pricesNode.add(qortToDogeNode);
         pricesNode.add(dogeToQortNode);
         
-        dataNode = new DefaultMutableTreeNode(new NodeInfo("Data Usage (System wide)","data.png"));
+        dataNode = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("dataUsageNode"),"data.png"));
         root.add(dataNode);
-        dataUsageNode = new DefaultMutableTreeNode("Total data usage");
-        averageRateNode = new DefaultMutableTreeNode("Average data rate per day");
-        minuteRateNode = new DefaultMutableTreeNode("Data rate per minute");
-        hourRateNode = new DefaultMutableTreeNode("Data rate per hour");
-        dayRateNode = new DefaultMutableTreeNode("Data rate per day");
+        dataUsageNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("totalUsageDefault"));
+        averageRateNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("avgPerDayDefault"));
+        minuteRateNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("ratePerMinuteDefault"));
+        hourRateNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("ratePerHourDefault"));
+        dayRateNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("ratePerDayDefault"));
         dataNode.add(dataUsageNode);   
         dataNode.add(averageRateNode);
         dataNode.add(minuteRateNode);
@@ -182,24 +181,23 @@ public class MonitorPanel extends javax.swing.JPanel
     
     private void ClearMonitorTree()
     {        
-        uptimeNode.setUserObject("Uptime");
-        syncNode.setUserObject("Synchronization Status");
-        blockheightNode.setUserObject("Blockheight (node)");
-        chainHeighNode.setUserObject("Blockheight (chain)");
-        buildversionNode.setUserObject("Build version");
-        peersNode .setUserObject("Peers");
-        allMintersNode.setUserObject("All Online Minters");   
-        knownPeersNode.setUserObject("All Known Peers");  
-        mintingAccountNode.setUserObject("Minting Account Address");
-        blocksMintedNode.setUserObject("Blocks Minted");
-        balanceNode.setUserObject("Account Balance");
-        levelNode.setUserObject("Account Level");
-        dataUsageNode.setUserObject("Data Usage Info");
-        dataUsageNode.setUserObject("Total data usage");
-        averageRateNode.setUserObject("Average data rate per day");
-        minuteRateNode.setUserObject("Data rate per minute");
-        hourRateNode.setUserObject("Data rate per hour");
-        dayRateNode.setUserObject("Data rate per day");
+        uptimeNode.setUserObject(Main.BUNDLE.getString("uptimeDefault"));
+        syncNode.setUserObject(Main.BUNDLE.getString("syncStatusDefault"));
+        blockheightNode.setUserObject(Main.BUNDLE.getString("nodeHeightDefault"));
+        chainHeighNode.setUserObject(Main.BUNDLE.getString("chainHeightDefault"));
+        buildversionNode.setUserObject(Main.BUNDLE.getString("buildVersionDefault"));
+        peersNode .setUserObject(Main.BUNDLE.getString("peersDefault"));
+        allMintersNode.setUserObject(Main.BUNDLE.getString("allMintersDefault"));   
+        knownPeersNode.setUserObject(Main.BUNDLE.getString("allPeersDefault"));  
+        mintingAccountNode.setUserObject(Main.BUNDLE.getString("mintingAddressDefault"));
+        blocksMintedNode.setUserObject(Main.BUNDLE.getString("blocksMintedDefault"));
+        balanceNode.setUserObject(Main.BUNDLE.getString("balanceDefault"));
+        levelNode.setUserObject(Main.BUNDLE.getString("levelDefault"));
+        dataUsageNode.setUserObject(Main.BUNDLE.getString("totalUsageDefault"));
+        averageRateNode.setUserObject(Main.BUNDLE.getString("avgPerDayDefault"));
+        minuteRateNode.setUserObject(Main.BUNDLE.getString("ratePerMinuteDefault"));
+        hourRateNode.setUserObject(Main.BUNDLE.getString("ratePerHourDefault"));
+        dayRateNode.setUserObject(Main.BUNDLE.getString("ratePerDayDefault"));
         monitorTreeModel.reload();
         gui.ExpandNode(monitorTree, statusRoot, 1);
     }
@@ -241,11 +239,11 @@ public class MonitorPanel extends javax.swing.JPanel
                 }
                 if (currentTick < 10)
                 {
-                    refreshButton.setText("Refresh in " + (10 - currentTick));
+                    refreshButton.setText(Main.BUNDLE.getString("refreshIn") + (10 - currentTick));
                 }
                 if (currentTick == 10) //allow refresh every 10 seconds
                 {
-                    refreshButton.setText("Refresh Now");
+                    refreshButton.setText(Main.BUNDLE.getString("refreshNow"));
                     refreshButton.setEnabled(true);
 //                    if(!isSynced)//update every 9 seconds when time approximation is active
 //                        RestartTimer();
@@ -253,17 +251,21 @@ public class MonitorPanel extends javax.swing.JPanel
                 
                 //show node update status
                 if (coreOnline)
-                {                                        
-                    pingLabel.setText("Last refresh: " + Utilities.TimeFormat(lastPingTime)
-                            + ", next refresh in " + (nodeInfoUpdateDelta - (currentTick % nodeInfoUpdateDelta))
-                            + " sec");
+                {    
+                    String[] split = Main.BUNDLE.getString("pingLabel").split("%%");
+                    pingLabel.setText(String.format(split[0] + "%s" + split[1] + "%d" + split[2],  
+                                                    Utilities.TimeFormat(lastPingTime),
+                                                    (nodeInfoUpdateDelta - (currentTick % nodeInfoUpdateDelta))));
+                            
                 }
                 else
                 {
                     //show last online (if was online)
-                    nodeStatusString = lastOnlineTime == 0 ? "Last refresh: " + Utilities.TimeFormat(lastPingTime)
-                            : "Last time online: " + Utilities.DateFormat(lastOnlineTime);
-                    nodeStatusString += ". Next refresh in " + (nodeInfoUpdateDelta - (currentTick % nodeInfoUpdateDelta)) + " sec";                    
+                    nodeStatusString = lastOnlineTime == 0 ? Main.BUNDLE.getString("lastRefresh") + Utilities.TimeFormat(lastPingTime)
+                            : Main.BUNDLE.getString("lastOnline") + Utilities.DateFormat(lastOnlineTime);
+                    
+                    String[] split = Main.BUNDLE.getString("nextRefresh").split("%%");
+                    nodeStatusString += String.format(split[0] + "%d" + split[1], (nodeInfoUpdateDelta - (currentTick % nodeInfoUpdateDelta)));                   
                     pingLabel.setText(nodeStatusString); 
                 }
 
@@ -336,37 +338,37 @@ public class MonitorPanel extends javax.swing.JPanel
                     myBalance =  Double.parseDouble(Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/addresses/balance/" + myMintingAddress));
                     jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/addresses/" + myMintingAddress);
                     jSONObject = new JSONObject(jsonString);
-
+                    
                     monitorTreeModel.valueForPathChanged(new TreePath(mintingAccountNode.getPath()),
-                        "Active minting account: " + myMintingAddress);                    
+                        Main.BUNDLE.getString("activeAccountDBM") + myMintingAddress);                    
                     monitorTreeModel.valueForPathChanged(new TreePath(blocksMintedNode.getPath()),String.format(
-                            "Blocks minted: %s",NumberFormat.getIntegerInstance().format(jSONObject.getInt("blocksMinted"))));                    
+                            Main.BUNDLE.getString("blocksMintedDBM") + "%s",NumberFormat.getIntegerInstance().format(jSONObject.getInt("blocksMinted"))));                    
                     monitorTreeModel.valueForPathChanged(new TreePath(balanceNode.getPath()),
-                            "Balance: " + myBalance + " QORT");                              
+                            Main.BUNDLE.getString("balanceDBM") + myBalance + " QORT");                              
                     monitorTreeModel.valueForPathChanged(new TreePath(levelNode.getPath()),
-                            "Level: " + jSONObject.getInt("level"));             
+                            Main.BUNDLE.getString("levelDBM") + jSONObject.getInt("level"));             
                 }    
                 else
                 {          
                     monitorTreeModel.valueForPathChanged(new TreePath(mintingAccountNode.getPath()),
-                            "No Active Minting Account Found");  
-                    monitorTreeModel.valueForPathChanged(new TreePath(blocksMintedNode.getPath()),"Blocks Minted");                    
-                    monitorTreeModel.valueForPathChanged(new TreePath(balanceNode.getPath()),"Account Balance");                              
-                    monitorTreeModel.valueForPathChanged(new TreePath(levelNode.getPath()),"Account Level");                        
+                            Main.BUNDLE.getString("noAccountDBM"));  
+                    monitorTreeModel.valueForPathChanged(new TreePath(blocksMintedNode.getPath()),Main.BUNDLE.getString("blocksMintedDefault"));                    
+                    monitorTreeModel.valueForPathChanged(new TreePath(balanceNode.getPath()),Main.BUNDLE.getString("balanceDefault"));                              
+                    monitorTreeModel.valueForPathChanged(new TreePath(levelNode.getPath()),Main.BUNDLE.getString("levelDefault"));                        
                 }                
                 
-                monitorTreeModel.valueForPathChanged(new TreePath(statusNode.getPath()), "Qortal Core is Online");
+                monitorTreeModel.valueForPathChanged(new TreePath(statusNode.getPath()), Main.BUNDLE.getString("coreIsOnline"));
                 monitorTreeModel.valueForPathChanged(new TreePath(peersNode.getPath()), 
-                        "Connected peers: " + numberOfConnections);                
+                        Main.BUNDLE.getString("connectedPeers") + numberOfConnections);                
                 monitorTreeModel.valueForPathChanged(new TreePath(uptimeNode.getPath()),
-                        "Uptime: " + Utilities.MillisToDayHrMin(uptime));                
+                        Main.BUNDLE.getString("uptimeTree") + Utilities.MillisToDayHrMin(uptime));                
                 monitorTreeModel.valueForPathChanged(new TreePath(buildversionNode.getPath()), 
-                        "Qortal core build version: " + buildVersion);
+                        Main.BUNDLE.getString("buildVersionTree") + buildVersion);
                 
                 monitorTreeModel.valueForPathChanged(new TreePath(allMintersNode.getPath()),
-                        "Minters online: " + mintersOnline);
+                        Main.BUNDLE.getString("mintersOnline") + mintersOnline);
                 monitorTreeModel.valueForPathChanged(new TreePath(knownPeersNode.getPath()),
-                        "All known peers: " + allKnownPeers);
+                        Main.BUNDLE.getString("allKnownPeers") + allKnownPeers);
 
                 int chainHeight = Utilities.FindChainHeight();
 
@@ -381,7 +383,7 @@ public class MonitorPanel extends javax.swing.JPanel
                     }
 
                     monitorTreeModel.valueForPathChanged(new TreePath(syncNode.getPath()),
-                            "Core is Synchronizing");   
+                            Main.BUNDLE.getString("isSyncing"));   
                 }
                 else
                 {
@@ -390,11 +392,15 @@ public class MonitorPanel extends javax.swing.JPanel
                         isSynced = true;
                         nodeInfoUpdateDelta = 60;
                         monitorTreeModel.valueForPathChanged(new TreePath(syncNode.getPath()),
-                                "Core is Synchronized");   
+                                Main.BUNDLE.getString("isSynced"));   
                     }
                 }
 
                 String heightString = chainHeight == 0 ? "N/A" : String.format("%s", NumberFormat.getIntegerInstance().format(chainHeight));// String.valueOf(chainHeight);
+                if(heightString.equals("N/A"))
+                    monitorTreeModel.valueForPathChanged(new TreePath(syncNode.getPath()),
+                            Main.BUNDLE.getString("noChainHeight"));   
+                            
                 if (myBlockHeight - syncStartBlock > 0)
                 {
                     syncTime = ((System.currentTimeMillis() - syncStartTime) / (myBlockHeight - syncStartBlock)) * (chainHeight - myBlockHeight);
@@ -407,20 +413,20 @@ public class MonitorPanel extends javax.swing.JPanel
                 //we need to give the algo some time to get a good estimate of blocks_synced per delta time, otherwise the figure
                 //will be irrelevant and confusing to the user
                 String estimateString = System.currentTimeMillis() - syncStartTime > 30000 ?
-                        " | Estimated time left: " + Utilities.MillisToDayHrMinSec(syncTime) : " | Estimating time left";
+                        Main.BUNDLE.getString("estimatedTime") + Utilities.MillisToDayHrMinSec(syncTime) : Main.BUNDLE.getString("estimatingTime");
                 //fail safe 
-                estimateString = syncTime < 1000 ? " | Estimating time left" : estimateString;
+                estimateString = syncTime < 1000 ? Main.BUNDLE.getString("estimatingTime") : estimateString;
 
                  String blocksString = myBlockHeight < chainHeight
-                        ? String.format("Blockheight node:  %s", NumberFormat.getIntegerInstance().format(myBlockHeight)) + "  |  "
-                        + "Blocks left: " + NumberFormat.getIntegerInstance().format(chainHeight - myBlockHeight) + estimateString
-                        : String.format("Blockheight node:  %s",NumberFormat.getIntegerInstance().format(myBlockHeight));                   
+                        ? String.format(Main.BUNDLE.getString("nodeHeight") + "%s", NumberFormat.getIntegerInstance().format(myBlockHeight)) + "  |  "
+                        + Main.BUNDLE.getString("blocksLeft") + NumberFormat.getIntegerInstance().format(chainHeight - myBlockHeight)  + " " + estimateString 
+                        : String.format(Main.BUNDLE.getString("nodeHeight") + "%s",NumberFormat.getIntegerInstance().format(myBlockHeight));                   
 
                 monitorTreeModel.valueForPathChanged(new TreePath(blockheightNode.getPath()),
                         blocksString);  
                           
                 monitorTreeModel.valueForPathChanged(new TreePath(chainHeighNode.getPath()),
-                        "Blockheight chain: " + heightString);      
+                        Main.BUNDLE.getString("chainHeight") + heightString);      
                     
                 //must be set after synctime approximation
                 lastPingTime = System.currentTimeMillis();                     
@@ -433,10 +439,12 @@ public class MonitorPanel extends javax.swing.JPanel
                 {
                     File folder = new File(blockChainFolder);
                     long size = Utilities.getDirectorySize(folder);
-                    monitorTreeModel.valueForPathChanged(new TreePath(blockchainNode.getPath()), String.format("Blockchain size: %sMb",
-                            NumberFormat.getIntegerInstance().format(size / 1000000)));
-                    monitorTreeModel.valueForPathChanged(new TreePath(spaceLeftNode.getPath()), String.format("Space left on disk: %sMb",
-                            NumberFormat.getIntegerInstance().format(folder.getFreeSpace() / 1000000)));              
+                    monitorTreeModel.valueForPathChanged(new TreePath(blockchainNode.getPath()), 
+                            String.format(Main.BUNDLE.getString("blockChainSizeDBM") + "%sMb",
+                                NumberFormat.getIntegerInstance().format(size / 1000000)));
+                    monitorTreeModel.valueForPathChanged(new TreePath(spaceLeftNode.getPath()), 
+                            String.format(Main.BUNDLE.getString("spaceLeftDBM") + "%sMb",
+                                NumberFormat.getIntegerInstance().format(folder.getFreeSpace() / 1000000)));              
                 }  
             }
             catch(ConnectException e)
@@ -444,9 +452,7 @@ public class MonitorPanel extends javax.swing.JPanel
                 coreOnline = false;
                 pricesButton.setEnabled(false);
                 monitorTreeModel.valueForPathChanged(new TreePath(statusNode.getPath()),
-                        Utilities.AllignCenterHTML("<br/>Cannot connect to Qortal core<br/>"
-                   + "Check if your core and/or SSH tunnel are running<br/>"
-                   + "and if your IP and port settings are correct<br/><br/>"));   
+                        Utilities.AllignCenterHTML(Main.BUNDLE.getString("cannotConnectMp")));   
                 ClearMonitorTree();
             }
             catch (IOException | NumberFormatException | TimeoutException | JSONException e)
@@ -474,8 +480,8 @@ public class MonitorPanel extends javax.swing.JPanel
         }        
         
         String choice = (String)JOptionPane.showInputDialog(this, 
-                Utilities.AllignCenterHTML("Multiple minting accounts were found<br/>Please select your active minting account<br/><br/>"),
-            "Select minting account", JOptionPane.QUESTION_MESSAGE, null, accounts, accounts[0]); 
+                Utilities.AllignCenterHTML(Main.BUNDLE.getString("multipleAccounts")),
+                Main.BUNDLE.getString("multipleAccountTitle"), JOptionPane.QUESTION_MESSAGE, null, accounts, accounts[0]); 
         
         for(int i = 0; i < jsonArray.length(); i++)
         {
@@ -532,24 +538,29 @@ public class MonitorPanel extends javax.swing.JPanel
             long averageReceived = (totalBytesReceived / (System.currentTimeMillis() - startTime)) * 86400000;
             long averageSent = (totalBytesSent / (System.currentTimeMillis() - startTime)) * 86400000;
 
+            String[] split = Main.BUNDLE.getString("totalUsage").split("%%");
             monitorTreeModel.valueForPathChanged(new TreePath(dataUsageNode.getPath()),
-                    String.format("Total Received: %.2fMb  |  Total Sent: %.2fMb",
+                    String.format(split[0] + "%.2f" + split[1] + "%.2f" + split[2],
                     ((double) totalBytesReceived / 1000000), ((double) totalBytesSent / 1000000)));
             
+            split = Main.BUNDLE.getString("avgPerDay").split("%%");
             monitorTreeModel.valueForPathChanged(new TreePath(averageRateNode.getPath()),
-                    String.format("Average rate per day: Down %.2fMb  |  Up: %.2fMb",
+                    String.format(split[0] + "%.2f" + split[1] + "%.2f" + split[2],
                     ((double)  averageReceived / 1000000), ((double) averageSent / 1000000)));
 
+            split = Main.BUNDLE.getString("ratePerMinute").split("%%");
             monitorTreeModel.valueForPathChanged(new TreePath(minuteRateNode.getPath()),
-                    String.format( "Current rate per minute: Down: %.2fMb  |  Up: %.2fMb",
+                    String.format( split[0] + "%.2f" + split[1] + "%.2f" + split[2],
                     ((double) (receivedPerSec * 60) / 1000000), ((double) (sentPerSec * 60) / 1000000)));
 
+            split = Main.BUNDLE.getString("ratePerHour").split("%%");
             monitorTreeModel.valueForPathChanged(new TreePath(hourRateNode.getPath()),
-                    String.format("Current rate per hour: Down: %.2fMb  |  Up: %.2fMb",
+                    String.format(split[0] + "%.2f" + split[1] + "%.2f" + split[2],
                     ((double) (receivedPerSec * 3600) / 1000000), ((double) (sentPerSec * 3600) / 1000000)));
 
+            split = Main.BUNDLE.getString("ratePerDay").split("%%");
             monitorTreeModel.valueForPathChanged(new TreePath(dayRateNode.getPath()),
-                    String.format("Current rate per day: Down: %.2fMb  |  Up: %.2fMb",
+                    String.format(split[0] + "%.2f" + split[1] + "%.2f" + split[2],
                     ((double) (receivedPerSec * 86400) / 1000000), ((double) (sentPerSec * 86400) / 1000000)));
         }
         
@@ -591,7 +602,8 @@ public class MonitorPanel extends javax.swing.JPanel
         gridBagConstraints.weighty = 1.0;
         monitorPanel.add(monitorTreeScrollPane, gridBagConstraints);
 
-        refreshButton.setText("Refresh Now");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("i18n/Language"); // NOI18N
+        refreshButton.setText(bundle.getString("refreshButtonDefault")); // NOI18N
         refreshButton.setMinimumSize(new java.awt.Dimension(125, 30));
         refreshButton.addActionListener(new java.awt.event.ActionListener()
         {
@@ -607,14 +619,14 @@ public class MonitorPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(8, 5, 8, 5);
         monitorPanel.add(refreshButton, gridBagConstraints);
 
-        pingLabel.setText("Ping status");
+        pingLabel.setText(bundle.getString("pingLabelDefault")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         monitorPanel.add(pingLabel, gridBagConstraints);
 
-        pricesButton.setText("Fetch prices");
+        pricesButton.setText(bundle.getString("pricesButton")); // NOI18N
         pricesButton.setEnabled(false);
         pricesButton.setMinimumSize(new java.awt.Dimension(125, 30));
         pricesButton.addActionListener(new java.awt.event.ActionListener()
@@ -655,19 +667,19 @@ public class MonitorPanel extends javax.swing.JPanel
     private void pricesButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_pricesButtonActionPerformed
     {//GEN-HEADEREND:event_pricesButtonActionPerformed
         monitorTreeModel.valueForPathChanged(new TreePath(qortToLtcNode.getPath()),
-                String.format("Fetching QORT to Litecoin price. Please wait..."));
+                String.format(Main.BUNDLE.getString("fetchQ2Lite")));
         monitorTreeModel.reload(qortToLtcNode);
         
         monitorTreeModel.valueForPathChanged(new TreePath(ltcToQortNode.getPath()),
-                String.format("Fetching Litecoin to QORT price. Please wait..."));
+                String.format(Main.BUNDLE.getString("fetchLite2Q")));
         monitorTreeModel.reload(ltcToQortNode);
         
         monitorTreeModel.valueForPathChanged(new TreePath(qortToDogeNode.getPath()),
-                String.format("Fetching QORT to Dogecoin price. Please wait..."));
+                String.format(Main.BUNDLE.getString("fetchQ2Doge")));
         monitorTreeModel.reload(qortToDogeNode);  
         
         monitorTreeModel.valueForPathChanged(new TreePath(dogeToQortNode.getPath()),
-                String.format("Fetching Dogecoin to QORT price. Please wait..."));
+                String.format(Main.BUNDLE.getString("fetchDoge2Q")));
         monitorTreeModel.reload(dogeToQortNode);      
         
         pricesButton.setEnabled(false);

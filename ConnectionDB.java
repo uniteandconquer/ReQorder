@@ -81,11 +81,9 @@ public class ConnectionDB
         catch (ClassNotFoundException | SQLException e) 
         {
             BackgroundService.AppendLog(e);
+            String[] split = Main.BUNDLE.getString("connectWarning").split("%%");
             JOptionPane.showMessageDialog(null,
-                    Utilities.AllignCenterHTML(String.format("Cannot connect to database '%s'. Possible causes:<br/><br/>"
-                            + "The database login credentials are invalid<br/>"
-                            + "The database does not exist<br/>"
-                            + "The database is in use by another process", database)));
+                    Utilities.AllignCenterHTML(String.format(split[0] + "%s" + split[1], database)));
             BackgroundService.GUI.dbManager.MoveInaccessibleFile(database);
             throw new NullPointerException();
         }
@@ -106,11 +104,9 @@ public class ConnectionDB
         catch (ClassNotFoundException | SQLException e) 
         {
             BackgroundService.AppendLog(e);
+            String[] split = Main.BUNDLE.getString("connectWarning").split("%%");
             JOptionPane.showMessageDialog(null,
-                    Utilities.AllignCenterHTML(String.format("Cannot connect to database '%s'. Possible causes:<br/><br/>"
-                            + "The database login credentials are invalid<br/>"
-                            + "The database does not exist<br/>"
-                            + "The database is in use by another process", database)));
+                    Utilities.AllignCenterHTML(String.format(split[0] + "%s" + split[1], database)));
             BackgroundService.GUI.dbManager.MoveInaccessibleFile(database);
             throw new NullPointerException();
         }

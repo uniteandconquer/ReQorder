@@ -264,7 +264,8 @@ public class ChartsPanel extends javax.swing.JPanel
             }
         }
 
-        DefaultMutableTreeNode databasesNode = new DefaultMutableTreeNode(new NodeInfo("Databases", "server.png"));
+        DefaultMutableTreeNode databasesNode = 
+                new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("databases"), "server.png"));
         chartsTreeModel.setRoot(databasesNode);
 
         DefaultMutableTreeNode[] databaseNodes = new DefaultMutableTreeNode[dbFiles.size()];
@@ -400,27 +401,27 @@ public class ChartsPanel extends javax.swing.JPanel
         chartsOptionsPanel = new javax.swing.JPanel();
         balanceCheckbox = new javax.swing.JCheckBox();
         levelCheckbox = new javax.swing.JCheckBox();
-        numberOfConnectionsBox1 = new javax.swing.JCheckBox();
-        allKnownPeersBox1 = new javax.swing.JCheckBox();
-        uptimeBox1 = new javax.swing.JCheckBox();
+        numberOfConnectionsBox = new javax.swing.JCheckBox();
+        allKnownPeersBox = new javax.swing.JCheckBox();
+        uptimeBox = new javax.swing.JCheckBox();
         ltc2Qortbox = new javax.swing.JCheckBox();
         jSeparator8 = new javax.swing.JSeparator();
-        cpu_tempBox1 = new javax.swing.JCheckBox();
-        blockchainSizeBox1 = new javax.swing.JCheckBox();
-        allOnlineMintersBox1 = new javax.swing.JCheckBox();
-        blocksCheckbox = new javax.swing.JCheckBox();
+        cpu_tempBox = new javax.swing.JCheckBox();
+        blockchainSizeBox = new javax.swing.JCheckBox();
+        allOnlineMintersBox = new javax.swing.JCheckBox();
+        blocksMintedBox = new javax.swing.JCheckBox();
         createChartButton = new javax.swing.JButton();
         jSeparator9 = new javax.swing.JSeparator();
-        ramUsageBox1 = new javax.swing.JCheckBox();
-        selectButton = new javax.swing.JButton();
-        deselectButton = new javax.swing.JButton();
+        ramUsageBox = new javax.swing.JCheckBox();
+        selectAllButton = new javax.swing.JButton();
+        deselectAllButton = new javax.swing.JButton();
         crosshairsCheckbox = new javax.swing.JCheckBox();
         showDialogCheckbox = new javax.swing.JCheckBox();
         jSeparator10 = new javax.swing.JSeparator();
         buildversionCheckbox = new javax.swing.JCheckBox();
         doge2QortBox = new javax.swing.JCheckBox();
-        myBlockHeightBox2 = new javax.swing.JCheckBox();
-        blockHeightBox2 = new javax.swing.JCheckBox();
+        myBlockHeightBox = new javax.swing.JCheckBox();
+        blockHeightBox = new javax.swing.JCheckBox();
         levelProjectionButton = new javax.swing.JButton();
         levelingSeperator = new javax.swing.JSeparator();
         mintingRateBox = new javax.swing.JCheckBox();
@@ -475,7 +476,7 @@ public class ChartsPanel extends javax.swing.JPanel
         );
         chartsUIPanelLayout.setVerticalGroup(
             chartsUIPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1056, Short.MAX_VALUE)
+            .addGap(0, 1375, Short.MAX_VALUE)
         );
 
         chartsUISplitpane.setRightComponent(chartsUIPanel);
@@ -486,7 +487,8 @@ public class ChartsPanel extends javax.swing.JPanel
         chartsOptionsPanel.setPreferredSize(new java.awt.Dimension(172, 600));
         chartsOptionsPanel.setLayout(new java.awt.GridBagLayout());
 
-        balanceCheckbox.setText("Balance");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("i18n/Language"); // NOI18N
+        balanceCheckbox.setText(bundle.getString("balanceCheckBox")); // NOI18N
         balanceCheckbox.setActionCommand("balance");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -495,7 +497,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(balanceCheckbox, gridBagConstraints);
 
-        levelCheckbox.setText("Level");
+        levelCheckbox.setText(bundle.getString("levelCheckbox")); // NOI18N
         levelCheckbox.setActionCommand("level");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -504,34 +506,34 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(levelCheckbox, gridBagConstraints);
 
-        numberOfConnectionsBox1.setText("Connected peers");
-        numberOfConnectionsBox1.setActionCommand("numberOfConnections");
+        numberOfConnectionsBox.setText(bundle.getString("numberOfConnectionsBox")); // NOI18N
+        numberOfConnectionsBox.setActionCommand("numberOfConnections");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 29;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
-        chartsOptionsPanel.add(numberOfConnectionsBox1, gridBagConstraints);
+        chartsOptionsPanel.add(numberOfConnectionsBox, gridBagConstraints);
 
-        allKnownPeersBox1.setText("All known peers");
-        allKnownPeersBox1.setActionCommand("allKnownPeers");
+        allKnownPeersBox.setText(bundle.getString("allKnownPeersBox")); // NOI18N
+        allKnownPeersBox.setActionCommand("allKnownPeers");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 30;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
-        chartsOptionsPanel.add(allKnownPeersBox1, gridBagConstraints);
+        chartsOptionsPanel.add(allKnownPeersBox, gridBagConstraints);
 
-        uptimeBox1.setText("Uptime");
-        uptimeBox1.setActionCommand("uptime");
+        uptimeBox.setText(bundle.getString("uptimeBox")); // NOI18N
+        uptimeBox.setActionCommand("uptime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 32;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
-        chartsOptionsPanel.add(uptimeBox1, gridBagConstraints);
+        chartsOptionsPanel.add(uptimeBox, gridBagConstraints);
 
-        ltc2Qortbox.setText("Litecoin to Qort price");
+        ltc2Qortbox.setText(bundle.getString("ltc2QortBox")); // NOI18N
         ltc2Qortbox.setActionCommand("ltc_to_qort_price");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -547,44 +549,45 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(jSeparator8, gridBagConstraints);
 
-        cpu_tempBox1.setText("CPU temperature");
-        cpu_tempBox1.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
-        cpu_tempBox1.setActionCommand("cpu_temp");
+        cpu_tempBox.setText(bundle.getString("cpuTempBox")); // NOI18N
+        cpu_tempBox.setToolTipText(bundle.getString("cpuTempBoxTooltip")); // NOI18N
+        cpu_tempBox.setActionCommand("cpu_temp");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 42;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
-        chartsOptionsPanel.add(cpu_tempBox1, gridBagConstraints);
+        chartsOptionsPanel.add(cpu_tempBox, gridBagConstraints);
 
-        blockchainSizeBox1.setText("Blockchain size");
-        blockchainSizeBox1.setActionCommand("blockchainsize");
+        blockchainSizeBox.setText(bundle.getString("blockChainSizeBox")); // NOI18N
+        blockchainSizeBox.setActionCommand("blockchainsize");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 45;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
-        chartsOptionsPanel.add(blockchainSizeBox1, gridBagConstraints);
+        chartsOptionsPanel.add(blockchainSizeBox, gridBagConstraints);
 
-        allOnlineMintersBox1.setText("All online minters");
-        allOnlineMintersBox1.setActionCommand("allOnlineMinters");
+        allOnlineMintersBox.setText(bundle.getString("allOnlineMintersBox")); // NOI18N
+        allOnlineMintersBox.setActionCommand("allOnlineMinters");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 31;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
-        chartsOptionsPanel.add(allOnlineMintersBox1, gridBagConstraints);
+        chartsOptionsPanel.add(allOnlineMintersBox, gridBagConstraints);
 
-        blocksCheckbox.setText("Blocks minted");
-        blocksCheckbox.setActionCommand("blocks");
+        blocksMintedBox.setText(bundle.getString("blocksMintedBox")); // NOI18N
+        blocksMintedBox.setActionCommand("blocks");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 23;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
-        chartsOptionsPanel.add(blocksCheckbox, gridBagConstraints);
+        chartsOptionsPanel.add(blocksMintedBox, gridBagConstraints);
 
-        createChartButton.setText("Create chart");
+        createChartButton.setText(bundle.getString("createChartButton")); // NOI18N
+        createChartButton.setActionCommand(bundle.getString("createChartButton")); // NOI18N
         createChartButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -605,21 +608,21 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         chartsOptionsPanel.add(jSeparator9, gridBagConstraints);
 
-        ramUsageBox1.setText("ReQorder RAM usage");
-        ramUsageBox1.setActionCommand("ram_usage");
+        ramUsageBox.setText(bundle.getString("ramUsageBox")); // NOI18N
+        ramUsageBox.setActionCommand("ram_usage");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 46;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 10, 10);
-        chartsOptionsPanel.add(ramUsageBox1, gridBagConstraints);
+        chartsOptionsPanel.add(ramUsageBox, gridBagConstraints);
 
-        selectButton.setText("Select all");
-        selectButton.addActionListener(new java.awt.event.ActionListener()
+        selectAllButton.setText(bundle.getString("selectAllButton")); // NOI18N
+        selectAllButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                selectButtonActionPerformed(evt);
+                selectAllButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -627,14 +630,14 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.gridy = 47;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
-        chartsOptionsPanel.add(selectButton, gridBagConstraints);
+        chartsOptionsPanel.add(selectAllButton, gridBagConstraints);
 
-        deselectButton.setText("Deselect all");
-        deselectButton.addActionListener(new java.awt.event.ActionListener()
+        deselectAllButton.setText(bundle.getString("deselectAllButton")); // NOI18N
+        deselectAllButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                deselectButtonActionPerformed(evt);
+                deselectAllButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -642,10 +645,10 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.gridy = 48;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 12, 0);
-        chartsOptionsPanel.add(deselectButton, gridBagConstraints);
+        chartsOptionsPanel.add(deselectAllButton, gridBagConstraints);
 
         crosshairsCheckbox.setSelected(true);
-        crosshairsCheckbox.setText("Show crosshairs");
+        crosshairsCheckbox.setText(bundle.getString("crosshairsCheckbox")); // NOI18N
         crosshairsCheckbox.setActionCommand("skip");
         crosshairsCheckbox.addActionListener(new java.awt.event.ActionListener()
         {
@@ -662,7 +665,7 @@ public class ChartsPanel extends javax.swing.JPanel
         chartsOptionsPanel.add(crosshairsCheckbox, gridBagConstraints);
 
         showDialogCheckbox.setSelected(true);
-        showDialogCheckbox.setText("Show dialog");
+        showDialogCheckbox.setText(bundle.getString("showDialogCheckbox")); // NOI18N
         showDialogCheckbox.setActionCommand("skip");
         showDialogCheckbox.addActionListener(new java.awt.event.ActionListener()
         {
@@ -685,7 +688,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         chartsOptionsPanel.add(jSeparator10, gridBagConstraints);
 
-        buildversionCheckbox.setText("Buildversion");
+        buildversionCheckbox.setText(bundle.getString("buildversionCheckBox")); // NOI18N
         buildversionCheckbox.setActionCommand("buildversion");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -694,7 +697,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(buildversionCheckbox, gridBagConstraints);
 
-        doge2QortBox.setText("Dogecoin to Qort price");
+        doge2QortBox.setText(bundle.getString("doge2QortBox")); // NOI18N
         doge2QortBox.setActionCommand("doge_to_qort_price");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -703,25 +706,25 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(doge2QortBox, gridBagConstraints);
 
-        myBlockHeightBox2.setText("Blockheight (node)");
-        myBlockHeightBox2.setActionCommand("myblockheight");
+        myBlockHeightBox.setText(bundle.getString("myBlockHeightBox")); // NOI18N
+        myBlockHeightBox.setActionCommand("myblockheight");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 21;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
-        chartsOptionsPanel.add(myBlockHeightBox2, gridBagConstraints);
+        chartsOptionsPanel.add(myBlockHeightBox, gridBagConstraints);
 
-        blockHeightBox2.setText("Blockheight (chain)");
-        blockHeightBox2.setActionCommand("blockheight");
+        blockHeightBox.setText(bundle.getString("blockHeightBox")); // NOI18N
+        blockHeightBox.setActionCommand("blockheight");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 22;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
-        chartsOptionsPanel.add(blockHeightBox2, gridBagConstraints);
+        chartsOptionsPanel.add(blockHeightBox, gridBagConstraints);
 
-        levelProjectionButton.setText("Levelling projection");
+        levelProjectionButton.setText(bundle.getString("levellingProjectionButton")); // NOI18N
         levelProjectionButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -742,7 +745,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         chartsOptionsPanel.add(levelingSeperator, gridBagConstraints);
 
-        mintingRateBox.setText("Minting rate");
+        mintingRateBox.setText(bundle.getString("mintingRateBox")); // NOI18N
         mintingRateBox.setActionCommand("mintingrate");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -751,7 +754,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(mintingRateBox, gridBagConstraints);
 
-        balanceDeltaBox.setText("Balance delta");
+        balanceDeltaBox.setText(bundle.getString("balanceDeltaBox")); // NOI18N
         balanceDeltaBox.setActionCommand("balancedelta");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -761,7 +764,7 @@ public class ChartsPanel extends javax.swing.JPanel
         chartsOptionsPanel.add(balanceDeltaBox, gridBagConstraints);
 
         interpolateCheckbox.setSelected(true);
-        interpolateCheckbox.setText("Interpolate snapshots");
+        interpolateCheckbox.setText(bundle.getString("interpolateCheckbox")); // NOI18N
         interpolateCheckbox.setActionCommand("skip");
         interpolateCheckbox.addActionListener(new java.awt.event.ActionListener()
         {
@@ -777,7 +780,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
         chartsOptionsPanel.add(interpolateCheckbox, gridBagConstraints);
 
-        efficiencyBox.setText("Minting efficiency");
+        efficiencyBox.setText(bundle.getString("efficiencyBox")); // NOI18N
         efficiencyBox.setActionCommand("efficiency");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -786,7 +789,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(efficiencyBox, gridBagConstraints);
 
-        movingAverageBox.setText("Show moving average");
+        movingAverageBox.setText(bundle.getString("showMovingAverageBox")); // NOI18N
         movingAverageBox.setActionCommand("skip");
         movingAverageBox.addActionListener(new java.awt.event.ActionListener()
         {
@@ -802,7 +805,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
         chartsOptionsPanel.add(movingAverageBox, gridBagConstraints);
 
-        qort2LtcBox.setText("Qort to Litecoin price");
+        qort2LtcBox.setText(bundle.getString("qort2LtcBox")); // NOI18N
         qort2LtcBox.setActionCommand("qort_to_ltc_price");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -811,7 +814,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(qort2LtcBox, gridBagConstraints);
 
-        qort2DogeBox.setText("Qort to Dogecoin price");
+        qort2DogeBox.setText(bundle.getString("qort2DogeBox")); // NOI18N
         qort2DogeBox.setActionCommand("qort_to_doge_price");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -820,7 +823,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(qort2DogeBox, gridBagConstraints);
 
-        recPerHourBox.setText("Avg received per hour");
+        recPerHourBox.setText(bundle.getString("recPerHourBox")); // NOI18N
         recPerHourBox.setActionCommand("bytes_rec_avg_hour");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -829,7 +832,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(recPerHourBox, gridBagConstraints);
 
-        sentPerHourBox.setText("Avg sent per hour");
+        sentPerHourBox.setText(bundle.getString("sentPerHourBox")); // NOI18N
         sentPerHourBox.setActionCommand("bytes_sent_avg_hour");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -838,7 +841,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(sentPerHourBox, gridBagConstraints);
 
-        bytesRecBox.setText("Bytes received");
+        bytesRecBox.setText(bundle.getString("bytesReceivedBox")); // NOI18N
         bytesRecBox.setActionCommand("bytes_received");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -847,7 +850,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(bytesRecBox, gridBagConstraints);
 
-        bytesSentBox.setText("Bytes sent");
+        bytesSentBox.setText(bundle.getString("bytesSentbox")); // NOI18N
         bytesSentBox.setActionCommand("bytes_sent");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -856,7 +859,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(bytesSentBox, gridBagConstraints);
 
-        sentPerDayBox.setText("Avg sent per day");
+        sentPerDayBox.setText(bundle.getString("sentPerDaybox")); // NOI18N
         sentPerDayBox.setActionCommand("bytes_sent_avg_day");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -865,7 +868,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(sentPerDayBox, gridBagConstraints);
 
-        recPerDayBox.setText("Avg received per day");
+        recPerDayBox.setText(bundle.getString("recPerDayBox")); // NOI18N
         recPerDayBox.setActionCommand("bytes_rec_avg_day");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -874,7 +877,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(recPerDayBox, gridBagConstraints);
 
-        sentPerMinBox.setText("Avg sent per minute");
+        sentPerMinBox.setText(bundle.getString("sentPerMinBox")); // NOI18N
         sentPerMinBox.setActionCommand("bytes_sent_avg_min");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -883,7 +886,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(sentPerMinBox, gridBagConstraints);
 
-        recPerMinBox.setText("Avg received per minute");
+        recPerMinBox.setText(bundle.getString("recPerinBox")); // NOI18N
         recPerMinBox.setActionCommand("bytes_rec_avg_min");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -893,7 +896,7 @@ public class ChartsPanel extends javax.swing.JPanel
         chartsOptionsPanel.add(recPerMinBox, gridBagConstraints);
 
         showSnapshotsBox.setSelected(true);
-        showSnapshotsBox.setText("Show snapshots");
+        showSnapshotsBox.setText(bundle.getString("showSnapshotsBox")); // NOI18N
         showSnapshotsBox.setActionCommand("skip");
         showSnapshotsBox.addActionListener(new java.awt.event.ActionListener()
         {
@@ -916,8 +919,8 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         chartsOptionsPanel.add(jSeparator11, gridBagConstraints);
 
-        averageLabel.setText("Average 5 snapshots");
-        averageLabel.setToolTipText("The moving average will calculate the sum of the number of snapshots specified here and divide the sum by this number");
+        averageLabel.setText(bundle.getString("averageLabelDefault")); // NOI18N
+        averageLabel.setToolTipText(bundle.getString("averageLabelTooltip")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 11;
@@ -941,7 +944,7 @@ public class ChartsPanel extends javax.swing.JPanel
         chartsOptionsPanel.add(averagingSlider, gridBagConstraints);
 
         showDataBox.setSelected(true);
-        showDataBox.setText("Show raw data");
+        showDataBox.setText(bundle.getString("showRawDataBox")); // NOI18N
         showDataBox.setActionCommand("skip");
         showDataBox.addActionListener(new java.awt.event.ActionListener()
         {
@@ -957,7 +960,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
         chartsOptionsPanel.add(showDataBox, gridBagConstraints);
 
-        averageAllBox.setText("Average all");
+        averageAllBox.setText(bundle.getString("averageAllBox")); // NOI18N
         averageAllBox.setActionCommand("skip");
         averageAllBox.addActionListener(new java.awt.event.ActionListener()
         {
@@ -973,8 +976,7 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
         chartsOptionsPanel.add(averageAllBox, gridBagConstraints);
 
-        qortalRamBox.setText("Qortal RAM usage");
-        qortalRamBox.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
+        qortalRamBox.setText(bundle.getString("qortalRamBox")); // NOI18N
         qortalRamBox.setActionCommand("qortal_ram");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -983,8 +985,8 @@ public class ChartsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(qortalRamBox, gridBagConstraints);
 
-        cpu_usageBox.setText("CPU usage");
-        cpu_usageBox.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
+        cpu_usageBox.setText(bundle.getString("cpu_usageBox")); // NOI18N
+        cpu_usageBox.setToolTipText("");
         cpu_usageBox.setActionCommand("cpu_usage");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1005,9 +1007,9 @@ public class ChartsPanel extends javax.swing.JPanel
         );
         ChartOptionsMainLayout.setVerticalGroup(
             ChartOptionsMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1056, Short.MAX_VALUE)
+            .addGap(0, 1375, Short.MAX_VALUE)
             .addGroup(ChartOptionsMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(ChartOptionsScrollpane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1056, Short.MAX_VALUE))
+                .addComponent(ChartOptionsScrollpane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1375, Short.MAX_VALUE))
         );
 
         chartsUISplitpane.setLeftComponent(ChartOptionsMain);
@@ -1035,7 +1037,8 @@ public class ChartsPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_createChartButtonActionPerformed
         if (chartsTree.getSelectionPath() == null)//failsafe, should never be the case (button should be disabled)
         {
-            JOptionPane.showMessageDialog(this, "Please select a dataset from the list", "Select a dataset", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("selectDataset"),
+                    Main.BUNDLE.getString("selectDatasetTitle"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         String selectedTable = chartsTree.getSelectionPath().getLastPathComponent().toString();
@@ -1071,7 +1074,7 @@ public class ChartsPanel extends javax.swing.JPanel
         
         if(selectedItems.isEmpty())
         {
-            JOptionPane.showMessageDialog(BackgroundService.GUI, "No dataset selected");
+            JOptionPane.showMessageDialog(BackgroundService.GUI, Main.BUNDLE.getString("noDatasetSelected"));
             return;
         }
         movingAverageBox.setEnabled(selectedItems.size() == 1);
@@ -1203,8 +1206,8 @@ public class ChartsPanel extends javax.swing.JPanel
         }
     }//GEN-LAST:event_createChartButtonActionPerformed
 
-    private void selectButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selectButtonActionPerformed
-    {//GEN-HEADEREND:event_selectButtonActionPerformed
+    private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selectAllButtonActionPerformed
+    {//GEN-HEADEREND:event_selectAllButtonActionPerformed
         Component[] components = chartsOptionsPanel.getComponents();
         JCheckBox checkBox;
 
@@ -1221,10 +1224,10 @@ public class ChartsPanel extends javax.swing.JPanel
                     checkBox.setSelected(true);
             }
         }
-    }//GEN-LAST:event_selectButtonActionPerformed
+    }//GEN-LAST:event_selectAllButtonActionPerformed
 
-    private void deselectButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_deselectButtonActionPerformed
-    {//GEN-HEADEREND:event_deselectButtonActionPerformed
+    private void deselectAllButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_deselectAllButtonActionPerformed
+    {//GEN-HEADEREND:event_deselectAllButtonActionPerformed
         Component[] components = chartsOptionsPanel.getComponents();
         JCheckBox checkBox;
 
@@ -1241,7 +1244,7 @@ public class ChartsPanel extends javax.swing.JPanel
                     checkBox.setSelected(false);                
             }
         }
-    }//GEN-LAST:event_deselectButtonActionPerformed
+    }//GEN-LAST:event_deselectAllButtonActionPerformed
 
     private void crosshairsCheckboxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_crosshairsCheckboxActionPerformed
     {//GEN-HEADEREND:event_crosshairsCheckboxActionPerformed
@@ -1315,7 +1318,8 @@ public class ChartsPanel extends javax.swing.JPanel
 
     private void averagingSliderStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_averagingSliderStateChanged
     {//GEN-HEADEREND:event_averagingSliderStateChanged
-        averageLabel.setText("Average " + averagingSlider.getValue() + " snapshots");
+        String[] split = Main.BUNDLE.getString("averageLabel").split("%%");
+        averageLabel.setText(split[0] + averagingSlider.getValue() + split[1]);
         chartMaker.averagingPeriod = averagingSlider.getValue();
     }//GEN-LAST:event_averagingSliderStateChanged
 
@@ -1344,16 +1348,16 @@ public class ChartsPanel extends javax.swing.JPanel
     private javax.swing.JPanel ChartOptionsMain;
     private javax.swing.JScrollPane ChartOptionsScrollpane;
     private javax.swing.JScrollPane ChartsTreePane;
-    private javax.swing.JCheckBox allKnownPeersBox1;
-    private javax.swing.JCheckBox allOnlineMintersBox1;
+    private javax.swing.JCheckBox allKnownPeersBox;
+    private javax.swing.JCheckBox allOnlineMintersBox;
     protected javax.swing.JCheckBox averageAllBox;
     private javax.swing.JLabel averageLabel;
     private javax.swing.JSlider averagingSlider;
     private javax.swing.JCheckBox balanceCheckbox;
     private javax.swing.JCheckBox balanceDeltaBox;
-    private javax.swing.JCheckBox blockHeightBox2;
-    private javax.swing.JCheckBox blockchainSizeBox1;
-    private javax.swing.JCheckBox blocksCheckbox;
+    private javax.swing.JCheckBox blockHeightBox;
+    private javax.swing.JCheckBox blockchainSizeBox;
+    private javax.swing.JCheckBox blocksMintedBox;
     private javax.swing.JCheckBox buildversionCheckbox;
     private javax.swing.JCheckBox bytesRecBox;
     private javax.swing.JCheckBox bytesSentBox;
@@ -1362,11 +1366,11 @@ public class ChartsPanel extends javax.swing.JPanel
     private javax.swing.JTree chartsTree;
     private javax.swing.JPanel chartsUIPanel;
     private javax.swing.JSplitPane chartsUISplitpane;
-    private javax.swing.JCheckBox cpu_tempBox1;
+    private javax.swing.JCheckBox cpu_tempBox;
     private javax.swing.JCheckBox cpu_usageBox;
     protected javax.swing.JButton createChartButton;
     private javax.swing.JCheckBox crosshairsCheckbox;
-    private javax.swing.JButton deselectButton;
+    private javax.swing.JButton deselectAllButton;
     private javax.swing.JCheckBox doge2QortBox;
     private javax.swing.JCheckBox efficiencyBox;
     private javax.swing.JCheckBox interpolateCheckbox;
@@ -1380,22 +1384,22 @@ public class ChartsPanel extends javax.swing.JPanel
     private javax.swing.JCheckBox ltc2Qortbox;
     private javax.swing.JCheckBox mintingRateBox;
     protected javax.swing.JCheckBox movingAverageBox;
-    private javax.swing.JCheckBox myBlockHeightBox2;
-    private javax.swing.JCheckBox numberOfConnectionsBox1;
+    private javax.swing.JCheckBox myBlockHeightBox;
+    private javax.swing.JCheckBox numberOfConnectionsBox;
     private javax.swing.JCheckBox qort2DogeBox;
     private javax.swing.JCheckBox qort2LtcBox;
     private javax.swing.JCheckBox qortalRamBox;
-    private javax.swing.JCheckBox ramUsageBox1;
+    private javax.swing.JCheckBox ramUsageBox;
     private javax.swing.JCheckBox recPerDayBox;
     private javax.swing.JCheckBox recPerHourBox;
     private javax.swing.JCheckBox recPerMinBox;
-    private javax.swing.JButton selectButton;
+    private javax.swing.JButton selectAllButton;
     private javax.swing.JCheckBox sentPerDayBox;
     private javax.swing.JCheckBox sentPerHourBox;
     private javax.swing.JCheckBox sentPerMinBox;
     protected javax.swing.JCheckBox showDataBox;
     private javax.swing.JCheckBox showDialogCheckbox;
     private javax.swing.JCheckBox showSnapshotsBox;
-    private javax.swing.JCheckBox uptimeBox1;
+    private javax.swing.JCheckBox uptimeBox;
     // End of variables declaration//GEN-END:variables
 }

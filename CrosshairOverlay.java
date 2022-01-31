@@ -302,7 +302,8 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
                     case "level":
                         //change label only after it was used as the switch flag
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s : %s<br/>",label,NumberFormat.getIntegerInstance().format((int) y));
+                        dialogString += String.format("%s : %s<br/>",Main.BUNDLE.getString(label + "Charts"),
+                                NumberFormat.getIntegerInstance().format((int) y));
                         break;
                     case "levelling":
                         dialogString += String.format("%s : %d<br/>%s blocks","level",
@@ -320,46 +321,47 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
                     case "blockchainsize":
                     case "qortal_ram":
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s : %.2fMb<br/>",label, y );
+                        dialogString += String.format("%s : %.2fMb<br/>",Main.BUNDLE.getString(label + "Charts"), y );
                         break;  
                     case "ltc_to_qort_price":
                     case "doge_to_qort_price":
                     case "balance":
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s : %.5f QORT<br/>",label, (double) y);
+                        dialogString += String.format("%s : %.5f QORT<br/>",Main.BUNDLE.getString(label + "Charts"), (double) y);
                         break;   
                     case "qort_to_ltc_price":  
                         label = isMovingAverage ? "moving average" : label;  
-                        dialogString += String.format("%s : %.5f LTC<br/>",label, (double) y);
+                        dialogString += String.format("%s : %.5f LTC<br/>",Main.BUNDLE.getString(label + "Charts"), (double) y);
                         break;     
                     case "qort_to_doge_price": 
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s : %.5f Doge<br/>",label, (double) y);
+                        dialogString += String.format("%s : %.5f Doge<br/>",Main.BUNDLE.getString(label + "Charts"), (double) y);
                         break;           
                     case "uptime":
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s:<br/>%s<br/>",label, Utilities.MillisToDayHrMinShortFormat((long)y));
+                        dialogString += String.format("%s:<br/>%s<br/>",Main.BUNDLE.getString(label + "Charts"),
+                                Utilities.MillisToDayHrMinShortFormat((long)y));
                         break;
                     case "buildversion":
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s:<br/>%.6f<br/>",label, (double) y);
+                        dialogString += String.format("%s:<br/>%.6f<br/>",Main.BUNDLE.getString(label + "Charts"), (double) y);
                         break;
                     case "mintingrate":
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s : %d B/Hr<br/>",label, (int) y );
+                        dialogString += String.format("%s : %d B/Hr<br/>",Main.BUNDLE.getString(label + "Charts"), (int) y );
                         break;
                     case "balancedelta":
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s : %.3f Q/Hr<br/>",label, (double) y);
+                        dialogString += String.format("%s : %.3f Q/Hr<br/>",Main.BUNDLE.getString(label + "Charts"), (double) y);
                         break; 
                     case "efficiency":
                     case "cpu_usage":
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s : %.2f%%<br/>",label, (double) y);
+                        dialogString += String.format("%s : %.2f%%<br/>",Main.BUNDLE.getString(label + "Charts"), (double) y);
                         break; 
                     case "cpu_temp":
                         label = isMovingAverage ? "moving average" : label;
-                        dialogString += String.format("%s : %.1f °C<br/>",label, (double) y);
+                        dialogString += String.format("%s : %.1f °C<br/>",Main.BUNDLE.getString(label + "Charts"), (double) y);
                         break; 
                 }
             }   

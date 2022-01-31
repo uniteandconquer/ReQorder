@@ -31,7 +31,7 @@ public class GUI extends javax.swing.JFrame
     protected static boolean REQORDING;
     
     public GUI(BackgroundService bgs)
-    {
+    {        
         SetLookAndFeel("Nimbus");//do this before initComponents()
         backgroundService = bgs;
         dbManager = bgs.dbManager;
@@ -52,7 +52,7 @@ public class GUI extends javax.swing.JFrame
         splashTimer.schedule(splashTask, 2000);  
         
     }//end constructor
-
+    
     private void InitFrame()
     {
         //put the frame at middle of the screen,add icon and set visible
@@ -146,17 +146,12 @@ public class GUI extends javax.swing.JFrame
     private void AuthenticatorMissing()
     {
         JOptionPane.showMessageDialog(this,
-                Utilities.AllignCenterHTML(
-                        "Error: Missing authenticator file<br/><br/>"
-                        + "Unable to log into ReQorder or access encrypted databases<br/><br/>"
-                        + "Redirecting you to account menu, where you can restore<br/>"
-                        + "the last known working account or create a new one"),
-                "Failed to authenticate", JOptionPane.WARNING_MESSAGE);
+                Utilities.AllignCenterHTML(Main.BUNDLE.getString("authError")),
+                 Main.BUNDLE.getString("authErrorTitle"), JOptionPane.WARNING_MESSAGE);
         
         if(JOptionPane.showConfirmDialog(this,
-                Utilities.AllignCenterHTML("Do you want to save the inaccessible databases to the 'inaccessible' folder?<br/><br/>"
-                        + "Choosing 'no' will delete all inaccessible databases"), 
-                "Save inaccessible files?", 
+                Utilities.AllignCenterHTML(Main.BUNDLE.getString("saveInaccessibleMessage")), 
+                Main.BUNDLE.getString("saveInaccessibleTitle"), 
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
         {            
             dbManager.MoveInaccessibleFiles(true);
@@ -236,12 +231,8 @@ public class GUI extends javax.swing.JFrame
             else
             {
                 JOptionPane.showMessageDialog(this, 
-                            Utilities.AllignCenterHTML(
-                                        "Could not access properties database<br/>"
-                                    + "The file either belongs to a different account, or it is corrupted<br/><br/>"
-                                    + "Redirecting you to account menu, where you can restore<br/>"
-                                    + "the last known working account or create a new one"),
-                            "Cannot access properties", JOptionPane.WARNING_MESSAGE);
+                            Utilities.AllignCenterHTML(Main.BUNDLE.getString("propertiesErrorRedirect")),
+                            Main.BUNDLE.getString("propertiesErrorTitle"), JOptionPane.WARNING_MESSAGE);
                 
                 dbManager.MoveInaccessibleFile("properties");
                 ShowNewUserPanel();
@@ -276,7 +267,7 @@ public class GUI extends javax.swing.JFrame
     protected void ShowLoadScreen()
     {      
         //setting the label to visible will make the logo jump up. Label start text is 3 line breaks.
-        statusLabel.setText(Utilities.AllignCenterHTML("Login successful, backing up your account<br/><br/>Please wait..."));
+        statusLabel.setText(Utilities.AllignCenterHTML(Main.BUNDLE.getString("loginSuccess")));
         CardLayout card = (CardLayout) mainPanel.getLayout();
         card.show(mainPanel, "splashPanel");
     }
@@ -288,7 +279,7 @@ public class GUI extends javax.swing.JFrame
         newUserPanel.passwordField1.setText("");
         newUserPanel.passwordField2.setText("");
         newUserPanel.savePasswordButton.setEnabled(false);
-        newUserPanel.passwordStatusLabel.setText("Waiting for input...");
+        newUserPanel.passwordStatusLabel.setText(Main.BUNDLE.getString("waitingForInput"));
         newUserPanel.backButton.setVisible(true);
         ShowNewUserPanel();
     }
@@ -370,8 +361,8 @@ public class GUI extends javax.swing.JFrame
         {
             if(JOptionPane.showConfirmDialog(
                     this,
-                    Utilities.AllignCenterHTML("Exiting the program will abort the running ReQording session<br/>Close the main window to continue ReQording in the background<br/><br/>Do you want to exit?"),
-                    "ReQording in progress",
+                    Utilities.AllignCenterHTML(Main.BUNDLE.getString("exitConfirm")),
+                    Main.BUNDLE.getString("exitConfirmTitle"),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION)
             {
@@ -415,9 +406,10 @@ public class GUI extends javax.swing.JFrame
         reqorderButton = new javax.swing.JButton();
         chartsButton = new javax.swing.JButton();
         alertsButton = new javax.swing.JButton();
-        nodeButton = new javax.swing.JButton();
+        nodeMonitorButton = new javax.swing.JButton();
         appearanceButton = new javax.swing.JButton();
         logButton = new javax.swing.JButton();
+        donateButton = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
         mainPanel = new javax.swing.JPanel();
         splashPanel = new javax.swing.JPanel();
@@ -483,8 +475,9 @@ public class GUI extends javax.swing.JFrame
         mainToolbar.setRollover(true);
 
         reqorderButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/reqorder.png"))); // NOI18N
-        reqorderButton.setText("ReQorder");
-        reqorderButton.setToolTipText("Main databases page");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("i18n/Language"); // NOI18N
+        reqorderButton.setText(bundle.getString("reqorderButton")); // NOI18N
+        reqorderButton.setToolTipText("");
         reqorderButton.setFocusable(false);
         reqorderButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         reqorderButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -498,7 +491,7 @@ public class GUI extends javax.swing.JFrame
             mainToolbar.add(reqorderButton);
 
             chartsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/charts.png"))); // NOI18N
-            chartsButton.setText("Charts");
+            chartsButton.setText(bundle.getString("chartsButton")); // NOI18N
             chartsButton.setFocusable(false);
             chartsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
             chartsButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -512,7 +505,7 @@ public class GUI extends javax.swing.JFrame
             mainToolbar.add(chartsButton);
 
             alertsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/alerts.png"))); // NOI18N
-            alertsButton.setText("Alerts");
+            alertsButton.setText(bundle.getString("alertsButton")); // NOI18N
             alertsButton.setFocusable(false);
             alertsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
             alertsButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -525,23 +518,23 @@ public class GUI extends javax.swing.JFrame
             });
             mainToolbar.add(alertsButton);
 
-            nodeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/monitor.png"))); // NOI18N
-            nodeButton.setText("Node monitor");
-            nodeButton.setToolTipText("Current info on you node's status");
-            nodeButton.setFocusable(false);
-            nodeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-            nodeButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-            nodeButton.addActionListener(new java.awt.event.ActionListener()
+            nodeMonitorButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/monitor.png"))); // NOI18N
+            nodeMonitorButton.setText(bundle.getString("nodeMonitorButton")); // NOI18N
+            nodeMonitorButton.setToolTipText("Current info on you node's status");
+            nodeMonitorButton.setFocusable(false);
+            nodeMonitorButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+            nodeMonitorButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+            nodeMonitorButton.addActionListener(new java.awt.event.ActionListener()
             {
                 public void actionPerformed(java.awt.event.ActionEvent evt)
                 {
-                    nodeButtonActionPerformed(evt);
+                    nodeMonitorButtonActionPerformed(evt);
                 }
             });
-            mainToolbar.add(nodeButton);
+            mainToolbar.add(nodeMonitorButton);
 
             appearanceButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Appearance.png"))); // NOI18N
-            appearanceButton.setText("Appearance");
+            appearanceButton.setText(bundle.getString("appearanceButton")); // NOI18N
             appearanceButton.setFocusable(false);
             appearanceButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
             appearanceButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -555,8 +548,8 @@ public class GUI extends javax.swing.JFrame
             mainToolbar.add(appearanceButton);
 
             logButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/log.png"))); // NOI18N
-            logButton.setText("Log");
-            logButton.setToolTipText("For de-bugging purposes");
+            logButton.setText(bundle.getString("logButton")); // NOI18N
+            logButton.setToolTipText("");
             logButton.setFocusable(false);
             logButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
             logButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -569,8 +562,22 @@ public class GUI extends javax.swing.JFrame
             });
             mainToolbar.add(logButton);
 
+            donateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/donate.png"))); // NOI18N
+            donateButton.setText(bundle.getString("donateButton")); // NOI18N
+            donateButton.setFocusable(false);
+            donateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+            donateButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+            donateButton.addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(java.awt.event.ActionEvent evt)
+                {
+                    donateButtonActionPerformed(evt);
+                }
+            });
+            mainToolbar.add(donateButton);
+
             exitButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/exit.png"))); // NOI18N
-            exitButton.setText("Exit");
+            exitButton.setText(bundle.getString("exitButton")); // NOI18N
             exitButton.setFocusable(false);
             exitButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
             exitButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -632,8 +639,8 @@ public class GUI extends javax.swing.JFrame
                 setLocationRelativeTo(null);
             }// </editor-fold>//GEN-END:initComponents
 
-    private void nodeButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_nodeButtonActionPerformed
-    {//GEN-HEADEREND:event_nodeButtonActionPerformed
+    private void nodeMonitorButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_nodeMonitorButtonActionPerformed
+    {//GEN-HEADEREND:event_nodeMonitorButtonActionPerformed
         monitorPanel.isSynced = true; //first ping this flag must be true to activate time approximation
         CardLayout card = (CardLayout) mainPanel.getLayout();
         //We only need to run the GUI timer if monitorPanel is selected/in focus
@@ -646,7 +653,7 @@ public class GUI extends javax.swing.JFrame
             monitorPanel.startTime = System.currentTimeMillis();
         //on slow systems, the dialog may not have been triggered to invisible on leaving the chart
         chartsPanel.chartMaker.chartDialog.setVisible(false);
-    }//GEN-LAST:event_nodeButtonActionPerformed
+    }//GEN-LAST:event_nodeMonitorButtonActionPerformed
 
     private void logButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_logButtonActionPerformed
     {//GEN-HEADEREND:event_logButtonActionPerformed
@@ -708,6 +715,11 @@ public class GUI extends javax.swing.JFrame
         chartsPanel.chartMaker.chartDialog.setVisible(false);
     }//GEN-LAST:event_alertsButtonActionPerformed
 
+    private void donateButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_donateButtonActionPerformed
+    {//GEN-HEADEREND:event_donateButtonActionPerformed
+        reqorderPanel.GoToDonatePage();
+    }//GEN-LAST:event_donateButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton alertsButton;
@@ -717,6 +729,7 @@ public class GUI extends javax.swing.JFrame
     private javax.swing.JPopupMenu appearanceMenu;
     private javax.swing.JButton chartsButton;
     private reqorder.ChartsPanel chartsPanel;
+    private javax.swing.JButton donateButton;
     private javax.swing.JButton exitButton;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JButton logButton;
@@ -727,7 +740,7 @@ public class GUI extends javax.swing.JFrame
     protected javax.swing.JToolBar mainToolbar;
     protected reqorder.MonitorPanel monitorPanel;
     private reqorder.NewUserPanel newUserPanel;
-    private javax.swing.JButton nodeButton;
+    private javax.swing.JButton nodeMonitorButton;
     private javax.swing.JButton reqorderButton;
     private reqorder.ReqorderPanel reqorderPanel;
     private javax.swing.JPanel splashPanel;

@@ -61,6 +61,11 @@ public class Utilities
 {
     private static final ExecutorService executor = Executors.newCachedThreadPool();
     private static final int TIMEOUT_DURATION = 45;
+    private static final String WEEKS =Main.BUNDLE.getString("weeks");
+    private static final String DAYS =Main.BUNDLE.getString("days");
+    private static final String HOURS =Main.BUNDLE.getString("hours");
+    private static final String MINUTES =Main.BUNDLE.getString("minutes");
+    private static final String SECONDS =Main.BUNDLE.getString("seconds");
     
     public static String CreateRandomString(int length)
     {
@@ -121,14 +126,14 @@ public class Utilities
         if(days > 6)
         {
             long weeks = days / 7;
-            return String.format("%d weeks %d days %d hours %d minutes",weeks, days % 7, hours, minutes);
+            return String.format("%d %s %d %s %d %s %d %s",weeks,WEEKS, days % 7,DAYS, hours,HOURS, minutes,MINUTES);
         }
         if(days >= 1)
-            return String.format("%d days %d hours %d minutes", days % 7, hours, minutes);            
+            return String.format("%d %s %d %s %d %s", days % 7, DAYS, hours, HOURS, minutes, MINUTES);            
         if(days < 1 && hours > 0)
-            return String.format("%d hours %d minutes",hours,minutes);
+            return String.format("%d %s %d %s",hours, HOURS, minutes, MINUTES);
         if(hours < 1)
-            return String.format("%d minutes", minutes);
+            return String.format("%d %s", minutes, MINUTES);
         
         return "invalid duration format"; //String.format("%d days %d hours %d minutes", days, hours, minutes);
      }
@@ -170,9 +175,9 @@ public class Utilities
         if(days >= 1)
             return String.format("%d days %d hrs %d min", days % 7, hours, minutes);            
         if(days < 1 && hours > 0)
-            return String.format("%d hours %d minutes",hours,minutes);
+            return String.format("%d %s %d %s",hours,HOURS,minutes, MINUTES);
         if(hours < 1)
-            return String.format("%d minutes", minutes);
+            return String.format("%d %s", minutes, MINUTES);
         
         return "invalid duration format"; //String.format("%d days %d hours %d minutes", days, hours, minutes);
      }
@@ -188,16 +193,16 @@ public class Utilities
        if(days > 6)
        {
            long weeks = days / 7;
-           return String.format("%d weeks %d days %d hours %d minutes",weeks, days % 7, hours, minutes);
+           return String.format("%d %s %d %s %d %s %d %s",weeks, WEEKS, days % 7, DAYS, hours, HOURS, minutes, MINUTES);
        }
        if(days >= 1)
-           return String.format("%d days %d hours %d minutes", days % 7, hours, minutes);            
+           return String.format("%d %s %d %s %d %s", days % 7, DAYS, hours, HOURS, minutes, MINUTES);            
        if(days < 1 && hours > 0)
-           return String.format("%d hours %d minutes",hours,minutes);
+           return String.format("%d %s %d %s",hours, HOURS, minutes, MINUTES);
        if(hours < 1)
-           return String.format("%d minutes %d seconds", minutes, seconds);
+           return String.format("%d %s %d %s", minutes, MINUTES, seconds, SECONDS);
        if(minutes < 1)
-           return String.format("%d seconds", seconds);
+           return String.format("%d %s", seconds, SECONDS);
            
 
        return "invalid duration format"; //String.format("%d days %d hours %d minutes", days, hours, minutes);
@@ -603,8 +608,7 @@ public class Utilities
     public static boolean SendEmail(String recipient, String username,String password,String smtp, String port,String subject, String message)
     {      
         
-        message += "\n\n\nThank you for using ReQorder. If you find the application useful and want to contribute to its further "
-                + "development you can donate some QORT, Litecoin, Dogecoin or Bitcoin at http://www.reqorder.org/Donate.html\n\n\n";
+        message += Main.BUNDLE.getString("mailFooter");
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

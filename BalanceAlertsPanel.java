@@ -72,7 +72,7 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
             //reset address components on selection of other db
             if(!databasesList.getSelectedValue().equals(selectedDb))
             {     
-                infoLabel.setText("Choose a database and an account to set a balance alert");
+                infoLabel.setText(Main.BUNDLE.getString("balanceAlertsInfoLabel"));
                 saveAlertButton.setEnabled(false);
                 balanceSpinner.setEnabled(false);
                 balanceSpinner.setValue(0);
@@ -118,7 +118,8 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
                 ArrayList<Object> timestamps = dbManager.GetColumn(table, "timestamp", "timestamp", "desc", connection);
                 if(timestamps.isEmpty())
                 {
-                    infoLabel.setText(String.format("No ReQorded balance entries for account '%s' in database '%s'.", 
+                    String[] split = Main.BUNDLE.getString("noReqordedBalance").split("%%");
+                    infoLabel.setText(String.format(split[0] + "%s" + split[1] + "%s" + split[2], 
                             addressesList.getSelectedValue(),databasesList.getSelectedValue()));
                     balanceSpinner.setValue(0);                    
                 }
@@ -126,7 +127,8 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
                 {
                     long timestamp = (long)timestamps.get(0);
                     double balance = (double)dbManager.GetItemValue(table, "balance", "timestamp", String.valueOf(timestamp), connection);
-                    infoLabel.setText(String.format("Account '%s' last ReQorded balance was %.5f QORT.", addressesList.getSelectedValue(),balance));
+                    String[] split = Main.BUNDLE.getString("reqordedBalance").split("%%");
+                    infoLabel.setText(String.format(split[0] + "%s" + split[1] + "%.5f" + split[2], addressesList.getSelectedValue(),balance));
                     balanceSpinner.setValue(balance);
                     
                 }
@@ -146,7 +148,8 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
             }
             else
             {
-                infoLabel.setText(String.format("Account '%s' has no balance data table in database '%s'. Cannot set balance alert.", 
+                String[] split = Main.BUNDLE.getString("noBalanceData").split("%%");
+                infoLabel.setText(String.format(split[0] + "%s" + split[1] + "%s" + split[2], 
                         addressesList.getSelectedValue(),databasesList.getSelectedValue()));
                 aboveRadio.setEnabled(false);
                 belowRadio.setEnabled(false);
@@ -179,7 +182,7 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
         jSplitPane1 = new javax.swing.JSplitPane();
         optionsPanel = new javax.swing.JPanel();
         balanceSpinner = new javax.swing.JSpinner();
-        jLabel1 = new javax.swing.JLabel();
+        balanceAlertsLabel = new javax.swing.JLabel();
         saveAlertButton = new javax.swing.JButton();
         aboveRadio = new javax.swing.JRadioButton();
         belowRadio = new javax.swing.JRadioButton();
@@ -212,15 +215,16 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         optionsPanel.add(balanceSpinner, gridBagConstraints);
 
-        jLabel1.setText("Alert me when balance goes");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("i18n/Language"); // NOI18N
+        balanceAlertsLabel.setText(bundle.getString("balanceAlertsLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridheight = 4;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
-        optionsPanel.add(jLabel1, gridBagConstraints);
+        optionsPanel.add(balanceAlertsLabel, gridBagConstraints);
 
-        saveAlertButton.setText("Save");
+        saveAlertButton.setText(bundle.getString("saveAlertButton")); // NOI18N
         saveAlertButton.setEnabled(false);
         saveAlertButton.addActionListener(new java.awt.event.ActionListener()
         {
@@ -236,7 +240,7 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
         optionsPanel.add(saveAlertButton, gridBagConstraints);
 
         aboveRadio.setSelected(true);
-        aboveRadio.setText("above");
+        aboveRadio.setText(bundle.getString("aboveRadio")); // NOI18N
         aboveRadio.setEnabled(false);
         aboveRadio.addActionListener(new java.awt.event.ActionListener()
         {
@@ -251,7 +255,7 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         optionsPanel.add(aboveRadio, gridBagConstraints);
 
-        belowRadio.setText("below");
+        belowRadio.setText(bundle.getString("belowRadio")); // NOI18N
         belowRadio.setEnabled(false);
         belowRadio.addActionListener(new java.awt.event.ActionListener()
         {
@@ -266,7 +270,7 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         optionsPanel.add(belowRadio, gridBagConstraints);
 
-        jLabel2.setText("QORT");
+        jLabel2.setText(bundle.getString("qortLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 3;
@@ -276,7 +280,7 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
         optionsPanel.add(jLabel2, gridBagConstraints);
 
         infoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        infoLabel.setText("Choose a database and an account to set a balance alert");
+        infoLabel.setText(bundle.getString("balanceAlertsInfoLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -329,7 +333,9 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
             dbManager.ChangeValue("my_watchlist", "alertvalue", String.valueOf(alertValue), "id", String.valueOf(ID),connection);            
             connection.close();
             
-            JOptionPane.showMessageDialog(saveAlertButton, "Alert saved", "Succes", JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(saveAlertButton, 
+                    Main.BUNDLE.getString("alertSaved"),
+                    Main.BUNDLE.getString("success"), JOptionPane.PLAIN_MESSAGE);
         }
         catch (Exception e)
         {
@@ -342,12 +348,12 @@ public class BalanceAlertsPanel extends javax.swing.JPanel
     private javax.swing.JRadioButton aboveRadio;
     private javax.swing.JList<String> addressesList;
     private javax.swing.JScrollPane addressesScrollpane;
+    private javax.swing.JLabel balanceAlertsLabel;
     private javax.swing.JSpinner balanceSpinner;
     private javax.swing.JRadioButton belowRadio;
     private javax.swing.JList<String> databasesList;
     private javax.swing.JScrollPane databasesScrollpane;
     private javax.swing.JLabel infoLabel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane mainSplitpane;

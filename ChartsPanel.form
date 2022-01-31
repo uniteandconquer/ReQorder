@@ -96,7 +96,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="1056" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="1375" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -124,9 +124,9 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="1056" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="1375" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                          <Component id="ChartOptionsScrollpane" alignment="1" pref="1056" max="32767" attributes="0"/>
+                          <Component id="ChartOptionsScrollpane" alignment="1" pref="1375" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -153,7 +153,9 @@
                       <SubComponents>
                         <Component class="javax.swing.JCheckBox" name="balanceCheckbox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Balance"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="balanceCheckBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="balance"/>
                           </Properties>
                           <Constraints>
@@ -164,7 +166,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="levelCheckbox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Level"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="levelCheckbox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="level"/>
                           </Properties>
                           <Constraints>
@@ -173,9 +177,11 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="numberOfConnectionsBox1">
+                        <Component class="javax.swing.JCheckBox" name="numberOfConnectionsBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Connected peers"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="numberOfConnectionsBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="numberOfConnections"/>
                           </Properties>
                           <Constraints>
@@ -184,9 +190,11 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="allKnownPeersBox1">
+                        <Component class="javax.swing.JCheckBox" name="allKnownPeersBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="All known peers"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="allKnownPeersBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="allKnownPeers"/>
                           </Properties>
                           <Constraints>
@@ -195,9 +203,11 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="uptimeBox1">
+                        <Component class="javax.swing.JCheckBox" name="uptimeBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Uptime"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="uptimeBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="uptime"/>
                           </Properties>
                           <Constraints>
@@ -208,7 +218,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="ltc2Qortbox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Litecoin to Qort price"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="ltc2QortBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="ltc_to_qort_price"/>
                           </Properties>
                           <Constraints>
@@ -224,10 +236,14 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="cpu_tempBox1">
+                        <Component class="javax.swing.JCheckBox" name="cpu_tempBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="CPU temperature"/>
-                            <Property name="toolTipText" type="java.lang.String" value="On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="cpuTempBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
+                            <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="cpuTempBoxTooltip" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="cpu_temp"/>
                           </Properties>
                           <Constraints>
@@ -236,9 +252,11 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="blockchainSizeBox1">
+                        <Component class="javax.swing.JCheckBox" name="blockchainSizeBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Blockchain size"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="blockChainSizeBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="blockchainsize"/>
                           </Properties>
                           <Constraints>
@@ -247,9 +265,11 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="allOnlineMintersBox1">
+                        <Component class="javax.swing.JCheckBox" name="allOnlineMintersBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="All online minters"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="allOnlineMintersBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="allOnlineMinters"/>
                           </Properties>
                           <Constraints>
@@ -258,9 +278,11 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="blocksCheckbox">
+                        <Component class="javax.swing.JCheckBox" name="blocksMintedBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Blocks minted"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="blocksMintedBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="blocks"/>
                           </Properties>
                           <Constraints>
@@ -271,7 +293,12 @@
                         </Component>
                         <Component class="javax.swing.JButton" name="createChartButton">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Create chart"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="createChartButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
+                            <Property name="actionCommand" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="createChartButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="createChartButtonActionPerformed"/>
@@ -292,9 +319,11 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="ramUsageBox1">
+                        <Component class="javax.swing.JCheckBox" name="ramUsageBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="ReQorder RAM usage"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="ramUsageBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="ram_usage"/>
                           </Properties>
                           <Constraints>
@@ -303,12 +332,14 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JButton" name="selectButton">
+                        <Component class="javax.swing.JButton" name="selectAllButton">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Select all"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="selectAllButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selectButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selectAllButtonActionPerformed"/>
                           </Events>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -316,12 +347,14 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JButton" name="deselectButton">
+                        <Component class="javax.swing.JButton" name="deselectAllButton">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Deselect all"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="deselectAllButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deselectButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deselectAllButtonActionPerformed"/>
                           </Events>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -332,7 +365,9 @@
                         <Component class="javax.swing.JCheckBox" name="crosshairsCheckbox">
                           <Properties>
                             <Property name="selected" type="boolean" value="true"/>
-                            <Property name="text" type="java.lang.String" value="Show crosshairs"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="crosshairsCheckbox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="skip"/>
                           </Properties>
                           <Events>
@@ -347,7 +382,9 @@
                         <Component class="javax.swing.JCheckBox" name="showDialogCheckbox">
                           <Properties>
                             <Property name="selected" type="boolean" value="true"/>
-                            <Property name="text" type="java.lang.String" value="Show dialog"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="showDialogCheckbox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="skip"/>
                           </Properties>
                           <Events>
@@ -368,7 +405,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="buildversionCheckbox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Buildversion"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="buildversionCheckBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="buildversion"/>
                           </Properties>
                           <Constraints>
@@ -379,7 +418,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="doge2QortBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Dogecoin to Qort price"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="doge2QortBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="doge_to_qort_price"/>
                           </Properties>
                           <Constraints>
@@ -388,9 +429,11 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="myBlockHeightBox2">
+                        <Component class="javax.swing.JCheckBox" name="myBlockHeightBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Blockheight (node)"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="myBlockHeightBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="myblockheight"/>
                           </Properties>
                           <Constraints>
@@ -399,9 +442,11 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="javax.swing.JCheckBox" name="blockHeightBox2">
+                        <Component class="javax.swing.JCheckBox" name="blockHeightBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Blockheight (chain)"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="blockHeightBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="blockheight"/>
                           </Properties>
                           <Constraints>
@@ -412,7 +457,9 @@
                         </Component>
                         <Component class="javax.swing.JButton" name="levelProjectionButton">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Levelling projection"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="levellingProjectionButton" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="levelProjectionButtonActionPerformed"/>
@@ -432,7 +479,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="mintingRateBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Minting rate"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="mintingRateBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="mintingrate"/>
                           </Properties>
                           <Constraints>
@@ -443,7 +492,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="balanceDeltaBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Balance delta"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="balanceDeltaBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="balancedelta"/>
                           </Properties>
                           <Constraints>
@@ -455,7 +506,9 @@
                         <Component class="javax.swing.JCheckBox" name="interpolateCheckbox">
                           <Properties>
                             <Property name="selected" type="boolean" value="true"/>
-                            <Property name="text" type="java.lang.String" value="Interpolate snapshots"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="interpolateCheckbox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="skip"/>
                           </Properties>
                           <Events>
@@ -469,7 +522,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="efficiencyBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Minting efficiency"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="efficiencyBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="efficiency"/>
                           </Properties>
                           <Constraints>
@@ -480,7 +535,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="movingAverageBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Show moving average"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="showMovingAverageBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="skip"/>
                           </Properties>
                           <Events>
@@ -497,7 +554,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="qort2LtcBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Qort to Litecoin price"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="qort2LtcBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="qort_to_ltc_price"/>
                           </Properties>
                           <Constraints>
@@ -508,7 +567,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="qort2DogeBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Qort to Dogecoin price"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="qort2DogeBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="qort_to_doge_price"/>
                           </Properties>
                           <Constraints>
@@ -519,7 +580,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="recPerHourBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Avg received per hour"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="recPerHourBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="bytes_rec_avg_hour"/>
                           </Properties>
                           <Constraints>
@@ -530,7 +593,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="sentPerHourBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Avg sent per hour"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="sentPerHourBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="bytes_sent_avg_hour"/>
                           </Properties>
                           <Constraints>
@@ -541,7 +606,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="bytesRecBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Bytes received"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="bytesReceivedBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="bytes_received"/>
                           </Properties>
                           <Constraints>
@@ -552,7 +619,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="bytesSentBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Bytes sent"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="bytesSentbox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="bytes_sent"/>
                           </Properties>
                           <Constraints>
@@ -563,7 +632,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="sentPerDayBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Avg sent per day"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="sentPerDaybox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="bytes_sent_avg_day"/>
                           </Properties>
                           <Constraints>
@@ -574,7 +645,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="recPerDayBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Avg received per day"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="recPerDayBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="bytes_rec_avg_day"/>
                           </Properties>
                           <Constraints>
@@ -585,7 +658,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="sentPerMinBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Avg sent per minute"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="sentPerMinBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="bytes_sent_avg_min"/>
                           </Properties>
                           <Constraints>
@@ -596,7 +671,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="recPerMinBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Avg received per minute"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="recPerinBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="bytes_rec_avg_min"/>
                           </Properties>
                           <Constraints>
@@ -608,7 +685,9 @@
                         <Component class="javax.swing.JCheckBox" name="showSnapshotsBox">
                           <Properties>
                             <Property name="selected" type="boolean" value="true"/>
-                            <Property name="text" type="java.lang.String" value="Show snapshots"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="showSnapshotsBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="skip"/>
                           </Properties>
                           <Events>
@@ -629,8 +708,12 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="averageLabel">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Average 5 snapshots"/>
-                            <Property name="toolTipText" type="java.lang.String" value="The moving average will calculate the sum of the number of snapshots specified here and divide the sum by this number"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="averageLabelDefault" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
+                            <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="averageLabelTooltip" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -656,7 +739,9 @@
                         <Component class="javax.swing.JCheckBox" name="showDataBox">
                           <Properties>
                             <Property name="selected" type="boolean" value="true"/>
-                            <Property name="text" type="java.lang.String" value="Show raw data"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="showRawDataBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="skip"/>
                           </Properties>
                           <Events>
@@ -673,7 +758,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="averageAllBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Average all"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="averageAllBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="skip"/>
                           </Properties>
                           <Events>
@@ -690,8 +777,9 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="qortalRamBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Qortal RAM usage"/>
-                            <Property name="toolTipText" type="java.lang.String" value="On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="qortalRamBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
                             <Property name="actionCommand" type="java.lang.String" value="qortal_ram"/>
                           </Properties>
                           <Constraints>
@@ -702,8 +790,10 @@
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="cpu_usageBox">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="CPU usage"/>
-                            <Property name="toolTipText" type="java.lang.String" value="On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data"/>
+                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                              <ResourceString bundle="i18n/Language.properties" key="cpu_usageBox" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            </Property>
+                            <Property name="toolTipText" type="java.lang.String" value=""/>
                             <Property name="actionCommand" type="java.lang.String" value="cpu_usage"/>
                           </Properties>
                           <Constraints>

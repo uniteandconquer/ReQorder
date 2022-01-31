@@ -208,12 +208,10 @@ public class DatabaseManager
     
     protected void MoveInaccessibleFile(String fileName)
     {
+        String[] split = Main.BUNDLE.getString("dbInaccessible").split("%%");
         boolean keepFile = JOptionPane.showConfirmDialog(BackgroundService.GUI, 
-                        Utilities.AllignCenterHTML(String.format(
-                                "The database '%s' is inaccessible for this account<br/>"
-                                        + "Do you want to save it to the 'inaccessible' folder?"
-                                        + "<br/><br/>Choosing 'No' will delete this file", fileName)), 
-                        "Delete or move?", 
+                        Utilities.AllignCenterHTML(String.format(split[0] + "%s" + split[1], fileName)), 
+                        Main.BUNDLE.getString("dbInaccessibleTitle"), 
                         JOptionPane.YES_NO_OPTION, 
                         JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION;
         try
@@ -237,12 +235,12 @@ public class DatabaseManager
             
             if(keepFile)
                 JOptionPane.showMessageDialog(BackgroundService.GUI, 
-                    Utilities.AllignCenterHTML(String.format("'%s' was moved to:<br/>%s",fileName,newFile)),
-                    "Database inaccessible", JOptionPane.WARNING_MESSAGE);
+                    Utilities.AllignCenterHTML(String.format("'%s' " + Main.BUNDLE.getString("dbMoved") + "<br/>%s",fileName,newFile)),
+                    Main.BUNDLE.getString("dbMovedTitle"), JOptionPane.WARNING_MESSAGE);
             else
                 JOptionPane.showMessageDialog(BackgroundService.GUI, 
-                    Utilities.AllignCenterHTML(String.format("'%s' was deleted",fileName)),
-                    "Database inaccessible", JOptionPane.WARNING_MESSAGE);
+                    Utilities.AllignCenterHTML(String.format("'%s' " + Main.BUNDLE.getString("dbDeleted"),fileName)),
+                    Main.BUNDLE.getString("dbDeletedTitle"), JOptionPane.WARNING_MESSAGE);
         }
         catch (IOException e)
         {
@@ -350,14 +348,14 @@ public class DatabaseManager
             Files.move(fileToMovePath, targetPath,StandardCopyOption.REPLACE_EXISTING);
             
             BackgroundService.AppendLog("Account backup complete");
-            System.out.println("Account backup complete");
+            System.out.println(Main.BUNDLE.getString("backupComplete"));
         }
         catch (IOException e)
         {      
             newFile.delete();
             BackgroundService.AppendLog(e);
             BackgroundService.AppendLog("ACCOUNT BACKUP FAILED\n" + e.toString());
-            System.out.println("ACCOUNT BACKUP FAILED");
+            System.out.println(Main.BUNDLE.getString("backupFailed"));
         }
     }
     
@@ -382,7 +380,7 @@ public class DatabaseManager
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Invalid file: file must be named 'restore.zip'");
+                JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("invalidRestoreFile"));
                 return null;
             }
         }
@@ -400,11 +398,8 @@ public class DatabaseManager
         if(accountFile != null)
         {
             if(JOptionPane.showConfirmDialog(BackgroundService.GUI, 
-                    Utilities.AllignCenterHTML("Do you want to import this account?<br/><br/>"
-                            + "This will replace your current properties file.<br/><br/>"
-                            + "The imported account will not have access to any<br/>"
-                            + "encrypted databases created with the current account."),
-                    "Import account?",
+                    Utilities.AllignCenterHTML(Main.BUNDLE.getString("importAccountPrompt")),
+                    Main.BUNDLE.getString("importAccountPromptTitle"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
             {
                 File dbDir = new File(dbFolderOS);
@@ -417,13 +412,13 @@ public class DatabaseManager
                 try
                 {
                     UnzipRestoreFile(accountFile, dbDir, authDir);        
-                    JOptionPane.showMessageDialog(BackgroundService.GUI, "Account imported");     
+                    JOptionPane.showMessageDialog(BackgroundService.GUI, Main.BUNDLE.getString("accountImported"));     
                     return true;//success
                 }
                 catch (HeadlessException | IOException | NullPointerException e)
                 {
                     BackgroundService.AppendLog(e);
-                    JOptionPane.showMessageDialog(BackgroundService.GUI, "Error restoring account\n\n" + e.toString());
+                    JOptionPane.showMessageDialog(BackgroundService.GUI, Main.BUNDLE.getString("importFailed") + e.toString());
                     return false;//exception thrown
                 }
             }
@@ -818,12 +813,11 @@ public class DatabaseManager
                     return true;  
                 }                 
 
+                 String[] split = Main.BUNDLE.getString("nodeSettingsChanged").split("%%");
                  int choice = JOptionPane.showConfirmDialog(
                          BackgroundService.GUI,
-                         Utilities.AllignCenterHTML("Node settings have changed<br/>"
-                            + "Choose 'OK' to continue (this will delete any node data stored in '" + args[0] + "')<br/>"
-                            + "If you wish to keep your node data, choose 'Cancel' and create a new database"),
-                         "Delete node data?",
+                         Utilities.AllignCenterHTML(split[0] + args[0] + split[1]),
+                         Main.BUNDLE.getString("nodeSettingsChangedTitle"),
                          JOptionPane.OK_CANCEL_OPTION,
                          JOptionPane.WARNING_MESSAGE
                  );
@@ -964,7 +958,8 @@ public class DatabaseManager
             {
                 if(address.equals(resultSet.getString("address")))
                 {
-                    JOptionPane.showMessageDialog(null,"Address '" + address + "' already exists in watchlist '" + watchlist + "'");
+                    String[] split = Main.BUNDLE.getString("addressExists").split("%%");
+                    JOptionPane.showMessageDialog(null,split[0] + address + split[1] + watchlist + split[2]);
                     c.close();
                     return false;
                 }
@@ -997,12 +992,12 @@ public class DatabaseManager
         }
         catch(ConnectException e)
         {
-                JOptionPane.showMessageDialog(null,"Cannot connect to core\n Please make sure the Qortal core is running\n");
+                JOptionPane.showMessageDialog(null,Main.BUNDLE.getString("cannotConnect"));
                 return false;            
         }
         catch(IOException e)
         {            
-            JOptionPane.showMessageDialog(null, "Error: invalid address.\n" + address + "\n");
+            JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("invalidAddress") + address + "\n");
             return false;
         }
         catch (NullPointerException | HeadlessException | SQLException | TimeoutException | JSONException e) 
@@ -1123,15 +1118,10 @@ public class DatabaseManager
         if(myOS.equals("Windows") && sensors.getCpuTemperature() < 1)
         {
             JOptionPane jOptionPane = new JOptionPane(
-                        Utilities.AllignCenterHTML(
-                                    "Could not access CPU temperature sensors<br/>"
-                                + "On Windows systems please make sure<br/>"
-                                + "'Open Hardware Monitor' is installed and running<br/><br/>"
-                                + "Otherwise, deselect the CPU temperature checkbox<br/><br/>"
-                                + "Session will continue, snapshots will not include CPU temp data"), 
+                        Utilities.AllignCenterHTML(Main.BUNDLE.getString("ohwmDialog")), 
                         JOptionPane.PLAIN_MESSAGE);
 
-                JDialog dlg = jOptionPane.createDialog("Please install and run 'Open Hardware Monitor'");
+                JDialog dlg = jOptionPane.createDialog(Main.BUNDLE.getString("ohwmDialogTitle"));
                 dlg.addComponentListener(new ComponentAdapter()
                 {
                     @Override
@@ -1167,42 +1157,41 @@ public class DatabaseManager
                 {
                     if (!(boolean) GetFirstItem("node_prefs", "blockchainsize", dbConn))
                     {
-                        invalids.add("Blockchain size (blockchain folder not set)");
-                        invalids.add("Space left (blockchain folder not set)");
+                        invalids.add(Main.BUNDLE.getString("ivBlockchainSize"));
+                        invalids.add(Main.BUNDLE.getString("ivSpaceLeft"));
                     }           
                 }
                  if ((boolean) GetFirstItem("alerts_settings", "ltcprice", propsConnection))
                 {
                     if (!(boolean) GetFirstItem("node_prefs", "ltcprice", dbConn))
-                        invalids.add("LTC price");              
+                        invalids.add(Main.BUNDLE.getString("ivLtc"));              
                 }
                  if ((boolean) GetFirstItem("alerts_settings", "dogeprice", propsConnection))
                 {
                     if (!(boolean) GetFirstItem("node_prefs", "dogeprice", dbConn))
-                        invalids.add("Doge price");              
+                        invalids.add(Main.BUNDLE.getString("ivDoge"));              
                 }
                  if (!TableExists(" my_watchlist", dbConn))  //GetFirstItem("my_watchlist", "id", dbConn) == null)//if table is empty
                 {
                     if ((boolean) GetFirstItem("alerts_settings", "minting", propsConnection))
-                        invalids.add("Minting halted (no watchlist applied)");
+                        invalids.add(Main.BUNDLE.getString("ivMinting"));
                     if ((boolean) GetFirstItem("alerts_settings", "levelling", propsConnection))
-                        invalids.add("Levelling updates (no watchlist applied)");
+                        invalids.add(Main.BUNDLE.getString("ivLevelling"));
                     if ((boolean) GetFirstItem("alerts_settings", "name_reg", propsConnection))
-                        invalids.add("Name registration (no watchlist applied)");                 
+                        invalids.add(Main.BUNDLE.getString("ivName"));                 
                 }
             }
 
             if(invalids.isEmpty())
                 return;
 
-            String paneMessage = "The following alerts are enabled but can not be triggered:<br/><br/>";
+            String paneMessage = Main.BUNDLE.getString("paneMessage1");
             paneMessage = invalids.stream().map(invalid -> invalid + "<br/>").reduce(paneMessage, String::concat);
-            paneMessage += "<br/>In order to receive these alerts you'll<br/>need to reqord the corresponding data.";
+            paneMessage += Main.BUNDLE.getString("paneMessage2");
 
             JOptionPane.showMessageDialog(BackgroundService.GUI, 
-                    Utilities.AllignCenterHTML(paneMessage), "Alerts warning", JOptionPane.WARNING_MESSAGE);
-           
-            
+                    Utilities.AllignCenterHTML(paneMessage),
+                    Main.BUNDLE.getString("paneMessageTitle"), JOptionPane.WARNING_MESSAGE);
         }
         catch (Exception e)
         {
@@ -1219,10 +1208,8 @@ public class DatabaseManager
                 if(!TableExists("blockchain_folder", c))
                 {
                     JOptionPane.showMessageDialog(BackgroundService.GUI,
-                            Utilities.AllignCenterHTML("Could not find blockchain folder, please locate and set it<br/>"
-                                    + "or disable the checkmark in your database options panel<br/><br/>"
-                                    + "The blockchain folder is inside your Qortal folder and is named 'db'"),
-                            "Locate blockchain folder", JOptionPane.QUESTION_MESSAGE);
+                            Utilities.AllignCenterHTML(Main.BUNDLE.getString("blockchainFolderWarning")),
+                            Main.BUNDLE.getString("blockchainFolderWarningTitle"), JOptionPane.QUESTION_MESSAGE);
                     JFileChooser jfc = new JFileChooser();
                     jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                     int returnValue = jfc.showSaveDialog(null);
@@ -1234,7 +1221,7 @@ public class DatabaseManager
                         if (selectedFile.getName().equals("db"))
                         {
                             blockChainFolder = selectedFile.getAbsolutePath();
-                            System.out.println("Setting blockchainfolder to " + blockChainFolder);
+                            System.out.println(Main.BUNDLE.getString("settingBlockchainFolder") + blockChainFolder);
 
                             CreateTable(new String[]{"blockchain_folder","id","tinyint","blockchain_folder","varchar(255)"}, c);
                             InsertIntoDB(new String[]{"blockchain_folder","id","0","blockchain_folder",Utilities.SingleQuotedString(blockChainFolder)}, c);
@@ -1242,16 +1229,15 @@ public class DatabaseManager
                         else
                         {
                             JOptionPane.showMessageDialog(BackgroundService.GUI,
-                            Utilities.AllignCenterHTML("Invalid folder, folder name must be 'db'<br/><br/>"
-                                    + "Blockchain folder is not set. All 'Blockchain size' entries will default to '0'"),
-                            "Invalid blockchain folder", JOptionPane.WARNING_MESSAGE);
+                            Utilities.AllignCenterHTML(Main.BUNDLE.getString("invalidBcFolder")),
+                            Main.BUNDLE.getString("invalidBcFolderTitle"), JOptionPane.WARNING_MESSAGE);
                         }
                     }
                     else
                     {
                         JOptionPane.showMessageDialog(BackgroundService.GUI,
-                            "Blockchain folder is not set. All 'Blockchain size' entries will default to '0'",
-                            "Blockchain folder not set", JOptionPane.WARNING_MESSAGE);
+                            Main.BUNDLE.getString("bcFolderNotSet"),
+                            Main.BUNDLE.getString("bcFolderNotSetTitle"), JOptionPane.WARNING_MESSAGE);
                     }                    
                 }
                 else
@@ -1282,40 +1268,42 @@ public class DatabaseManager
 
         lastStatusAlertTime = System.currentTimeMillis();
         
-        String subject = "ReQorder status update";
-        String message = "ReQorder status update:\n\n"
-                + "Your Qortal node is online, ReQording session is active.\n\n";
+        String subject = Main.BUNDLE.getString("statusSubject");
+        String message = Main.BUNDLE.getString("statusHeader");
         
         if((boolean)GetFirstItem("alerts_settings", "shownodeinfo", propertiesConnection))
         {
             if(blockHeight - myBlockHeight >= 30)
-                message += String.format("WARNING: Your Qortal node blockheight is lagging by %d blocks.\n\n", blockHeight - myBlockHeight);
+            {
+                String[] split = Main.BUNDLE.getString("syncWarning").split("%%");
+                message += String.format(split[0] + "%d" + split[1], blockHeight - myBlockHeight);
+            }
             
-            message += String.format("Blockheight node: %s\n"
-                    + "Blockheight chain: %s\n"
-                    + "Qortal core uptime: %s\n"
-                    + "Qortal core build version: %s\n"
-                    + "Connected peers: %d\n"
-                    + "Minters online: %d\n"
-                    + "All known peers: %d\n"
-                    + "Average download rate per day: %.2f Mb\n"
-                    + "Average upload rate per day: %.2f Mb\n", 
-                    NumberFormat.getIntegerInstance().format(myBlockHeight),
-                    NumberFormat.getIntegerInstance().format(blockHeight),
-                    Utilities.MillisToDayHrMin(uptime),
-                    buildVersion.substring(1, buildVersion.length() - 2),
-                    numberofconnections,allOnlineMinters,allKnownPeers,
-                    (double)(avrgReceivedPerMinute * 1440) / 1000000, (double)(avrgSentPerMinute * 1440) / 1000000);
-
+            message += String.format(Main.BUNDLE.getString("nodeHeight") + "%s\n",
+                    NumberFormat.getIntegerInstance().format(myBlockHeight));
+            message += String.format(Main.BUNDLE.getString("chainHeight") + "%s\n",
+                    NumberFormat.getIntegerInstance().format(blockHeight));
+            message += String.format(Main.BUNDLE.getString("coreUptime") + "%s\n",
+                    Utilities.MillisToDayHrMin(uptime));
+            message += String.format(Main.BUNDLE.getString("coreBuildversion") + "%s\n",
+                    buildVersion.substring(1, buildVersion.length() - 2));
+            message += String.format(Main.BUNDLE.getString("connectedPeers") + "%d\n",numberofconnections);
+            message += String.format(Main.BUNDLE.getString("mintersOnline") + "%d\n",allOnlineMinters);
+            message += String.format(Main.BUNDLE.getString("allKnownPeers") + "%d\n",allKnownPeers);
+            message += String.format(Main.BUNDLE.getString("downloadRate") + "%.2f Mb\n",
+                    (double)(avrgReceivedPerMinute * 1440) / 1000000);
+            message += String.format(Main.BUNDLE.getString("uploadRate") + "%.2f Mb\n", 
+                    (double)(avrgSentPerMinute * 1440) / 1000000);                    
+                    
             if (blockChainFolder != null)
             {
                 File folder = new File(blockChainFolder);
                 long size = Utilities.getDirectorySize(folder);
                 int sizeMb = (int) ((double) size / 1000000);
-                message += String.format("Blockchain size: %s Mb\n"
-                                                        + "Space left on disk : %s Mb\n", 
-                                                        NumberFormat.getIntegerInstance().format(sizeMb),
-                                                        NumberFormat.getIntegerInstance().format(folder.getFreeSpace() / 1000000));
+                message += String.format(Main.BUNDLE.getString("blockChainSizeDBM") + "%s Mb\n",
+                        NumberFormat.getIntegerInstance().format(sizeMb));
+                message += String.format(Main.BUNDLE.getString("spaceLeftDBM") + "%s Mb\n",
+                        NumberFormat.getIntegerInstance().format(folder.getFreeSpace() / 1000000));
             }
 
             try
@@ -1333,14 +1321,15 @@ public class DatabaseManager
                     int myLevel = jso.getInt("level");
                     blocksMinted = jso.getInt("blocksMinted");
 
-                    message += String.format("\n"
-                            + "Active minting account: %s\n"
-                            + "Blocks minted: %s\n"
-                            + "Balance: %.5f QORT\n"
-                            + "Level: %d", myMintingAddress, NumberFormat.getIntegerInstance().format(blocksMinted), myBalance, myLevel);
+                    message+="'\n";
+                    message += String.format(Main.BUNDLE.getString("activeAccountDBM") + "%s\n",myMintingAddress);
+                    message += String.format(Main.BUNDLE.getString("blocksMintedDBM") + "%s\n",
+                            NumberFormat.getIntegerInstance().format(blocksMinted));
+                    message += String.format(Main.BUNDLE.getString("balanceDBM") + "%.5f QORT\n",myBalance);
+                    message += String.format(Main.BUNDLE.getString("levelDBM") + "%d", myLevel);
                 }
                 else
-                    message += "\n\nNo active minting account found.";    
+                    message += Main.BUNDLE.getString("noAccountDBM");    
             }
             catch (IOException | NumberFormatException | TimeoutException | JSONException e)
             {
@@ -1359,14 +1348,12 @@ public class DatabaseManager
         if ((boolean) GetFirstItem("alerts_settings", "spaceleft", propertiesConnection))
         {
             long spaceLeftValue = (long) GetFirstItem("alerts_settings", "spaceleftvalue", propertiesConnection);
-//            String filePath = (String) GetItemValue("blockchain_folder", "blockchain_folder", "id", "0", m_connection2);
             File file = new File(blockChainFolder);//new File(filePath);
             if (!spaceLeftAlertSent && file.getFreeSpace() <= spaceLeftValue)
             {
-                PoolAlert("Disk space alert",
-                        String.format("ReQorder has detected that the free space remaining on the disk drive containing "
-                                + "your blockchain folder is below the amount indicated in your alert settings.\n\n"
-                                + "Blockchain folder : ''%s''\n\nSpace remaining : %s Mb\nAlert setting : %s Mb",
+                String[] split = Main.BUNDLE.getString("spaceAlert").split("%%");//0=folder,1=space left,2=alert setting
+                PoolAlert(Main.BUNDLE.getString("spaceAlertSubject"),
+                        String.format(split[0] + "%s" + split[1] + "%s" + split[2] + "%s" + split[3],
                                 blockChainFolder, NumberFormat.getIntegerInstance().format(file.getFreeSpace() / 1000000),
                                 NumberFormat.getIntegerInstance().format(spaceLeftValue / 1000000)));
                 spaceLeftAlertSent = true;
@@ -1380,10 +1367,9 @@ public class DatabaseManager
         {
             if (!outOfSyncAlertSent && blockHeight - myBlockHeight >= 30)
             {
-                PoolAlert("Out of sync alert",
-                        String.format("ReQorder has detected that your Qortal node blockheight is "
-                                + "lagging %d blocks behind the chain blockheight.\n\n",
-                                blockHeight - myBlockHeight));
+                String[] split = Main.BUNDLE.getString("outOfSyncAlert").split("%%");
+                PoolAlert(Main.BUNDLE.getString("outOfSyncSubject"),
+                        String.format(split[0] + "%d" +  split[1],blockHeight - myBlockHeight));
                 outOfSyncAlertSent = true;
             }
         }
@@ -1394,9 +1380,8 @@ public class DatabaseManager
          try (Connection c = ConnectionDB.getConnection("properties"))
         {
              JOptionPane.showMessageDialog(BackgroundService.GUI,
-                        Utilities.AllignCenterHTML("Pease locate and set your blockchain folder<br/><br/>"
-                                + "The blockchain folder is inside your Qortal folder and is named 'db'"),
-                        "Locate blockchain folder", JOptionPane.QUESTION_MESSAGE);
+                        Utilities.AllignCenterHTML(Main.BUNDLE.getString("locateBcFolder")),
+                        Main.BUNDLE.getString("locateBcFolderTitle"), JOptionPane.QUESTION_MESSAGE);
              
                 JFileChooser jfc = new JFileChooser();
                 jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -1424,9 +1409,8 @@ public class DatabaseManager
                     else
                     {
                         JOptionPane.showMessageDialog(BackgroundService.GUI,
-                        Utilities.AllignCenterHTML("Invalid folder, folder name must be 'db'<br/><br/>"
-                                + "Blockchain folder is not set. All 'Blockchain size' entries will default to '0'"),
-                        "Invalid blockchain folder", JOptionPane.WARNING_MESSAGE);
+                        Utilities.AllignCenterHTML(Main.BUNDLE.getString("invalidBcFolder")),
+                        Main.BUNDLE.getString("invalidBcFolderTitle"), JOptionPane.WARNING_MESSAGE);
                     }
                 }      
 
@@ -1507,7 +1491,7 @@ public class DatabaseManager
     {     
         retries = -1;
         timer.cancel();
-        System.out.println("ReQording Session has stopped");        
+        System.out.println(Main.BUNDLE.getString("sessionStopped"));        
         System.gc();
     }
     
@@ -1571,8 +1555,9 @@ public class DatabaseManager
                 if(currentTick == 1)
                 {
                     snapShots++;
+                    String[] split = Main.BUNDLE.getString("sessionInfo").split("%%");
                     System.out.println(
-                            String.format("ReQording session time: %s  |  %d snapshots taken", Utilities.MillisToDayHrMin(sessionTime),snapShots));
+                            String.format(split[0] + "%s" + split[1] + "%d" + split[2], Utilities.MillisToDayHrMin(sessionTime),snapShots));
                     sessionTime += updateDelta;                    
                 }
 //                System.out.println("Starting update @ " + Utilities.TimeFormat(System.currentTimeMillis()));
@@ -1655,15 +1640,17 @@ public class DatabaseManager
                                 String nameEntry = (String) GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
                                 if(!name.equals(nameEntry))
                                 {
-                                    String update = String.format("Changing registered name entry from '%s' to '%s'", nameEntry,name);
-                                    ChangeValue("my_watchlist", "name", name, "address", Utilities.SingleQuotedString(address), dbConnection);
+                                    String[] split = Main.BUNDLE.getString("nameUpdate").split("%%");
+                                    String update = String.format(split[0] + "%s" + split[1] + "%s" + split[2], nameEntry,name);
+                                    ChangeValue("my_watchlist", "name", Utilities.SingleQuotedString(name), "address", Utilities.SingleQuotedString(address), dbConnection);
                                     System.out.println(update);
                                     BackgroundService.AppendLog(update); 
                                      //check if alert enabled, no need for alertsent flag (update should only happen once, if at all)
                                     if ((boolean) GetFirstItem("alerts_settings", "name_reg",propertiesConnection))
                                     {
-                                        PoolAlert("Qortal account name registration detected", String.format(
-                                                "ReQorder has detected a name registration for Qortal account '%s'. The newly registered name is '%s'.", 
+                                        split = Main.BUNDLE.getString("nameAlert").split("%%");
+                                        PoolAlert(Main.BUNDLE.getString("nameAlertSubject"), String.format(
+                                                split[0] + "%s" + split[1] + "%s" + split[2], 
                                                 address,name));
                                     }
                                 }
@@ -1736,23 +1723,23 @@ public class DatabaseManager
                     {
                         timer.cancel();//important to close the timer (thread)
                         Retry();
-                        SendAlertToGUI("", "ReQording retry attempt " + (retries + 1), 
-                                "An exception was thrown during your ReQording session, attempting a retry in 30 seconds.\n\n"
-                                        + "The following error was thrown:\n\n" + e.toString(), propertiesConnection);
+                        SendAlertToGUI("", Main.BUNDLE.getString("retrySubject") + (retries + 1), 
+                                Main.BUNDLE.getString("retry") + e.toString(), propertiesConnection);
                         return;
                     }
                     BackgroundService.AppendLog(e);
                     //check if alert enabled, no need for alertsent flag (update should only happen once, if at all)
                     if ((boolean) GetFirstItem("alerts_settings", "reqording",propertiesConnection))
                     {
-                        PoolAlert("WARNING: ReQording session was halted", 
-                            "ReQorder has stopped reqording, the following error was encountered:\n\n"  + e.toString());      
+                        PoolAlert(Main.BUNDLE.getString("reqordingHaltedSubject"), 
+                            Main.BUNDLE.getString("reqordingHalted")  + e.toString());      
                         SendAlertPool();
                     }
                     if(BackgroundService.GUI == null)
                     {
                         System.out.println(
-                                "Stopped reqording @ " + Utilities.DateFormat(System.currentTimeMillis()) + "\n" + e.toString());
+                                Main.BUNDLE.getString("stoppedReqording") 
+                                        + Utilities.DateFormat(System.currentTimeMillis()) + "\n" + e.toString());
                         StopReqording();
                         
                     }
@@ -1760,8 +1747,9 @@ public class DatabaseManager
                     {
                         BackgroundService.GUI.StopReqording();
                         JOptionPane.showMessageDialog(BackgroundService.GUI, 
-                                "Stopped reqording @ " + Utilities.DateFormat(System.currentTimeMillis()) + "\n" + e.toString(),
-                                "Error while reqording", JOptionPane.ERROR_MESSAGE);
+                                Main.BUNDLE.getString("stoppedReqording")  
+                                    + Utilities.DateFormat(System.currentTimeMillis()) + "\n" + e.toString(),
+                                Main.BUNDLE.getString("stoppedReqordingTitle"), JOptionPane.ERROR_MESSAGE);
                     }   
                 }
             }          
@@ -1910,12 +1898,12 @@ public class DatabaseManager
                         {
                             chainSizeAlertSent = true;
                             int sizeMb = (int)((double)size/1000000);
-                            PoolAlert("Qortal blockchain size alert", 
-                                    String.format("ReQorder has detected that the size of your blockchain folder (%s) has exceeded the "
-                                            + "treshold indicated in your alerts settings.\n\nThe current size of your blockchain folder "
-                                            + "is %s Mb.\nThe alert setting was %s Mb.",blockChainFolder,
-                                                NumberFormat.getIntegerInstance().format(sizeMb),
-                                                NumberFormat.getIntegerInstance().format(alertSize/1000000)));
+                            String[] split = Main.BUNDLE.getString("bcSizeAlert").split("%%");//0=folder,1=current,2=alert setting
+                            PoolAlert(Main.BUNDLE.getString("bcSizeAlertSubject"), 
+                                    String.format(split[0] + "%s" + split[1] + "%s" + split[2] + "%s" + split[3],
+                                            blockChainFolder,
+                                            NumberFormat.getIntegerInstance().format(sizeMb),
+                                            NumberFormat.getIntegerInstance().format(alertSize/1000000)));
                         }                        
                     }                    
                     if(folder.isDirectory())
@@ -2012,10 +2000,8 @@ public class DatabaseManager
                         subject,
                         message))
                 {
-                    String subject2 = "Error sending e-mail alert";
-                    String message2 = "ReQorder failed to send the following message. Please make sure that your mail "
-                            + "server settings and log-in credentials correct. You can also disable e-mail alerts to stop recieving this message.\n\n"
-                            + "Undelivered message : \n\nSubject : "+ subject + "\n\n" + message;
+                    String subject2 = Main.BUNDLE.getString("emailErrorSubject");
+                    String message2 = String.format(Main.BUNDLE.getString("emailError") + "%s\n\n%s", subject,message);
                     SendAlertToGUI(recipient, subject2, message2, c);
                 }
                 Arrays.fill(password, '\0');
@@ -2043,6 +2029,9 @@ public class DatabaseManager
          if(!TableExists("alerts", c))
                 CreateTable(new String[]{"alerts","timestamp","long","recipient","varchar(255)",
                     "subject","varchar(255)","message","varchar(MAX)","read","boolean"}, c);
+         
+         if(message.contains("'"))
+                message = message.replace("'", "''");
             
             InsertIntoDB(new String[]{"alerts","timestamp",String.valueOf(System.currentTimeMillis()),
                 "recipient",Utilities.SingleQuotedString(recipient),"subject",Utilities.SingleQuotedString(subject),"message",Utilities.SingleQuotedString(message),"read","false"}, c); 
@@ -2094,12 +2083,9 @@ public class DatabaseManager
                         alertedBlockAddresses.add(address);
                         String name = (String) GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
                         name = name.isEmpty() ? address : name;
-                        PoolAlert("Minting has halted",
-                                String.format("ReQorder has detected that Qortal account ''%s'' has not been minting for "
-                                        + "%s.\n\nYou might want to check if your Qortal core is running, or alert the owner of that account.\n\n"
-                                        + "If this account is not a minting account, de-select the ''blocks minted'' checkbox for it\n"
-                                        + "in the watchlist editor to stop receiving this alert.",
-                                        name, Utilities.MillisToDayHrMin(WARNING_TIME)));
+                        String[] split = Main.BUNDLE.getString("mintingHaltedAlert").split("%%");
+                        PoolAlert(Main.BUNDLE.getString("mintingHaltedSubject"),
+                                String.format(split[0] + "%s" + split[1] + "%s" + split[2],name, Utilities.MillisToDayHrMin(WARNING_TIME)));
                     }
                 }
             }
@@ -2205,19 +2191,17 @@ public class DatabaseManager
                 
                 if(alertForExceed && balance >= alertValue)
                 {
-                    PoolAlert(String.format("Balance has reached or exceeded %.5f QORT",alertValue), 
-                            String.format("ReQorder has detected that the balance for account ''%s'' has reached or exceeded the indicated alert value of %.5f.\n"
-                                    + "The current balance for this account is %.5f QORT.\n\nThis balance alert has automatically been disabled.", 
-                                    name,alertValue,balance));
+                    String[] split = Main.BUNDLE.getString("balanceAlertMessage").split("%%");
+                    PoolAlert(String.format(Main.BUNDLE.getString("balanceAlertSubject") + "%.5f QORT",alertValue), 
+                            String.format(split[0] + "%s" + split[1] + "%.5f" + split[2] + "%.5f" + split[3],name,alertValue,balance));
                     //disable alert
                     ChangeValue("my_watchlist", "alert", "false", "address", Utilities.SingleQuotedString(address), dbConnection);
                 }
                 if(!alertForExceed && balance <= alertValue)
-                {
-                    PoolAlert(String.format("Balance has reached or gone below %.5f QORT",alertValue), 
-                            String.format("ReQorder has detected that the balance for account ''%s'' has reached or gone below the indicated alert value of %.5f.\n"
-                                    + "The current balance for this account is %.5f QORT.\n\nThis balance alert has automatically been disabled.", 
-                                    name,alertValue,balance));
+                {                    
+                    String[] split = Main.BUNDLE.getString("balanceAlertMessage2").split("%%");
+                    PoolAlert(String.format(Main.BUNDLE.getString("balanceAlertSubject2") + "%.5f QORT",alertValue), 
+                            String.format(split[0] + "%s" + split[1] + "%.5f" + split[2] + "%.5f" + split[3],name,alertValue,balance));
                     //disable alert
                     ChangeValue("my_watchlist", "alert", "false", "address", Utilities.SingleQuotedString(address), dbConnection);
                 }                
@@ -2253,9 +2237,9 @@ public class DatabaseManager
                    //check if alert enabled, no need for alertsent flag (update should only happen once, if at all)
                 if ((boolean) GetFirstItem("alerts_settings", "levelling",propertiesConnection))
                 {
-                    PoolAlert("Qortal account level upgrade detected", String.format(
-                            "Congratulations!\n\nReQorder has detected a levelling upgrade from level %d to level %d for Qortal account '%s'. "
-                            + "Thank you for your contribution to the Qortal network.", oldLevel,level,name));
+                    String[] split = Main.BUNDLE.getString("levellingAlert").split("%%");
+                    PoolAlert(Main.BUNDLE.getString("levellingSubject"), String.format(
+                            split[0] + "%d" + split[1] + "%d" + split[2] + "%s" + split[3], oldLevel,level,name));
                 }
             }                                
         }
@@ -2288,10 +2272,10 @@ public class DatabaseManager
                 //check if alert enabled (no need for alert sent flag as buildversion is rarely updated)
                 if((boolean) GetFirstItem("alerts_settings", "core_update",propertiesConnection))
                 {
+                    String[] split = Main.BUNDLE.getString("coreUpdateAlert").split("%%");
                     //use 2x single quote to escape varchar required single quote
-                    PoolAlert("Qortal core update detected", String.format(
-                            "ReQorder has detected an update of your Qortal core. "
-                            + "Your buildversion has been updated from '%s' to '%s'.", oldversion, buildVersion));
+                    PoolAlert(Main.BUNDLE.getString("coreUpdateSubject"), String.format(
+                            split[0] + "%s" + split[1] + "%s" + split[2], oldversion, buildVersion));
                 }
             }                                 
         } 
@@ -2345,11 +2329,11 @@ public class DatabaseManager
                 
                 if(sendAlert)
                 {
-                    PoolAlert("Litecoin price alert", String.format(
-                            "ReQorder has detected that the Litecoin price %s the value set in your alerts settings.\n\n"
-                                    + "Last ReQorded price: %.5f QORT\nCurrent price: %.5f QORT\nAlert price %.5f QORT\n\n"
-                                    + "This alert has automatically been disabled",alertForExceed?"has exceeded":"is now lower than",
-                                    ((double)lastPrice/100000000),((double)LTCprice/100000000),((double)alertValue/100000000)));
+                    String[] split = Main.BUNDLE.getString("ltcAlertMessage").split("%%");//0=up/down type,1=last price,2=current price,3=alertvalue
+                    PoolAlert(Main.BUNDLE.getString("ltcAlertSubject"), String.format(
+                            split[0] + "%s" + split[1] + "%.5f" + split[2] + "%.5f" + split[3] + "%.5f" + split[4],
+                                alertForExceed ? Main.BUNDLE.getString("hasExceeded") : Main.BUNDLE.getString("isNowBelow"),
+                                ((double)lastPrice/100000000),((double)LTCprice/100000000),((double)alertValue/100000000)));
                     //disable alert
                     ChangeValue("alerts_settings", "ltcprice", "false", "id", "0", propertiesConnection);
                     if(BackgroundService.GUI != null)
@@ -2407,10 +2391,10 @@ public class DatabaseManager
                 
                 if(sendAlert)
                 {
-                    PoolAlert("Dogecoin price alert", String.format(
-                            "ReQorder has detected that the Dogecoin price %s the value set in your alerts settings.\n\n"
-                                    + "Last ReQorded price: %.5f QORT\nCurrent price: %.5f QORT\nAlert price %.5f QORT\n\n"
-                                    + "This alert has automatically been disabled",alertForExceed?"has exceeded":"is now lower than",
+                    String[] split = Main.BUNDLE.getString("dogeAlertMessage").split("%%");//0=up/down type,1=last price,2=current price,3=alertvalue
+                    PoolAlert(Main.BUNDLE.getString("dogeAlertSubject"), String.format(
+                            split[0] + "%s" + split[1] + "%.5f" + split[2] + "%.5f" + split[3] + "%.5f" + split[4],
+                                alertForExceed ? Main.BUNDLE.getString("hasExceeded") : Main.BUNDLE.getString("isNowBelow"),
                                     ((double)lastPrice/100000000),((double)DogePrice/100000000),((double)alertValue/100000000)));
                     //disable alert
                     ChangeValue("alerts_settings", "dogeprice", "false", "id", "0", propertiesConnection);

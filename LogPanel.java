@@ -52,7 +52,7 @@ public class LogPanel extends javax.swing.JPanel
         textArea = new javax.swing.JTextArea();
         logCheckbox = new javax.swing.JCheckBox();
         logLimitSpinner = new javax.swing.JSpinner();
-        jLabel10 = new javax.swing.JLabel();
+        logSizeLabel = new javax.swing.JLabel();
         dbEntriesCheckbox = new javax.swing.JCheckBox();
 
         logPanel.setBackground(new java.awt.Color(210, 207, 223));
@@ -74,7 +74,8 @@ public class LogPanel extends javax.swing.JPanel
         gridBagConstraints.weighty = 1.0;
         logPanel.add(jScrollPane1, gridBagConstraints);
 
-        logCheckbox.setText("Update the log");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("i18n/Language"); // NOI18N
+        logCheckbox.setText(bundle.getString("logCheckBox")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -90,15 +91,15 @@ public class LogPanel extends javax.swing.JPanel
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         logPanel.add(logLimitSpinner, gridBagConstraints);
 
-        jLabel10.setText("Maximum log size (in characters , 0 is unlimited)");
+        logSizeLabel.setText(bundle.getString("logSizeLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.weightx = 1.0;
-        logPanel.add(jLabel10, gridBagConstraints);
+        logPanel.add(logSizeLabel, gridBagConstraints);
 
-        dbEntriesCheckbox.setText("Log database entries");
+        dbEntriesCheckbox.setText(bundle.getString("dbEntriesCheckbox")); // NOI18N
         dbEntriesCheckbox.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -137,11 +138,11 @@ public class LogPanel extends javax.swing.JPanel
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JCheckBox dbEntriesCheckbox;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JScrollPane jScrollPane1;
     private static javax.swing.JCheckBox logCheckbox;
     private static javax.swing.JSpinner logLimitSpinner;
     private javax.swing.JPanel logPanel;
+    private javax.swing.JLabel logSizeLabel;
     private static javax.swing.JTextArea textArea;
     // End of variables declaration//GEN-END:variables
 }

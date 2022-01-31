@@ -40,7 +40,7 @@ public class LoginPanel extends javax.swing.JPanel
     {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jLabel1 = new javax.swing.JLabel();
+        loginLabel = new javax.swing.JLabel();
         passwordField = new javax.swing.JPasswordField();
         loginButton = new javax.swing.JButton();
         newAccountButton = new javax.swing.JButton();
@@ -49,12 +49,13 @@ public class LoginPanel extends javax.swing.JPanel
 
         setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setText("<html><div style='text-align: center;'>Welcome back!<br/><br/>Please enter your password</div></html>");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("i18n/Language"); // NOI18N
+        loginLabel.setText(bundle.getString("loginLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = new java.awt.Insets(14, 0, 14, 0);
-        add(jLabel1, gridBagConstraints);
+        add(loginLabel, gridBagConstraints);
 
         passwordField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         passwordField.addKeyListener(new java.awt.event.KeyAdapter()
@@ -71,7 +72,7 @@ public class LoginPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(14, 0, 14, 0);
         add(passwordField, gridBagConstraints);
 
-        loginButton.setText("Log in");
+        loginButton.setText(bundle.getString("loginButton")); // NOI18N
         loginButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -85,7 +86,7 @@ public class LoginPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(14, 0, 14, 0);
         add(loginButton, gridBagConstraints);
 
-        newAccountButton.setText("Create new account");
+        newAccountButton.setText(bundle.getString("newAccountButton")); // NOI18N
         newAccountButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -109,7 +110,7 @@ public class LoginPanel extends javax.swing.JPanel
 
         capsLockLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         capsLockLabel.setForeground(new java.awt.Color(161, 0, 40));
-        capsLockLabel.setText("CAPSLOCK IS ON");
+        capsLockLabel.setText(bundle.getString("capsLockLabel")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -137,7 +138,8 @@ public class LoginPanel extends javax.swing.JPanel
             else
             {
                 JOptionPane.showMessageDialog(this, 
-                        Utilities.AllignCenterHTML("Invalid password<br/>Please try again"), "Invalid password", JOptionPane.WARNING_MESSAGE);        
+                        Utilities.AllignCenterHTML(Main.BUNDLE.getString("invalidPassword")), 
+                        Main.BUNDLE.getString("invalidPasswordTitle"), JOptionPane.WARNING_MESSAGE);        
                 passwordField.setText("");
             }
         }
@@ -157,12 +159,9 @@ public class LoginPanel extends javax.swing.JPanel
     private void newAccountButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_newAccountButtonActionPerformed
     {//GEN-HEADEREND:event_newAccountButtonActionPerformed
         if(JOptionPane.showConfirmDialog(this,Utilities.AllignCenterHTML(
-                "Creating a new account will delete all your <br/>"
-            + "settings, including all of your watchlists.<br/>"
-            + "You will no longer have access to any encrypted <br/>"
-            + "databases created with this account<br/><br/>"
-                        + "Do you want to continue?"),
-                "Delete old settings?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION)
+                Main.BUNDLE.getString("newAccountWarning")),
+                Main.BUNDLE.getString("newAccountWarningTitle"), 
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION)
         {
             File[] filesToDelete = new File[3];
             filesToDelete[0] = new File(System.getProperty("user.dir") + "/databases/properties.mv.db");
@@ -180,9 +179,9 @@ public class LoginPanel extends javax.swing.JPanel
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JLabel capsLockLabel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JButton loginButton;
+    private javax.swing.JLabel loginLabel;
     private javax.swing.JButton newAccountButton;
     protected javax.swing.JPasswordField passwordField;
     // End of variables declaration//GEN-END:variables

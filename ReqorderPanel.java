@@ -110,8 +110,11 @@ public class ReqorderPanel extends javax.swing.JPanel
                     //to internal documentation files
                     else
                     {
-                        if (ev.getDescription().equals("BACK"))
+                        if (ev.getDescription().equals(Main.BUNDLE.getString("backLink")))
                         {
+                            if(guideHistory.isEmpty())
+                                return;
+                            
                             int lastGuideScrollPos = guideHistory.get(guideHistory.size() - 1).scrollValue;
                             guideEditorPane.setPage(guideHistory.get(guideHistory.size() - 1).url);
                             guideHistory.remove(guideHistory.size() - 1);
@@ -148,8 +151,8 @@ public class ReqorderPanel extends javax.swing.JPanel
     private void InitTrees()
     {
         databasesTreeModel = (DefaultTreeModel) databasesTree.getModel();
-        documentationNode = new DefaultMutableTreeNode(new NodeInfo("Documentation", "help.png"));  
-        databasesNode = new DefaultMutableTreeNode(new NodeInfo("Databases", "server.png"));
+        documentationNode = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("docuNode"), "help.png"));  
+        databasesNode = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("dbNode"), "server.png"));
         databasesTreeModel.setRoot(documentationNode);
         documentationNode.add(databasesNode);    
         databasesTreeModel.reload(databasesNode);        
@@ -166,7 +169,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         PopulateDatabasesTree();
         //after populate, otherwise it will be set to default again (until RefreshTree() implementation)
         NodeInfo ni = (NodeInfo) databasesNode.getUserObject();
-        ni.nodeName = "Databases (local mode)";
+        ni.nodeName = Main.BUNDLE.getString("dbNodeLocal");
         var dmt = (DefaultTreeModel) databasesTree.getModel();
         dmt.reload(databasesNode);
         gui.ExpandNode(databasesTree,databasesNode,1);   
@@ -182,8 +185,8 @@ public class ReqorderPanel extends javax.swing.JPanel
     {       
         ArrayList<String> dbFiles = dbManager.GetDbFiles();
         
-        documentationNode = new DefaultMutableTreeNode(new NodeInfo("Documentation", "help.png"));  
-        databasesNode = new DefaultMutableTreeNode(new NodeInfo("Databases", "server.png"));
+        documentationNode = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("docuNode"), "help.png"));  
+        databasesNode = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("dbNode"), "server.png"));
         databasesTreeModel.setRoot(documentationNode);
         documentationNode.add(databasesNode);   
 
@@ -305,7 +308,23 @@ public class ReqorderPanel extends javax.swing.JPanel
         TreePath path = new TreePath(propertiesNode.getPath());
         databasesTree.setSelectionPath(path);
         TreeSelector(path, false);
-    }   
+    } 
+    
+    protected void GoToDonatePage()
+    {
+        gui.reqorderButtonActionPerformed(null);
+        TreePath path = new TreePath(documentationNode.getPath());
+        databasesTree.setSelectionPath(path);
+        TreeSelector(path, false);
+        try
+        {            
+            guideEditorPane.setPage(GUI.class.getClassLoader().getResource("Documentation/Donate.html"));
+        }
+        catch (IOException e)
+        {
+            BackgroundService.AppendLog(e);
+        }        
+    }
     
     private void AddressSelected()
     {       
@@ -396,7 +415,8 @@ public class ReqorderPanel extends javax.swing.JPanel
             //ATTENTION: this error should not  be thrown but could pop up due to coding mistakes in versioning differences, remove later on
             if(!dbManager.TableExists("node_prefs", connection))
             {
-                JOptionPane.showMessageDialog(this, "Error: Could not find 'node_prefs' table", "Database error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("nodePrefsError"),
+                        Main.BUNDLE.getString("nodePrefsErrorTitle"), JOptionPane.ERROR_MESSAGE);
                 connection.close();
                 return;
             }
@@ -449,7 +469,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         
         if(selectedItems.isEmpty())
         {
-            JOptionPane.showMessageDialog(null, "You must select at least one item to reQord");
+            JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("selectPrompt"));
             return false;
         }
 
@@ -475,10 +495,10 @@ public class ReqorderPanel extends javax.swing.JPanel
     
     private void StartReqording()
     {   
-        if(databasesTree.getSelectionPath() == null)
+        if(databasesTree.getSelectionPath() == null && selectedDatabase == null)
         {
             JOptionPane.showMessageDialog(this, 
-                    Utilities.AllignCenterHTML("No database selected"), "", JOptionPane.PLAIN_MESSAGE);
+                    Utilities.AllignCenterHTML(Main.BUNDLE.getString("noDbSelected")), "", JOptionPane.PLAIN_MESSAGE);
             return;
         }
         online = true;
@@ -495,8 +515,8 @@ public class ReqorderPanel extends javax.swing.JPanel
         if(!online)
         {            
              JOptionPane.showMessageDialog(this,
-                    Utilities.AllignCenterHTML("Could not connect to Qortal core<br/>Make sure your core or SSH tunnel is running"),
-                    "Not connected", JOptionPane.PLAIN_MESSAGE);
+                    Utilities.AllignCenterHTML(Main.BUNDLE.getString("coreOfflineRp")),
+                    Main.BUNDLE.getString("coreOfflineRpTitle"), JOptionPane.PLAIN_MESSAGE);
             return;
         }
         
@@ -509,7 +529,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         //show user a list of the choices he made and ask for confirmation to reqord
         databaseInSession = selectedDatabase;
         GUI.REQORDING = true;  
-        reqordButton.setText("Stop ReQording");
+        reqordButton.setText(Main.BUNDLE.getString("stopReqording"));
         reqordButton.setForeground(Color.red);
         reqordingNode = selectedDatabase;
         
@@ -529,7 +549,7 @@ public class ReqorderPanel extends javax.swing.JPanel
             @Override
             public void run()
             {
-                sessionTimeLabel.setText("ReQording session: " + Utilities.MillisToDayHrMin(sessionTime));
+                sessionTimeLabel.setText(Main.BUNDLE.getString("sessionInfoRp") + Utilities.MillisToDayHrMin(sessionTime));
                 sessionTime += sessionTimerTick;
             }
         }, 0, sessionTimerTick);
@@ -539,10 +559,10 @@ public class ReqorderPanel extends javax.swing.JPanel
     public void StopReqording()
     {        
         dbManager.StopReqording();
-        reqordButton.setText("Start ReQording");
+        reqordButton.setText(Main.BUNDLE.getString("startReqording"));
         reqordButton.setForeground(Color.BLACK);
         sessionTimer.cancel();
-        sessionTimeLabel.setText("Not ReQording");
+        sessionTimeLabel.setText(Main.BUNDLE.getString("notReqording"));
         GUI.REQORDING = false;
         reqordingNode = null;
         PopulateDatabasesTree();
@@ -594,13 +614,13 @@ public class ReqorderPanel extends javax.swing.JPanel
                         connection = ConnectionDB.getConnection( "properties");
                         if(dbManager.TableExists("mail_server", connection))
                         {
-                            recipientTextbox.setText((String)dbManager.GetItemValue("mail_server", "recipient", "id", "0", connection));
-                            smtpServerTextfield.setText((String)dbManager.GetItemValue("mail_server", "smtp", "id", "0", connection));
-                            portTextfield.setText((String)dbManager.GetItemValue("mail_server", "port", "id", "0", connection));
-                            usernameTextfield.setText((String)dbManager.GetItemValue("mail_server", "username", "id", "0", connection));
+                            recipientInput.setText((String)dbManager.GetItemValue("mail_server", "recipient", "id", "0", connection));
+                            smtpServerInput.setText((String)dbManager.GetItemValue("mail_server", "smtp", "id", "0", connection));
+                            portInput.setText((String)dbManager.GetItemValue("mail_server", "port", "id", "0", connection));
+                            usernameInput.setText((String)dbManager.GetItemValue("mail_server", "username", "id", "0", connection));
                             
                             passwordField.setText("");
-                            retrievePasswordButton.setEnabled(true);                    
+                            loadPasswordButton.setEnabled(true);                    
                         }
                         if(dbManager.TableExists("socket", connection))
                         {
@@ -639,9 +659,9 @@ public class ReqorderPanel extends javax.swing.JPanel
                         connection = ConnectionDB.getConnection( selectedDatabase);
                         //doing this here, not in RefreshNodePrefsComponents(), will not update db's without node_prefs table
                         if(ConnectionDB.IsEncrypted(selectedDatabase))
-                            encryptDbButton.setText("Decrypt database");
+                            encryptDbButton.setText(Main.BUNDLE.getString("decryptDb"));
                         else
-                            encryptDbButton.setText("Encrypt database");
+                            encryptDbButton.setText(Main.BUNDLE.getString("encryptDb"));
                         
                         if(dbManager.TableExists("node_prefs",connection))
                             RefreshNodePrefsComponents();
@@ -715,7 +735,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         minuteSpinner = new javax.swing.JSpinner();
         hourIntervalLabel = new javax.swing.JLabel();
         minuteIntervalLabel = new javax.swing.JLabel();
-        timeIntervalLabel1 = new javax.swing.JLabel();
+        timeIntervalLabel = new javax.swing.JLabel();
         hourSpinner = new javax.swing.JSpinner();
         jSeparator4 = new javax.swing.JSeparator();
         jSeparator5 = new javax.swing.JSeparator();
@@ -729,9 +749,9 @@ public class ReqorderPanel extends javax.swing.JPanel
         dbModePanel = new javax.swing.JPanel();
         localButton = new javax.swing.JButton();
         remoteButton = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
+        comingSoonLabel = new javax.swing.JLabel();
         localLabel = new javax.swing.JLabel();
-        localLabel1 = new javax.swing.JLabel();
+        remoteLabel = new javax.swing.JLabel();
         jSeparator7 = new javax.swing.JSeparator();
         dbCreatePanel = new javax.swing.JPanel();
         createDbButton = new javax.swing.JButton();
@@ -744,28 +764,28 @@ public class ReqorderPanel extends javax.swing.JPanel
         propertiesOptionsPanel = new javax.swing.JPanel();
         setBlockchainFolderButton = new javax.swing.JButton();
         jSeparator11 = new javax.swing.JSeparator();
-        smtpServerTextfield = new javax.swing.JTextField();
-        portTextfield = new javax.swing.JTextField();
+        smtpServerInput = new javax.swing.JTextField();
+        portInput = new javax.swing.JTextField();
         passwordField = new javax.swing.JPasswordField();
-        usernameTextfield = new javax.swing.JTextField();
+        usernameInput = new javax.swing.JTextField();
         saveMailServerButton = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        setupMailLabel = new javax.swing.JLabel();
         testMailServerButton = new javax.swing.JButton();
-        recipientTextbox = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        recipientInput = new javax.swing.JTextField();
+        recipientLabel = new javax.swing.JLabel();
+        smtpLabel = new javax.swing.JLabel();
+        portLabel = new javax.swing.JLabel();
+        userLabel = new javax.swing.JLabel();
+        passwordLabel = new javax.swing.JLabel();
         receivedMailCheckbox = new javax.swing.JCheckBox();
-        retrievePasswordButton = new javax.swing.JButton();
+        loadPasswordButton = new javax.swing.JButton();
         changePasswordButton = new javax.swing.JButton();
         backupAccountCheckbox = new javax.swing.JCheckBox();
         buildVersionLabel = new javax.swing.JLabel();
         importAccountButton = new javax.swing.JButton();
-        jLabel9 = new javax.swing.JLabel();
+        apiIpLabel = new javax.swing.JLabel();
         apiPortInputField = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
+        apiPortLabel = new javax.swing.JLabel();
         api_IP_inputField = new javax.swing.JTextField();
         jSeparator12 = new javax.swing.JSeparator();
         saveSocketButton = new javax.swing.JButton();
@@ -880,7 +900,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 );
                 guidePanelLayout.setVerticalGroup(
                     guidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(guideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 931, Short.MAX_VALUE)
+                    .addComponent(guideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1024, Short.MAX_VALUE)
                 );
 
                 mainOptionsPanel.add(guidePanel, "guidePanel");
@@ -890,8 +910,9 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.setMinimumSize(new java.awt.Dimension(200, 545));
                 dbOptionsPanel.setLayout(new java.awt.GridBagLayout());
 
-                saveDbPrefsButton.setText("Save preferences");
-                saveDbPrefsButton.setToolTipText("Save your node and watchlist settings to the properties file");
+                java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("i18n/Language"); // NOI18N
+                saveDbPrefsButton.setText(bundle.getString("saveDbPrefsButton")); // NOI18N
+                saveDbPrefsButton.setToolTipText(bundle.getString("saveDbPrefsButtonTooltip")); // NOI18N
                 saveDbPrefsButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -906,7 +927,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 dbOptionsPanel.add(saveDbPrefsButton, gridBagConstraints);
 
-                deleteDbButton.setText("Delete database");
+                deleteDbButton.setText(bundle.getString("deleteDbButton")); // NOI18N
                 deleteDbButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -922,7 +943,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(deleteDbButton, gridBagConstraints);
 
                 blockHeightBox.setSelected(true);
-                blockHeightBox.setText("Blockheight (node)");
+                blockHeightBox.setText(bundle.getString("myBlockHeightBox")); // NOI18N
                 blockHeightBox.setActionCommand("myblockheight");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -932,7 +953,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(blockHeightBox, gridBagConstraints);
 
                 myBlockHeightBox.setSelected(true);
-                myBlockHeightBox.setText("Blockheight (chain)");
+                myBlockHeightBox.setText(bundle.getString("blockHeightBox")); // NOI18N
                 myBlockHeightBox.setActionCommand("blockheight");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -942,7 +963,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(myBlockHeightBox, gridBagConstraints);
 
                 numberOfConnectionsBox.setSelected(true);
-                numberOfConnectionsBox.setText("Connected peers");
+                numberOfConnectionsBox.setText(bundle.getString("numberOfConnectionsBox")); // NOI18N
                 numberOfConnectionsBox.setActionCommand("numberOfConnections");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -952,7 +973,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(numberOfConnectionsBox, gridBagConstraints);
 
                 allKnownPeersBox.setSelected(true);
-                allKnownPeersBox.setText("All known peers");
+                allKnownPeersBox.setText(bundle.getString("allKnownPeersBox")); // NOI18N
                 allKnownPeersBox.setActionCommand("allKnownPeers");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -962,7 +983,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(allKnownPeersBox, gridBagConstraints);
 
                 uptimeBox.setSelected(true);
-                uptimeBox.setText("Uptime");
+                uptimeBox.setText(bundle.getString("uptimeBox")); // NOI18N
                 uptimeBox.setActionCommand("uptime");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -972,7 +993,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(uptimeBox, gridBagConstraints);
 
                 ltcPriceBox.setSelected(true);
-                ltcPriceBox.setText("Litecoin price");
+                ltcPriceBox.setText(bundle.getString("ltcPriceBox")); // NOI18N
                 ltcPriceBox.setActionCommand("ltcPrice");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -990,7 +1011,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(jSeparator1, gridBagConstraints);
 
                 dataUsageBox.setSelected(true);
-                dataUsageBox.setText("Data usage");
+                dataUsageBox.setText(bundle.getString("dataUsageBox")); // NOI18N
                 dataUsageBox.setActionCommand("data_usage");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -1000,8 +1021,8 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(dataUsageBox, gridBagConstraints);
 
                 cpu_tempBox.setSelected(true);
-                cpu_tempBox.setText("CPU temperature");
-                cpu_tempBox.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
+                cpu_tempBox.setText(bundle.getString("cpuTempBox")); // NOI18N
+                cpu_tempBox.setToolTipText(bundle.getString("cpuTempBoxTooltip")); // NOI18N
                 cpu_tempBox.setActionCommand("cpu_temp");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -1011,7 +1032,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(cpu_tempBox, gridBagConstraints);
 
                 blockchainSizeBox.setSelected(true);
-                blockchainSizeBox.setText("Blockchain size");
+                blockchainSizeBox.setText(bundle.getString("blockChainSizeBox")); // NOI18N
                 blockchainSizeBox.setActionCommand("blockchainsize");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -1028,8 +1049,8 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
                 dbOptionsPanel.add(jSeparator2, gridBagConstraints);
 
-                watchlistsManagerButton.setText("Manage watchlists");
-                watchlistsManagerButton.setToolTipText("Add or remove addresses to your watchlist and choose which of their data to ReQord");
+                watchlistsManagerButton.setText(bundle.getString("watchlistsManagerButton")); // NOI18N
+                watchlistsManagerButton.setToolTipText(bundle.getString("watchlistsManagerBtnTooltip")); // NOI18N
                 watchlistsManagerButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1069,7 +1090,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
                 dbOptionsPanel.add(minuteSpinner, gridBagConstraints);
 
-                hourIntervalLabel.setText("Snapshot interval in hours :");
+                hourIntervalLabel.setText(bundle.getString("hourIntervalLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 22;
@@ -1078,7 +1099,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 dbOptionsPanel.add(hourIntervalLabel, gridBagConstraints);
 
-                minuteIntervalLabel.setText("Snapshot interval in minutes : ");
+                minuteIntervalLabel.setText(bundle.getString("minuteIntervalLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 21;
@@ -1087,15 +1108,15 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 dbOptionsPanel.add(minuteIntervalLabel, gridBagConstraints);
 
-                timeIntervalLabel1.setText("<html><div style='text-align: center;'>Total time interval : 5 minutes<br/>Entries per day: 288,0</div><html>");
-                timeIntervalLabel1.setToolTipText("The time interval that will be used between reQorder snapshots");
+                timeIntervalLabel.setText(bundle.getString("timeIntervalLabelDefault")); // NOI18N
+                timeIntervalLabel.setToolTipText(bundle.getString("timeIntervalLabelTooltip")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 23;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-                dbOptionsPanel.add(timeIntervalLabel1, gridBagConstraints);
+                dbOptionsPanel.add(timeIntervalLabel, gridBagConstraints);
 
                 hourSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 24, 1));
                 hourSpinner.setToolTipText("maximum = 24 hours");
@@ -1130,8 +1151,8 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 15, 0);
                 dbOptionsPanel.add(jSeparator5, gridBagConstraints);
 
-                reqordButton.setText("Start ReQording");
-                reqordButton.setToolTipText("Save your preferences and start reQording");
+                reqordButton.setText(bundle.getString("reqordButton")); // NOI18N
+                reqordButton.setToolTipText(bundle.getString("reqordButtonTooltip")); // NOI18N
                 reqordButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1147,7 +1168,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(reqordButton, gridBagConstraints);
 
                 allOnlineMintersBox.setSelected(true);
-                allOnlineMintersBox.setText("All online minters");
+                allOnlineMintersBox.setText(bundle.getString("allOnlineMintersBox")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 10;
@@ -1155,7 +1176,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(allOnlineMintersBox, gridBagConstraints);
 
-                sessionTimeLabel.setText("Not ReQording");
+                sessionTimeLabel.setText(bundle.getString("sessionTimeLabelDefault")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
@@ -1164,7 +1185,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(sessionTimeLabel, gridBagConstraints);
 
                 dogePriceBox.setSelected(true);
-                dogePriceBox.setText("Dogecoin price");
+                dogePriceBox.setText(bundle.getString("dogePriceBox")); // NOI18N
                 dogePriceBox.setActionCommand("dogeprice");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -1173,7 +1194,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(dogePriceBox, gridBagConstraints);
 
-                encryptDbButton.setText("Encrypt database");
+                encryptDbButton.setText(bundle.getString("encryptDbButton")); // NOI18N
                 encryptDbButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1189,8 +1210,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(encryptDbButton, gridBagConstraints);
 
                 qortalRamBox.setSelected(true);
-                qortalRamBox.setText("Qortal RAM usage");
-                qortalRamBox.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
+                qortalRamBox.setText(bundle.getString("qortalRamBox")); // NOI18N
                 qortalRamBox.setActionCommand("qortal_ram");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -1200,8 +1220,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(qortalRamBox, gridBagConstraints);
 
                 cpu_usageBox.setSelected(true);
-                cpu_usageBox.setText("CPU usage");
-                cpu_usageBox.setToolTipText("On Windows systems, Open Hardware Monitor needs to be installed and running on your system in order to fetch CPU temperature data");
+                cpu_usageBox.setText(bundle.getString("cpu_usageBox")); // NOI18N
                 cpu_usageBox.setActionCommand("cpu_usage");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -1217,7 +1236,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbModePanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED)));
                 dbModePanel.setLayout(new java.awt.GridBagLayout());
 
-                localButton.setText("Local");
+                localButton.setText(bundle.getString("localButon")); // NOI18N
                 localButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1231,7 +1250,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 dbModePanel.add(localButton, gridBagConstraints);
 
-                remoteButton.setText("Remote");
+                remoteButton.setText(bundle.getString("remoteButton")); // NOI18N
                 remoteButton.setEnabled(false);
                 remoteButton.addActionListener(new java.awt.event.ActionListener()
                 {
@@ -1246,14 +1265,14 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 dbModePanel.add(remoteButton, gridBagConstraints);
 
-                jLabel5.setText("Coming soon...");
+                comingSoonLabel.setText(bundle.getString("comingSoonLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 3;
                 gridBagConstraints.gridy = 3;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
-                dbModePanel.add(jLabel5, gridBagConstraints);
+                dbModePanel.add(comingSoonLabel, gridBagConstraints);
 
-                localLabel.setText("<html><div style='text-align: center;'>Choose 'Local' if you're reqording from the same machine as your node</div><html>");
+                localLabel.setText(bundle.getString("localLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
@@ -1263,7 +1282,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
                 dbModePanel.add(localLabel, gridBagConstraints);
 
-                localLabel1.setText("<html><div style='text-align: center;'>Choose 'Remote' if you're linking this session to a running ReQorder session on a different machine</div><html>");
+                remoteLabel.setText(bundle.getString("remoteLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 4;
@@ -1271,7 +1290,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.ipadx = 150;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
-                dbModePanel.add(localLabel1, gridBagConstraints);
+                dbModePanel.add(remoteLabel, gridBagConstraints);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 2;
@@ -1286,7 +1305,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbCreatePanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED)));
                 dbCreatePanel.setLayout(new java.awt.GridBagLayout());
 
-                createDbButton.setText("Create database");
+                createDbButton.setText(bundle.getString("createDbButton")); // NOI18N
                 createDbButton.setFocusable(false);
                 createDbButton.addActionListener(new java.awt.event.ActionListener()
                 {
@@ -1301,7 +1320,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(15, 0, 15, 0);
                 dbCreatePanel.add(createDbButton, gridBagConstraints);
 
-                importDbButton.setText("Import database");
+                importDbButton.setText(bundle.getString("importDbButton")); // NOI18N
                 importDbButton.setFocusable(false);
                 importDbButton.addActionListener(new java.awt.event.ActionListener()
                 {
@@ -1316,7 +1335,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(15, 0, 15, 0);
                 dbCreatePanel.add(importDbButton, gridBagConstraints);
 
-                switchModeButton.setText("Switch mode");
+                switchModeButton.setText(bundle.getString("switchModeButton")); // NOI18N
                 switchModeButton.setEnabled(false);
                 switchModeButton.addActionListener(new java.awt.event.ActionListener()
                 {
@@ -1343,7 +1362,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 );
                 tableOptionsPanelLayout.setVerticalGroup(
                     tableOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 921, Short.MAX_VALUE)
+                    .addGap(0, 1014, Short.MAX_VALUE)
                 );
 
                 mainOptionsPanel.add(tableOptionsPanel, "tableOptionsPanel");
@@ -1358,7 +1377,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 );
                 itemsOptionsPanelLayout.setVerticalGroup(
                     itemsOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 921, Short.MAX_VALUE)
+                    .addGap(0, 1014, Short.MAX_VALUE)
                 );
 
                 mainOptionsPanel.add(itemsOptionsPanel, "itemsOptionsPanel");
@@ -1373,7 +1392,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 propertiesOptionsPanel.setLayout(new java.awt.GridBagLayout());
 
-                setBlockchainFolderButton.setText("Set blockchain folder");
+                setBlockchainFolderButton.setText(bundle.getString("setBlockchainFolderButton")); // NOI18N
                 setBlockchainFolderButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1393,44 +1412,41 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 15, 0);
                 propertiesOptionsPanel.add(jSeparator11, gridBagConstraints);
 
-                smtpServerTextfield.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                smtpServerTextfield.setText("smtp server");
-                smtpServerTextfield.setMinimumSize(new java.awt.Dimension(250, 22));
-                smtpServerTextfield.setPreferredSize(new java.awt.Dimension(175, 30));
-                smtpServerTextfield.setSelectionStart(0);
-                smtpServerTextfield.addFocusListener(new java.awt.event.FocusAdapter()
+                smtpServerInput.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                smtpServerInput.setText(bundle.getString("smtpServerInput")); // NOI18N
+                smtpServerInput.setMinimumSize(new java.awt.Dimension(250, 22));
+                smtpServerInput.setPreferredSize(new java.awt.Dimension(175, 30));
+                smtpServerInput.addFocusListener(new java.awt.event.FocusAdapter()
                 {
                     public void focusGained(java.awt.event.FocusEvent evt)
                     {
-                        smtpServerTextfieldFocusGained(evt);
+                        smtpServerInputFocusGained(evt);
                     }
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 10;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
-                propertiesOptionsPanel.add(smtpServerTextfield, gridBagConstraints);
+                propertiesOptionsPanel.add(smtpServerInput, gridBagConstraints);
 
-                portTextfield.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                portTextfield.setText("port number");
-                portTextfield.setMinimumSize(new java.awt.Dimension(250, 22));
-                portTextfield.setPreferredSize(new java.awt.Dimension(175, 30));
-                portTextfield.setSelectionStart(0);
-                portTextfield.addFocusListener(new java.awt.event.FocusAdapter()
+                portInput.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                portInput.setText(bundle.getString("portInput")); // NOI18N
+                portInput.setMinimumSize(new java.awt.Dimension(250, 22));
+                portInput.setPreferredSize(new java.awt.Dimension(175, 30));
+                portInput.addFocusListener(new java.awt.event.FocusAdapter()
                 {
                     public void focusGained(java.awt.event.FocusEvent evt)
                     {
-                        portTextfieldFocusGained(evt);
+                        portInputFocusGained(evt);
                     }
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 12;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
-                propertiesOptionsPanel.add(portTextfield, gridBagConstraints);
+                propertiesOptionsPanel.add(portInput, gridBagConstraints);
 
                 passwordField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                passwordField.setText("jPasswordField1");
                 passwordField.setMinimumSize(new java.awt.Dimension(250, 22));
                 passwordField.setPreferredSize(new java.awt.Dimension(175, 30));
                 passwordField.addFocusListener(new java.awt.event.FocusAdapter()
@@ -1446,24 +1462,24 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(passwordField, gridBagConstraints);
 
-                usernameTextfield.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                usernameTextfield.setText("username");
-                usernameTextfield.setMinimumSize(new java.awt.Dimension(250, 22));
-                usernameTextfield.setPreferredSize(new java.awt.Dimension(175, 30));
-                usernameTextfield.addFocusListener(new java.awt.event.FocusAdapter()
+                usernameInput.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                usernameInput.setText(bundle.getString("usernameInput")); // NOI18N
+                usernameInput.setMinimumSize(new java.awt.Dimension(250, 22));
+                usernameInput.setPreferredSize(new java.awt.Dimension(175, 30));
+                usernameInput.addFocusListener(new java.awt.event.FocusAdapter()
                 {
                     public void focusGained(java.awt.event.FocusEvent evt)
                     {
-                        usernameTextfieldFocusGained(evt);
+                        usernameInputFocusGained(evt);
                     }
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 14;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
-                propertiesOptionsPanel.add(usernameTextfield, gridBagConstraints);
+                propertiesOptionsPanel.add(usernameInput, gridBagConstraints);
 
-                saveMailServerButton.setText("Save mail settings");
+                saveMailServerButton.setText(bundle.getString("saveMailServerButton")); // NOI18N
                 saveMailServerButton.setEnabled(false);
                 saveMailServerButton.addActionListener(new java.awt.event.ActionListener()
                 {
@@ -1479,15 +1495,15 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 propertiesOptionsPanel.add(saveMailServerButton, gridBagConstraints);
 
-                jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-                jLabel1.setText("Setup mail server");
+                setupMailLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+                setupMailLabel.setText("Setup mail server");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 6;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 9, 0);
-                propertiesOptionsPanel.add(jLabel1, gridBagConstraints);
+                propertiesOptionsPanel.add(setupMailLabel, gridBagConstraints);
 
-                testMailServerButton.setText("Send test mail");
+                testMailServerButton.setText(bundle.getString("testMailServerButton")); // NOI18N
                 testMailServerButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1501,54 +1517,54 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(testMailServerButton, gridBagConstraints);
 
-                recipientTextbox.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                recipientTextbox.setText("recipient e-mail address");
-                recipientTextbox.setMinimumSize(new java.awt.Dimension(250, 22));
-                recipientTextbox.setPreferredSize(new java.awt.Dimension(175, 30));
-                recipientTextbox.addFocusListener(new java.awt.event.FocusAdapter()
+                recipientInput.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                recipientInput.setText(bundle.getString("recipientInput")); // NOI18N
+                recipientInput.setMinimumSize(new java.awt.Dimension(250, 22));
+                recipientInput.setPreferredSize(new java.awt.Dimension(175, 30));
+                recipientInput.addFocusListener(new java.awt.event.FocusAdapter()
                 {
                     public void focusGained(java.awt.event.FocusEvent evt)
                     {
-                        recipientTextboxFocusGained(evt);
+                        recipientInputFocusGained(evt);
                     }
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 8;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
-                propertiesOptionsPanel.add(recipientTextbox, gridBagConstraints);
+                propertiesOptionsPanel.add(recipientInput, gridBagConstraints);
 
-                jLabel2.setText("Recipient");
+                recipientLabel.setText(bundle.getString("recipientLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 7;
-                propertiesOptionsPanel.add(jLabel2, gridBagConstraints);
+                propertiesOptionsPanel.add(recipientLabel, gridBagConstraints);
 
-                jLabel3.setText("SMTP server (gmail not supported)");
+                smtpLabel.setText(bundle.getString("smtpLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 9;
-                propertiesOptionsPanel.add(jLabel3, gridBagConstraints);
+                propertiesOptionsPanel.add(smtpLabel, gridBagConstraints);
 
-                jLabel4.setText("Port");
+                portLabel.setText(bundle.getString("portLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 11;
-                propertiesOptionsPanel.add(jLabel4, gridBagConstraints);
+                propertiesOptionsPanel.add(portLabel, gridBagConstraints);
 
-                jLabel6.setText("Username");
+                userLabel.setText(bundle.getString("userLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 13;
-                propertiesOptionsPanel.add(jLabel6, gridBagConstraints);
+                propertiesOptionsPanel.add(userLabel, gridBagConstraints);
 
-                jLabel7.setText("Password");
+                passwordLabel.setText(bundle.getString("passwordLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 15;
-                propertiesOptionsPanel.add(jLabel7, gridBagConstraints);
+                propertiesOptionsPanel.add(passwordLabel, gridBagConstraints);
 
-                receivedMailCheckbox.setText("I have received the test email");
+                receivedMailCheckbox.setText(bundle.getString("receivedMailCheckbox")); // NOI18N
                 receivedMailCheckbox.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1562,23 +1578,23 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 propertiesOptionsPanel.add(receivedMailCheckbox, gridBagConstraints);
 
-                retrievePasswordButton.setText("Retrieve password");
-                retrievePasswordButton.setToolTipText("<html><div style='text-align: center;'>Click this button to decrypt and retrieve the password stored in your database to the password field.<br/>The password field will automatically clear after 2 minutes.</div><html>\n");
-                retrievePasswordButton.setEnabled(false);
-                retrievePasswordButton.addActionListener(new java.awt.event.ActionListener()
+                loadPasswordButton.setText(bundle.getString("loadPasswordButton")); // NOI18N
+                loadPasswordButton.setToolTipText(bundle.getString("loadPasswordBtnTooltip")); // NOI18N
+                loadPasswordButton.setEnabled(false);
+                loadPasswordButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
                     {
-                        retrievePasswordButtonActionPerformed(evt);
+                        loadPasswordButtonActionPerformed(evt);
                     }
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 17;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
-                propertiesOptionsPanel.add(retrievePasswordButton, gridBagConstraints);
+                propertiesOptionsPanel.add(loadPasswordButton, gridBagConstraints);
 
-                changePasswordButton.setText("Change password");
+                changePasswordButton.setText(bundle.getString("changePasswordButton")); // NOI18N
                 changePasswordButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1593,7 +1609,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 propertiesOptionsPanel.add(changePasswordButton, gridBagConstraints);
 
                 backupAccountCheckbox.setSelected(true);
-                backupAccountCheckbox.setText("Auto backup account");
+                backupAccountCheckbox.setText(bundle.getString("backupAccountCheckbox")); // NOI18N
                 backupAccountCheckbox.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1607,14 +1623,14 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(2, 0, 1, 0);
                 propertiesOptionsPanel.add(backupAccountCheckbox, gridBagConstraints);
 
-                buildVersionLabel.setText("ReQorder buildversion");
+                buildVersionLabel.setText(bundle.getString("buildversionLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 5, 0);
                 propertiesOptionsPanel.add(buildVersionLabel, gridBagConstraints);
 
-                importAccountButton.setText("Import account");
+                importAccountButton.setText(bundle.getString("importAccountButton_Props")); // NOI18N
                 importAccountButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1628,11 +1644,11 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 7, 0);
                 propertiesOptionsPanel.add(importAccountButton, gridBagConstraints);
 
-                jLabel9.setText("Custom API IP address");
+                apiIpLabel.setText(bundle.getString("apiIpLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 22;
-                propertiesOptionsPanel.add(jLabel9, gridBagConstraints);
+                propertiesOptionsPanel.add(apiIpLabel, gridBagConstraints);
 
                 apiPortInputField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
                 apiPortInputField.setMinimumSize(new java.awt.Dimension(250, 22));
@@ -1643,11 +1659,11 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(apiPortInputField, gridBagConstraints);
 
-                jLabel10.setText("Custom API port");
+                apiPortLabel.setText(bundle.getString("apiPortLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 24;
-                propertiesOptionsPanel.add(jLabel10, gridBagConstraints);
+                propertiesOptionsPanel.add(apiPortLabel, gridBagConstraints);
 
                 api_IP_inputField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
                 api_IP_inputField.setMinimumSize(new java.awt.Dimension(250, 22));
@@ -1664,7 +1680,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 propertiesOptionsPanel.add(jSeparator12, gridBagConstraints);
 
-                saveSocketButton.setText("Save");
+                saveSocketButton.setText(bundle.getString("saveSocketButton")); // NOI18N
                 saveSocketButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1679,7 +1695,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 propertiesOptionsPanel.add(saveSocketButton, gridBagConstraints);
 
-                resetDefaultButton.setText("Reset to default");
+                resetDefaultButton.setText(bundle.getString("resetDefaultButton")); // NOI18N
                 resetDefaultButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1701,7 +1717,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 showPropsTablePanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED)));
                 showPropsTablePanel.setLayout(new java.awt.GridBagLayout());
 
-                deleteTableButton.setText("Delete selected table");
+                deleteTableButton.setText(bundle.getString("deleteTableButton")); // NOI18N
                 deleteTableButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1734,8 +1750,8 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(8, 0, 0, 0);
                 watchlistEditor.add(addressesListPane, gridBagConstraints);
 
-                addAddressButton.setText("Add new address");
-                addAddressButton.setToolTipText("Add a new address to your watchlist in this database");
+                addAddressButton.setText(bundle.getString("addAddressButton")); // NOI18N
+                addAddressButton.setToolTipText(bundle.getString("addAddressButtonTooltip")); // NOI18N
                 addAddressButton.setMaximumSize(new java.awt.Dimension(125, 25));
                 addAddressButton.setMinimumSize(new java.awt.Dimension(125, 25));
                 addAddressButton.setPreferredSize(new java.awt.Dimension(125, 25));
@@ -1754,8 +1770,8 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(15, 0, 8, 0);
                 watchlistEditor.add(addAddressButton, gridBagConstraints);
 
-                removeAddressButton.setText("Remove address");
-                removeAddressButton.setToolTipText("Remove selected address from your watchlist in this database");
+                removeAddressButton.setText(bundle.getString("removeAddressButton")); // NOI18N
+                removeAddressButton.setToolTipText(bundle.getString("removeAddressBtnTooltip")); // NOI18N
                 removeAddressButton.setEnabled(false);
                 removeAddressButton.setMaximumSize(new java.awt.Dimension(125, 25));
                 removeAddressButton.setMinimumSize(new java.awt.Dimension(125, 25));
@@ -1775,7 +1791,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(8, 0, 8, 0);
                 watchlistEditor.add(removeAddressButton, gridBagConstraints);
 
-                saveWatchlistButton.setText("Save watchlist");
+                saveWatchlistButton.setText(bundle.getString("saveWatchlistButton")); // NOI18N
                 saveWatchlistButton.setMaximumSize(new java.awt.Dimension(125, 25));
                 saveWatchlistButton.setMinimumSize(new java.awt.Dimension(125, 25));
                 saveWatchlistButton.setPreferredSize(new java.awt.Dimension(125, 25));
@@ -1795,7 +1811,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 watchlistEditor.add(saveWatchlistButton, gridBagConstraints);
 
                 blocksMintedBox.setSelected(true);
-                blocksMintedBox.setText("Blocks minted");
+                blocksMintedBox.setText(bundle.getString("blocksMintedBox")); // NOI18N
                 blocksMintedBox.setActionCommand("blocksminted");
                 blocksMintedBox.setEnabled(false);
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1806,7 +1822,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 watchlistEditor.add(blocksMintedBox, gridBagConstraints);
 
                 balanceBox.setSelected(true);
-                balanceBox.setText("Balance");
+                balanceBox.setText(bundle.getString("balanceCheckBox")); // NOI18N
                 balanceBox.setActionCommand("balance");
                 balanceBox.setEnabled(false);
                 balanceBox.addActionListener(new java.awt.event.ActionListener()
@@ -1824,7 +1840,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 watchlistEditor.add(balanceBox, gridBagConstraints);
 
                 levelBox.setSelected(true);
-                levelBox.setText("Level");
+                levelBox.setText(bundle.getString("levelCheckbox")); // NOI18N
                 levelBox.setActionCommand("level");
                 levelBox.setEnabled(false);
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1834,8 +1850,8 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(4, 80, 4, 0);
                 watchlistEditor.add(levelBox, gridBagConstraints);
 
-                watchlistLabel.setText("Choose which items to ReQord");
-                watchlistLabel.setToolTipText("These items will only be reQorded when their value changes on the next update interval");
+                watchlistLabel.setText(bundle.getString("watchlistLabel")); // NOI18N
+                watchlistLabel.setToolTipText(bundle.getString("watchlistLabelTooltip")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 5;
@@ -1849,8 +1865,8 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 watchlistEditor.add(jSeparator6, gridBagConstraints);
 
-                balanceTresholdLabel.setText("Balance update treshold:");
-                balanceTresholdLabel.setToolTipText("Balance will only be reqorded if its value has changed by this amount");
+                balanceTresholdLabel.setText(bundle.getString("balanceTresholdLabel")); // NOI18N
+                balanceTresholdLabel.setToolTipText(bundle.getString("balanceTresholdLblTooltip")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 9;
@@ -1868,7 +1884,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 watchlistEditor.add(balanceSpinner, gridBagConstraints);
 
-                watchlistEditorBackButton.setText("Back");
+                watchlistEditorBackButton.setText(bundle.getString("backButton")); // NOI18N
                 watchlistEditorBackButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1887,7 +1903,7 @@ public class ReqorderPanel extends javax.swing.JPanel
 
                 watchlistsManager.setLayout(new java.awt.GridBagLayout());
 
-                newWatchlistButton.setText("New");
+                newWatchlistButton.setText(bundle.getString("newWatchlistButton")); // NOI18N
                 newWatchlistButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
                 newWatchlistButton.setMaximumSize(new java.awt.Dimension(80, 25));
                 newWatchlistButton.setMinimumSize(new java.awt.Dimension(80, 25));
@@ -1918,7 +1934,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.weighty = 0.1;
                 watchlistsManager.add(jScrollPane2, gridBagConstraints);
 
-                editWatchlistButton.setText("Edit");
+                editWatchlistButton.setText(bundle.getString("editWatchlistButton")); // NOI18N
                 editWatchlistButton.setEnabled(false);
                 editWatchlistButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
                 editWatchlistButton.setMaximumSize(new java.awt.Dimension(80, 25));
@@ -1937,7 +1953,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
                 watchlistsManager.add(editWatchlistButton, gridBagConstraints);
 
-                watchlistsManagerBackButton.setText("Back");
+                watchlistsManagerBackButton.setText(bundle.getString("backButton")); // NOI18N
                 watchlistsManagerBackButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
                 watchlistsManagerBackButton.setMaximumSize(new java.awt.Dimension(80, 25));
                 watchlistsManagerBackButton.setMinimumSize(new java.awt.Dimension(80, 25));
@@ -1955,7 +1971,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
                 watchlistsManager.add(watchlistsManagerBackButton, gridBagConstraints);
 
-                deleteWatchlistButton.setText("Delete");
+                deleteWatchlistButton.setText(bundle.getString("deleteWatchlistButton")); // NOI18N
                 deleteWatchlistButton.setEnabled(false);
                 deleteWatchlistButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
                 deleteWatchlistButton.setMaximumSize(new java.awt.Dimension(80, 25));
@@ -1974,7 +1990,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(7, 0, 7, 0);
                 watchlistsManager.add(deleteWatchlistButton, gridBagConstraints);
 
-                applyWatchlistButton.setText("Apply to database");
+                applyWatchlistButton.setText(bundle.getString("applyWatchlistButton")); // NOI18N
                 applyWatchlistButton.setEnabled(false);
                 applyWatchlistButton.setMaximumSize(new java.awt.Dimension(125, 25));
                 applyWatchlistButton.setMinimumSize(new java.awt.Dimension(125, 25));
@@ -2030,7 +2046,7 @@ public class ReqorderPanel extends javax.swing.JPanel
 
                 createPropertiesPanel.setLayout(new java.awt.GridBagLayout());
 
-                propertiesLabel.setText("<html><div style='text-align: center;'>Could not find properties file (properties.mv.db)<br/><br/>This file stores your settings, preferences and watchlists<br/><br/>You can either create a new one or import an existing one</div><html>");
+                propertiesLabel.setText(bundle.getString("propertiesLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
@@ -2039,7 +2055,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.insets = new java.awt.Insets(0, 0, 50, 0);
                 createPropertiesPanel.add(propertiesLabel, gridBagConstraints);
 
-                createPropertiesBtn.setText("Create");
+                createPropertiesBtn.setText(bundle.getString("createPropertiesBtn")); // NOI18N
                 createPropertiesBtn.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -2053,7 +2069,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 createPropertiesPanel.add(createPropertiesBtn, gridBagConstraints);
 
-                importPropertiesButton.setText("Import");
+                importPropertiesButton.setText(bundle.getString("importPropertiesButton")); // NOI18N
                 importPropertiesButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -2079,7 +2095,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 );
                 layout.setVerticalGroup(
                     layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 947, Short.MAX_VALUE)
+                    .addGap(0, 1040, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(reqorderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
@@ -2094,9 +2110,7 @@ public class ReqorderPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_saveDbPrefsButtonActionPerformed
         if(GUI.REQORDING)
         {
-            JOptionPane.showMessageDialog(gui,Utilities.AllignCenterHTML(
-                    "Cannot save preferences while ReQording session is active<br/><br/>"
-                            + "Please stop the session before saving"));
+            JOptionPane.showMessageDialog(gui,Utilities.AllignCenterHTML(Main.BUNDLE.getString("cannotSaveRp")));
             return;
         }
         
@@ -2107,8 +2121,8 @@ public class ReqorderPanel extends javax.swing.JPanel
     private void deleteDbButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_deleteDbButtonActionPerformed
     {//GEN-HEADEREND:event_deleteDbButtonActionPerformed
         if(JOptionPane.showConfirmDialog(this,
-                "Do you want to delete database '" + selectedDatabase + "'?",
-                "Confirm deletion", 
+                Main.BUNDLE.getString("deletePromptRp") + selectedDatabase + "'?",
+                Main.BUNDLE.getString("deletePromptRpTitle"), 
                 JOptionPane.YES_NO_OPTION, 
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION)
             return;
@@ -2171,8 +2185,9 @@ public class ReqorderPanel extends javax.swing.JPanel
             minuteSpinner.setValue(0);
             interval = 86400000;
         }
-        timeIntervalLabel1.setText(Utilities.AllignCenterHTML(
-            String.format("Total time interval: %s<br/>Entries per day: %.1f",  Utilities.MillisToDayHrMin(interval),((double) 86400000 / interval))));
+        String[] split = Main.BUNDLE.getString("totalTimeInterval").split("%%");
+        timeIntervalLabel.setText(Utilities.AllignCenterHTML(
+            String.format(split[0] + "%s" + split[1] + "%.1f",  Utilities.MillisToDayHrMin(interval),((double) 86400000 / interval))));
     }//GEN-LAST:event_minuteSpinnerStateChanged
 
     private void hourSpinnerStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_hourSpinnerStateChanged
@@ -2188,13 +2203,14 @@ public class ReqorderPanel extends javax.swing.JPanel
             minuteSpinner.setValue(0);
             interval = 86400000;
         }
-        timeIntervalLabel1.setText(Utilities.AllignCenterHTML(
-            String.format("Total time interval: %s<br/>Entries per day: %.1f",  Utilities.MillisToDayHrMin(interval),((double) 86400000 / interval))));
+        String[] split = Main.BUNDLE.getString("totalTimeInterval").split("%%");
+        timeIntervalLabel.setText(Utilities.AllignCenterHTML(
+            String.format(split[0] + "%s" + split[1] + "%.1f",  Utilities.MillisToDayHrMin(interval),((double) 86400000 / interval))));
     }//GEN-LAST:event_hourSpinnerStateChanged
 
     private void reqordButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_reqordButtonActionPerformed
     {//GEN-HEADEREND:event_reqordButtonActionPerformed
-        if(reqordButton.getText().equals("Stop ReQording"))
+        if(reqordButton.getText().equals(Main.BUNDLE.getString("stopReqording")))
         {
             StopReqording();
             return;
@@ -2209,11 +2225,11 @@ public class ReqorderPanel extends javax.swing.JPanel
             }
             else
             {
+                String[] split = Main.BUNDLE.getString("switchDb").split("%%");
                 int choice = JOptionPane.showConfirmDialog(
                     this,
-                    Utilities.AllignCenterHTML(String.format("A reqording session is already active for database '%s'"
-                        + "<br/>Do you want to stop that session and start a new one?", databaseInSession)),
-                "Switch database?",
+                    Utilities.AllignCenterHTML(String.format(split[0] + "%s" + split[1], databaseInSession)),
+                Main.BUNDLE.getString("switchDbTitle"),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
 
@@ -2229,7 +2245,7 @@ public class ReqorderPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_encryptDbButtonActionPerformed
         if(selectedDatabase.equals(reqordingNode))
         {
-            JOptionPane.showMessageDialog(this, "Cannot encrypt/decrypt database while ReQording to it");
+            JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("cannotCrypt"));
             return;
         }
         try
@@ -2244,12 +2260,12 @@ public class ReqorderPanel extends javax.swing.JPanel
                 //decrypt encrypted database
                 try (Connection c = ConnectionDB.getConnection(selectedDatabase))
                 {
-                    //detect if user renamed properties db and tried to decrypt it
+                    //detect if user renamed properties db containge mail data and tried to decrypt it
                     if(dbManager.TableExists("mail_server", c))
                     {
                         JOptionPane.showMessageDialog(this,
-                            Utilities.AllignCenterHTML("Cannot decrypt a renamed 'properties' database <br/>"
-                                + "as it could possibly contain sensitive information.<br/><br/>Decryption aborted."), "Not allowed", JOptionPane.WARNING_MESSAGE);
+                            Utilities.AllignCenterHTML(Main.BUNDLE.getString("decryptPropError")), 
+                            Main.BUNDLE.getString("decryptPropErrorTitle"), JOptionPane.WARNING_MESSAGE);
                         c.close();
                         return;
                     }
@@ -2263,7 +2279,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                     "-decrypt", String.copyValueOf(DatabaseManager.dbPassword));
 
                 DatabaseManager.encryptedFiles.remove(selectedDatabase);
-                encryptDbButton.setText("Encrypt database");
+                encryptDbButton.setText(Main.BUNDLE.getString("encryptDb"));
 
                 var node = (DefaultMutableTreeNode) databasesTree.getLastSelectedPathComponent();
                 NodeInfo ni = (NodeInfo) node.getUserObject();
@@ -2288,7 +2304,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 "-encrypt", String.copyValueOf(DatabaseManager.dbPassword));
 
             DatabaseManager.encryptedFiles.add(selectedDatabase);
-            encryptDbButton.setText("Decrypt database");
+            encryptDbButton.setText(Main.BUNDLE.getString("decryptDb"));
 
             var node = (DefaultMutableTreeNode) databasesTree.getLastSelectedPathComponent();
             NodeInfo ni = (NodeInfo) node.getUserObject();
@@ -2301,7 +2317,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         if(!passedCheck)
         {
             JOptionPane.showMessageDialog(this,
-                "Failed: Database is improperly cataloged", "Failed", JOptionPane.WARNING_MESSAGE);
+                Main.BUNDLE.getString("failedCrypt"), Main.BUNDLE.getString("failedCryptTitle"), JOptionPane.WARNING_MESSAGE);
         }
         }
         catch (HeadlessException | SQLException e)
@@ -2313,17 +2329,17 @@ public class ReqorderPanel extends javax.swing.JPanel
     private void localButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_localButtonActionPerformed
     {//GEN-HEADEREND:event_localButtonActionPerformed
         modeType = 1;
-        switchModeButton.setText("Switch to remote mode");
+        switchModeButton.setText(Main.BUNDLE.getString("switchToRemote"));
     }//GEN-LAST:event_localButtonActionPerformed
 
     private void remoteButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_remoteButtonActionPerformed
     {//GEN-HEADEREND:event_remoteButtonActionPerformed
         modeType = 2;
-        switchModeButton.setText("Switch to local mode");
+        switchModeButton.setText(Main.BUNDLE.getString("switchToLocal"));
         CardLayout card = (CardLayout) mainOptionsPanel.getLayout();
         card.show(mainOptionsPanel, "dbCreatePanel");
         NodeInfo ni = (NodeInfo) databasesNode.getUserObject();
-        ni.nodeName = "Databases (remote mode)";
+        ni.nodeName = Main.BUNDLE.getString("databasesRemote");
         var dmt = (DefaultTreeModel) databasesTree.getModel();
         dmt.reload(databasesNode);
         //populate databasesTree from remote properties file
@@ -2331,39 +2347,36 @@ public class ReqorderPanel extends javax.swing.JPanel
 
     private void createDbButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_createDbButtonActionPerformed
     {//GEN-HEADEREND:event_createDbButtonActionPerformed
-        String dbName = JOptionPane.showInputDialog("Enter new database name:");
+        String dbName = JOptionPane.showInputDialog(Main.BUNDLE.getString("enterDbName"));
         if (dbName == null)
             return;
         
         if (dbName.equals(""))
         {
-            JOptionPane.showMessageDialog(null, "The database name should have at least one character");
+            JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("dbNameEmpty"));
             return;
         }
         if(dbName.contains("."))
         {
-            JOptionPane.showMessageDialog(null, "The database name should not contain any periods'");
+            JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("dbNamePeriod"));
             return;
         }
         if (dbName.equals("properties"))
         {
-            JOptionPane.showMessageDialog(null, "The database cannot be named 'properties'");
+            JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("dbNameProps"));
             return;
         }
         File checkFile = new File(System.getProperty("user.dir") + "/databases/" + dbName + ".mv.db");
         if (checkFile.exists())
         {
-            JOptionPane.showMessageDialog(null, "The database '" + dbName + "' already exists");
+            String[] split = Main.BUNDLE.getString("dbExists").split("%%");
+            JOptionPane.showMessageDialog(null, split[0] + dbName + split[1]);
             return;
         }
 
         if (JOptionPane.showConfirmDialog(this,
-                Utilities.AllignCenterHTML(
-                        "Do you want to encrypt this database?<br/><br/>"
-                        + "Encrypting a database will restrict unauthorised users or accounts from accessing it.<br/>"
-                        + "An encrypted database will keep your data safer, but will be bit slower to interact with.<br/><br/>"
-                        + "You can unlock the database later if you wish to share it with another ReQorder account."),
-                "Please choose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                Utilities.AllignCenterHTML(Main.BUNDLE.getString("encryptPrompt")),
+                Main.BUNDLE.getString("pleaseChoose"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
         {
             ConnectionDB.CreateDatabase(dbName, DatabaseManager.dbPassword, true);
         }
@@ -2395,8 +2408,8 @@ public class ReqorderPanel extends javax.swing.JPanel
             if(selectedFile.getName().equals("properties.mv.db"))
             {
                 JOptionPane.showMessageDialog(this, 
-                        "Importing properties file is not allowed.\nUse 'Import account' to change your properties file", 
-                        "Illegal operation", JOptionPane.WARNING_MESSAGE);
+                        Main.BUNDLE.getString("importPropsDenial"), 
+                        Main.BUNDLE.getString("illegalOperation"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -2405,12 +2418,13 @@ public class ReqorderPanel extends javax.swing.JPanel
                 File checkFile = new File(System.getProperty("user.dir") + "/databases/" + selectedFile.getName());
                 if(checkFile.exists())
                 {
+                    String[] split = Main.BUNDLE.getString("overwriteDb").split("%%");
                     fileExists = true;
                     int choice = JOptionPane.showConfirmDialog(
                             this, 
                             Utilities.AllignCenterHTML(String.format(
-                                    "Database '%s' already exists<br/><br/>Do you want to overwrite it?", selectedFile.getName().split("\\.",2)[0])),
-                            "Delete old file?",
+                                    split[0] + "%s" + split[1], selectedFile.getName().split("\\.",2)[0])),
+                            Main.BUNDLE.getString("overwriteDbTitle"),
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     
                     if(choice == JOptionPane.YES_OPTION)
@@ -2421,8 +2435,8 @@ public class ReqorderPanel extends javax.swing.JPanel
                         return;
                 }
                 
-                int choice = JOptionPane.showConfirmDialog(this, "Do you want to delete the source file?\n'" + selectedFile.getAbsolutePath() + "'",
-                        "Copy or move?", JOptionPane.YES_NO_OPTION);
+                int choice = JOptionPane.showConfirmDialog(this, Main.BUNDLE.getString("deleteSource") + selectedFile.getAbsolutePath() + "'",
+                        Main.BUNDLE.getString("Copy or move?"), JOptionPane.YES_NO_OPTION);
 
                 File newFile = new File(System.getProperty("user.dir") + "/databases/" + selectedFile.getName());
 
@@ -2438,7 +2452,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                     }
                     else
                     {
-                        JOptionPane.showMessageDialog(null, "Failed to import file '" + selectedFile.getName() + "'");
+                        JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("importFailed") + selectedFile.getName() + "'");
                         return;
                     }
                 }
@@ -2455,7 +2469,7 @@ public class ReqorderPanel extends javax.swing.JPanel
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Invalid file: file must end with 'mv.db'");
+                JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("invalidDbFile"));
             }
         }
         else
@@ -2470,17 +2484,17 @@ public class ReqorderPanel extends javax.swing.JPanel
         {
             case 1:
                 modeType = 2;
-                switchModeButton.setText("Switch to local mode");
+                switchModeButton.setText(Main.BUNDLE.getString("switchToLocal"));
                 NodeInfo ni = (NodeInfo) databasesNode.getUserObject();
-                ni.nodeName = "Databases (remote mode)";
+                ni.nodeName = Main.BUNDLE.getString("databasesRemote");
                 var dmt = (DefaultTreeModel) databasesTree.getModel();
                 dmt.reload(databasesNode);
                 break;
             case 2:
                 modeType = 1;
-                switchModeButton.setText("Switch to remote mode");
+                switchModeButton.setText(Main.BUNDLE.getString("switchToRemote"));
                 ni = (NodeInfo) databasesNode.getUserObject();
-                ni.nodeName = "Databases (local mode)";
+                ni.nodeName = Main.BUNDLE.getString("dbNodeLocal");
                 dmt = (DefaultTreeModel) databasesTree.getModel();
                 dmt.reload(databasesNode);
                 //ADD REMOTE CODE IMPLEMENTATION
@@ -2493,36 +2507,31 @@ public class ReqorderPanel extends javax.swing.JPanel
         dbManager.SetBlockchainFolder();
     }//GEN-LAST:event_setBlockchainFolderButtonActionPerformed
 
-    private void smtpServerTextfieldFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_smtpServerTextfieldFocusGained
-    {//GEN-HEADEREND:event_smtpServerTextfieldFocusGained
-        smtpServerTextfield.selectAll();
-    }//GEN-LAST:event_smtpServerTextfieldFocusGained
+    private void smtpServerInputFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_smtpServerInputFocusGained
+    {//GEN-HEADEREND:event_smtpServerInputFocusGained
+        smtpServerInput.selectAll();
+    }//GEN-LAST:event_smtpServerInputFocusGained
 
-    private void portTextfieldFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_portTextfieldFocusGained
-    {//GEN-HEADEREND:event_portTextfieldFocusGained
-        portTextfield.selectAll();
-    }//GEN-LAST:event_portTextfieldFocusGained
+    private void portInputFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_portInputFocusGained
+    {//GEN-HEADEREND:event_portInputFocusGained
+        portInput.selectAll();
+    }//GEN-LAST:event_portInputFocusGained
 
     private void passwordFieldFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_passwordFieldFocusGained
     {//GEN-HEADEREND:event_passwordFieldFocusGained
         passwordField.selectAll();
     }//GEN-LAST:event_passwordFieldFocusGained
 
-    private void usernameTextfieldFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_usernameTextfieldFocusGained
-    {//GEN-HEADEREND:event_usernameTextfieldFocusGained
-        usernameTextfield.selectAll();
-    }//GEN-LAST:event_usernameTextfieldFocusGained
+    private void usernameInputFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_usernameInputFocusGained
+    {//GEN-HEADEREND:event_usernameInputFocusGained
+        usernameInput.selectAll();
+    }//GEN-LAST:event_usernameInputFocusGained
 
     private void saveMailServerButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_saveMailServerButtonActionPerformed
     {//GEN-HEADEREND:event_saveMailServerButtonActionPerformed
         int choice = JOptionPane.showConfirmDialog(this,
-                Utilities.AllignCenterHTML("DISCLAIMER:<br/><br/>"
-                        + "The log-in credentials for your e-mail account will be stored in a locked and encrypted database.<br/>"
-                        + "Your password will also be encrypted before it is stored.<br/><br/>"
-                        + "Saving this information is at your own risk, the developer will  not be held liable for any damages<br/>"
-                        + "resulting from the use of this feature. By clicking 'OK' you acknowledge agreeing to these conditions.<br/><br/>"
-                        + " Read more at 'www.reqorder.org/privacy' or in the documentation"),
-                "DISCLAIMER", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                Utilities.AllignCenterHTML(Main.BUNDLE.getString("mailDisclaimer")),
+                Main.BUNDLE.getString("mailDisclaimerTitle"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (choice == JOptionPane.CANCEL_OPTION)
             return;
@@ -2532,22 +2541,22 @@ public class ReqorderPanel extends javax.swing.JPanel
         if (passwordField.getPassword().length == 0)
         {
             JOptionPane.showMessageDialog(this,
-                    Utilities.AllignCenterHTML("The password field is empty<br/>"
-                            + "Please enter your password or retrieve the previously saved one"),
-                    "Re-enter or retrieve password", JOptionPane.PLAIN_MESSAGE);
+                    Utilities.AllignCenterHTML(Main.BUNDLE.getString("passwordFieldEmpty")),
+                    Main.BUNDLE.getString("passwordFieldEmptyTitle"), JOptionPane.PLAIN_MESSAGE);
             return;
         }
 
         String[] keys = Utilities.EncryptPassword(passwordField.getPassword(), "", "");
         if (keys != null)
         {
-            dbManager.SaveCredentials(usernameTextfield.getText(),
+            dbManager.SaveCredentials(usernameInput.getText(),
                     keys[0],
-                    smtpServerTextfield.getText(), portTextfield.getText(),
-                    recipientTextbox.getText(), keys[1], keys[2]);
+                    smtpServerInput.getText(), portInput.getText(),
+                    recipientInput.getText(), keys[1], keys[2]);
         }
         else
-            JOptionPane.showMessageDialog(this, "Error encrypting password", "Encryption error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("pwEncryptError"), 
+                    Main.BUNDLE.getString("pwEncryptErrorTitle"), JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_saveMailServerButtonActionPerformed
 
     private void testMailServerButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_testMailServerButtonActionPerformed
@@ -2565,17 +2574,17 @@ public class ReqorderPanel extends javax.swing.JPanel
         buttonTimer.schedule(task, 8000);
 
         if (Utilities.SendEmail(
-                recipientTextbox.getText(),
-                usernameTextfield.getText(),
+                recipientInput.getText(),
+                usernameInput.getText(),
                 String.copyValueOf(passwordField.getPassword()),
-                smtpServerTextfield.getText(),
-                portTextfield.getText(),
-                "ReQorder test mail",
-                "Congratulations, your ReQorder mail alert settings are working properly."))
+                smtpServerInput.getText(),
+                portInput.getText(),
+                Main.BUNDLE.getString("testMailSubject"),
+                Main.BUNDLE.getString("testMailMessage")))
         {
             int choice = JOptionPane.showConfirmDialog(this,
-                    Utilities.AllignCenterHTML("Mail sent sucessfully<br/>Do you want to save these settings?<br/><br/>Check your inbox or spam folder first"),
-                    "E-mail sent", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    Utilities.AllignCenterHTML(Main.BUNDLE.getString("testMailSuccess")),
+                    Main.BUNDLE.getString("testMailSuccessTitle"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (choice == JOptionPane.YES_OPTION)
             {
                 saveMailServerButtonActionPerformed(null);
@@ -2584,23 +2593,23 @@ public class ReqorderPanel extends javax.swing.JPanel
         else
         {
             JOptionPane.showMessageDialog(this,
-                    Utilities.AllignCenterHTML("Failed to send e-mail<br/>Are your server settings correct?"),
-                    "Failed to send e-mail", JOptionPane.PLAIN_MESSAGE);
+                    Utilities.AllignCenterHTML(Main.BUNDLE.getString("testMailFail")),
+                    Main.BUNDLE.getString("testMailFailTitle"), JOptionPane.PLAIN_MESSAGE);
         }
     }//GEN-LAST:event_testMailServerButtonActionPerformed
 
-    private void recipientTextboxFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_recipientTextboxFocusGained
-    {//GEN-HEADEREND:event_recipientTextboxFocusGained
-        recipientTextbox.selectAll();
-    }//GEN-LAST:event_recipientTextboxFocusGained
+    private void recipientInputFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_recipientInputFocusGained
+    {//GEN-HEADEREND:event_recipientInputFocusGained
+        recipientInput.selectAll();
+    }//GEN-LAST:event_recipientInputFocusGained
 
     private void receivedMailCheckboxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_receivedMailCheckboxActionPerformed
     {//GEN-HEADEREND:event_receivedMailCheckboxActionPerformed
         saveMailServerButton.setEnabled(receivedMailCheckbox.isSelected());
     }//GEN-LAST:event_receivedMailCheckboxActionPerformed
 
-    private void retrievePasswordButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_retrievePasswordButtonActionPerformed
-    {//GEN-HEADEREND:event_retrievePasswordButtonActionPerformed
+    private void loadPasswordButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_loadPasswordButtonActionPerformed
+    {//GEN-HEADEREND:event_loadPasswordButtonActionPerformed
         //We want to avoid keeping the decrypted password inside the field (and in the heap)for too long,
         //but don't want the user to have to re-enter the password every time. This functionality seems like a good middle ground
         try(Connection connection = ConnectionDB.getConnection( "properties"))
@@ -2616,10 +2625,11 @@ public class ReqorderPanel extends javax.swing.JPanel
             }
             else
             {
-                JOptionPane.showMessageDialog(this, "Error decrypting password", "Decryption error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("pwDecryptError"), 
+                        Main.BUNDLE.getString("pwDecryptErrorTitle"), JOptionPane.ERROR_MESSAGE);
                 passwordField.setText("");
             }
-            retrievePasswordButton.setEnabled(false);
+            loadPasswordButton.setEnabled(false);
 
             Timer buttonTimer = new Timer();
             TimerTask buttonTask = new TimerTask()
@@ -2628,7 +2638,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 public void run()
                 {
                     passwordField.setText("");
-                    retrievePasswordButton.setEnabled(true);
+                    loadPasswordButton.setEnabled(true);
                 }
             };
             buttonTimer.schedule(buttonTask, 120000);
@@ -2637,7 +2647,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         {
             BackgroundService.AppendLog(e);
         }
-    }//GEN-LAST:event_retrievePasswordButtonActionPerformed
+    }//GEN-LAST:event_loadPasswordButtonActionPerformed
 
     private void changePasswordButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_changePasswordButtonActionPerformed
     {//GEN-HEADEREND:event_changePasswordButtonActionPerformed
@@ -2657,8 +2667,9 @@ public class ReqorderPanel extends javax.swing.JPanel
     private void deleteTableButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_deleteTableButtonActionPerformed
     {//GEN-HEADEREND:event_deleteTableButtonActionPerformed
         String table = databasesTree.getSelectionPath().getLastPathComponent().toString();
-        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the table '" + table + "' from the properties database?",
-                "Confirm table deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION)
+        String[] split = Main.BUNDLE.getString("deleteDbConfirm").split("%%");
+        if (JOptionPane.showConfirmDialog(this, split[0] + table + split[1],Main.BUNDLE.getString("deleteDbConfirmTitle"), 
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION)
         {
             try (Connection connection = ConnectionDB.getConnection("properties"))
             {
@@ -2675,7 +2686,8 @@ public class ReqorderPanel extends javax.swing.JPanel
 
     private void addAddressButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_addAddressButtonActionPerformed
     {//GEN-HEADEREND:event_addAddressButtonActionPerformed
-        String address = JOptionPane.showInputDialog(this, "Please enter the address to add to your watchlist", "Address input", JOptionPane.QUESTION_MESSAGE);
+        String address = JOptionPane.showInputDialog(this, Main.BUNDLE.getString("addAddress"),
+                Main.BUNDLE.getString("addAddressTitle"), JOptionPane.QUESTION_MESSAGE);
 
         //when user clicks cancel
         if (address == null)
@@ -2712,10 +2724,11 @@ public class ReqorderPanel extends javax.swing.JPanel
         //if creating new watchlist rename it, otherwise the changes were already saved
         if(editedWatchlist.equals(TEMPWATCHLIST) && !addressListModel.isEmpty())
         {
-            String name = JOptionPane.showInputDialog(this, "Please enter a name for your watchlist", "Name input", JOptionPane.QUESTION_MESSAGE);
+            String name = JOptionPane.showInputDialog(this, Main.BUNDLE.getString("nameWatchlist"), 
+                    Main.BUNDLE.getString("nameWatchlistTitle"), JOptionPane.QUESTION_MESSAGE);
             if(name == null || name.isEmpty())
             {
-                JOptionPane.showMessageDialog(this, "You need to enter a name");
+                JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("enterNameWarning"));
                 return;
             }
             name = "WL_" + name;
@@ -2724,7 +2737,8 @@ public class ReqorderPanel extends javax.swing.JPanel
             {
                 if(dbManager.TableExists(name,connection))
                 {
-                    JOptionPane.showMessageDialog(this, "Watchlist with name '" + name + "' already exists");
+                    String[] split = Main.BUNDLE.getString("duplicateWLName").split("%%");
+                    JOptionPane.showMessageDialog(this, split[0] + name + split[1]);
                     return;
                 }
                 name = name.replace(" ", "_");
@@ -2832,7 +2846,8 @@ public class ReqorderPanel extends javax.swing.JPanel
             String watchlist = watchlistsList.getSelectedValue();
             if (watchlist != null)
             {
-                int choice = JOptionPane.showConfirmDialog(this, "Delete watchlist '" + watchlist + "?", "Delete watchlist", JOptionPane.YES_NO_OPTION);
+                int choice = JOptionPane.showConfirmDialog(this, Main.BUNDLE.getString("deleteWatchlist") + watchlist + "?", 
+                        Main.BUNDLE.getString("deleteWatchlistTitle"), JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION)
                 {
                     dbManager.ExecuteUpdate("drop table WL_" + watchlistsList.getSelectedValue(), connection);
@@ -2853,22 +2868,21 @@ public class ReqorderPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_applyWatchlistButtonActionPerformed
          if(selectedNode.getUserObject().toString().equals(reqordingNode))
         {
+            String[] split = Main.BUNDLE.getString("applyWatchlistError").split("%%");
             JOptionPane.showMessageDialog(this, 
-                    Utilities.AllignCenterHTML(String.format("Database '%s' is currently ReQording"
-                            + "<br/>Stop the ReQording session to apply a new watchlist", selectedDatabase))
-                    , "ReQording in session", JOptionPane.PLAIN_MESSAGE);
+                    Utilities.AllignCenterHTML(String.format(split[0] + "%s" + split[1], selectedDatabase))
+                    , Main.BUNDLE.getString("reqordingInSession"), JOptionPane.PLAIN_MESSAGE);
             return;
         }
         try (Connection connection = ConnectionDB.getConnection( selectedDatabase))
         {      
             if(dbManager.TableExists("my_watchlist", connection))
             {
+                String[] split = Main.BUNDLE.getString("confirmApplyWL").split("%%");
                 int choice = JOptionPane.showConfirmDialog(
                         this,
-                        Utilities.AllignCenterHTML(String.format("Database '%s' already has a watchlist<br/>"
-                                + "If you choose 'OK', all the stored data in this database related to that watchlist will be deleted<br/>"
-                                + "Choose 'Cancel' and create a new database if you wish to keep the stored data", selectedDatabase)),
-                        "Please confirm",
+                        Utilities.AllignCenterHTML(String.format(split[0] + "%s" + split[1], selectedDatabase)),
+                        Main.BUNDLE.getString("confirm"),
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.WARNING_MESSAGE
                 );
@@ -2895,7 +2909,7 @@ public class ReqorderPanel extends javax.swing.JPanel
             //the properties watchlist for ID and address,so the database watchlist and properties watchlist need to  be decoupled.
             dbManager.CreateAddressTables(selectedDatabase, "WL_" + watchlistsList.getSelectedValue());  
             
-            JOptionPane.showMessageDialog(applyWatchlistButton, "Watchlist applied to '" + selectedDatabase + "'");
+            JOptionPane.showMessageDialog(applyWatchlistButton, Main.BUNDLE.getString("watchlistApplied") + selectedDatabase + "'");
             
             connection.close();
         }
@@ -2955,8 +2969,8 @@ public class ReqorderPanel extends javax.swing.JPanel
 
             if (selectedFile.getName().equals("properties.mv.db"))
             {
-                int choice = JOptionPane.showConfirmDialog(this, "Do you want to delete the source file '" + selectedFile.getAbsolutePath() + "'",
-                        "Copy or move?", JOptionPane.YES_NO_CANCEL_OPTION);
+                int choice = JOptionPane.showConfirmDialog(this, Main.BUNDLE.getString("deleteSourceFile") + selectedFile.getAbsolutePath() + "'",
+                        Main.BUNDLE.getString("deleteSourceFileTitle"), JOptionPane.YES_NO_CANCEL_OPTION);
 
                 if (choice == JOptionPane.CANCEL_OPTION)
                     return;
@@ -2975,7 +2989,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                     }
                     else
                     {
-                        JOptionPane.showMessageDialog(null, "Failed to import file '" + selectedFile.getName() + "'");
+                        JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("failedImport") + selectedFile.getName() + "'");
                         return;
                     }
                 }
@@ -2989,10 +3003,9 @@ public class ReqorderPanel extends javax.swing.JPanel
                 if (!ConnectionDB.CanConnect("properties", DatabaseManager.dbPassword))
                 {
                     JOptionPane.showMessageDialog(this,
-                            Utilities.AllignCenterHTML(
-                                    "Could not access properties database<br/>"
-                                    + "The file either belongs to a different<br/>"
-                                    + "account, or it is corrupted"), "Cannot access database", JOptionPane.WARNING_MESSAGE);
+                            Utilities.AllignCenterHTML(Main.BUNDLE.getString("propertiesError")),
+                            Main.BUNDLE.getString("propertiesErrorTitle"), JOptionPane.WARNING_MESSAGE);
+                    
                     //don't delete the new file if user opted to delete the old file but new file is invalid
                     if(choice != JOptionPane.YES_OPTION)
                         newFile.delete();
@@ -3008,7 +3021,7 @@ public class ReqorderPanel extends javax.swing.JPanel
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Invalid file: file must be named 'properties.mv.db'");
+                JOptionPane.showMessageDialog(null, Main.BUNDLE.getString("invalidPropsFile"));
             }
         }
         else
@@ -3028,12 +3041,12 @@ public class ReqorderPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_saveSocketButtonActionPerformed
         if(api_IP_inputField.getText().isBlank() || apiPortInputField.getText().isBlank())
         {
-            JOptionPane.showMessageDialog(this, "Please enter an IP address and port");
+            JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("socketInput"));
             return;
         }
         
         if(JOptionPane.showConfirmDialog(this,
-                "This is an advanced feature, are you sure you want to continue?","Warning",
+                Main.BUNDLE.getString("socketWarning"),Main.BUNDLE.getString("warning"),
                 JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
             return;
         
@@ -3052,7 +3065,7 @@ public class ReqorderPanel extends javax.swing.JPanel
             dbManager.customPort = apiPortInputField.getText();
             dbManager.socket = dbManager.customIP + ":" + dbManager.customPort;
             
-            JOptionPane.showMessageDialog(this, "Settings saved");
+            JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("settingsSaved"));
         }
         catch (Exception e)
         {
@@ -3080,7 +3093,7 @@ public class ReqorderPanel extends javax.swing.JPanel
             dbManager.customPort = apiPortInputField.getText();
             dbManager.socket = dbManager.customIP + ":" + dbManager.customPort;
             
-            JOptionPane.showMessageDialog(this, "IP and port settings reset to default");
+            JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("socketDefaultMsg"));
         }
         catch (Exception e)
         {
@@ -3096,7 +3109,9 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JScrollPane addressesListPane;
     private javax.swing.JCheckBox allKnownPeersBox;
     private javax.swing.JCheckBox allOnlineMintersBox;
+    private javax.swing.JLabel apiIpLabel;
     private javax.swing.JTextField apiPortInputField;
+    private javax.swing.JLabel apiPortLabel;
     private javax.swing.JTextField api_IP_inputField;
     private javax.swing.JButton applyWatchlistButton;
     private javax.swing.JCheckBox backupAccountCheckbox;
@@ -3108,6 +3123,7 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JCheckBox blocksMintedBox;
     private javax.swing.JLabel buildVersionLabel;
     private javax.swing.JButton changePasswordButton;
+    private javax.swing.JLabel comingSoonLabel;
     private javax.swing.JCheckBox cpu_tempBox;
     private javax.swing.JCheckBox cpu_usageBox;
     private javax.swing.JButton createDbButton;
@@ -3136,15 +3152,6 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JPanel itemsOptionsPanel;
     private javax.swing.JTable itemsTable;
     private javax.swing.JScrollPane itemsTableScrollPane;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator11;
@@ -3156,9 +3163,9 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JCheckBox levelBox;
+    private javax.swing.JButton loadPasswordButton;
     private javax.swing.JButton localButton;
     private javax.swing.JLabel localLabel;
-    private javax.swing.JLabel localLabel1;
     private javax.swing.JCheckBox ltcPriceBox;
     private javax.swing.JPanel mainOptionsPanel;
     private javax.swing.JSplitPane mainSplitPane;
@@ -3169,34 +3176,40 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JCheckBox numberOfConnectionsBox;
     private javax.swing.JSplitPane optionsSplitPane;
     private javax.swing.JPasswordField passwordField;
-    private javax.swing.JTextField portTextfield;
+    private javax.swing.JLabel passwordLabel;
+    private javax.swing.JTextField portInput;
+    private javax.swing.JLabel portLabel;
     private javax.swing.JScrollPane propOptionsScrollpane;
     private javax.swing.JLabel propertiesLabel;
     private javax.swing.JPanel propertiesOptionsPanel;
     private javax.swing.JCheckBox qortalRamBox;
     private javax.swing.JCheckBox receivedMailCheckbox;
-    private javax.swing.JTextField recipientTextbox;
+    private javax.swing.JTextField recipientInput;
+    private javax.swing.JLabel recipientLabel;
     private javax.swing.JButton remoteButton;
+    private javax.swing.JLabel remoteLabel;
     private javax.swing.JButton removeAddressButton;
     private javax.swing.JButton reqordButton;
     private javax.swing.JPanel reqorderPanel;
     private javax.swing.JButton resetDefaultButton;
-    private javax.swing.JButton retrievePasswordButton;
     private javax.swing.JButton saveDbPrefsButton;
     private javax.swing.JButton saveMailServerButton;
     private javax.swing.JButton saveSocketButton;
     private javax.swing.JButton saveWatchlistButton;
     private javax.swing.JLabel sessionTimeLabel;
     private javax.swing.JButton setBlockchainFolderButton;
+    private javax.swing.JLabel setupMailLabel;
     private javax.swing.JPanel showPropsTablePanel;
-    private javax.swing.JTextField smtpServerTextfield;
+    private javax.swing.JLabel smtpLabel;
+    private javax.swing.JTextField smtpServerInput;
     private javax.swing.JButton switchModeButton;
     private javax.swing.JPanel tableOptionsPanel;
     private javax.swing.JButton testMailServerButton;
-    private javax.swing.JLabel timeIntervalLabel1;
+    private javax.swing.JLabel timeIntervalLabel;
     private javax.swing.JScrollPane treeScrollPane;
     private javax.swing.JCheckBox uptimeBox;
-    private javax.swing.JTextField usernameTextfield;
+    private javax.swing.JLabel userLabel;
+    private javax.swing.JTextField usernameInput;
     private javax.swing.JPanel watchlistEditor;
     private javax.swing.JButton watchlistEditorBackButton;
     private javax.swing.JLabel watchlistLabel;
