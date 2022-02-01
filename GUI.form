@@ -441,7 +441,7 @@
                       <Font name="Bahnschrift" size="14" style="0"/>
                     </Property>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="1MCFEd5dpGLRqJxGhqLTMA2vf9GuvrpT7P"/>
+                    <Property name="text" type="java.lang.String" value="12YVFmXHi81srDhx4dcHs5Qvq8MTapCjse"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btcFieldMouseReleased"/>
@@ -473,7 +473,7 @@
                       <Font name="Bahnschrift" size="14" style="0"/>
                     </Property>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="DSbtx8q9hNzgzKUEKvrXRXtY8udjCnki1T"/>
+                    <Property name="text" type="java.lang.String" value="DMBKhCy7mdXDoQbS8DsEnEYqpifoc7Wf79"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="dogeFieldMouseReleased"/>
@@ -505,7 +505,7 @@
                       <Font name="Bahnschrift" size="14" style="0"/>
                     </Property>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="LU5mPptunXYmqx9iDwsEeSFAfJZ9RFafyF"/>
+                    <Property name="text" type="java.lang.String" value="Li6TZKNEGdfpjsLfSt1kaYAbKKpchjp5xR"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ltcFieldMouseReleased"/>
@@ -537,7 +537,7 @@
                       <Font name="Bahnschrift" size="14" style="0"/>
                     </Property>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="Qa672e3FktYjMRRiSZP2sJ8fyqHt3kx68Y"/>
+                    <Property name="text" type="java.lang.String" value="QTAjPXL42gZrEADibDb1WfCCYryE75wjSn"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="qortFieldMouseReleased"/>

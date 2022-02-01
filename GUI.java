@@ -685,7 +685,7 @@ public class GUI extends javax.swing.JFrame
                 btcField.setEditable(false);
                 btcField.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
                 btcField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                btcField.setText("1MCFEd5dpGLRqJxGhqLTMA2vf9GuvrpT7P");
+                btcField.setText("12YVFmXHi81srDhx4dcHs5Qvq8MTapCjse");
                 btcField.addMouseListener(new java.awt.event.MouseAdapter()
                 {
                     public void mouseReleased(java.awt.event.MouseEvent evt)
@@ -711,7 +711,7 @@ public class GUI extends javax.swing.JFrame
                 dogeField.setEditable(false);
                 dogeField.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
                 dogeField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                dogeField.setText("DSbtx8q9hNzgzKUEKvrXRXtY8udjCnki1T");
+                dogeField.setText("DMBKhCy7mdXDoQbS8DsEnEYqpifoc7Wf79");
                 dogeField.addMouseListener(new java.awt.event.MouseAdapter()
                 {
                     public void mouseReleased(java.awt.event.MouseEvent evt)
@@ -737,7 +737,7 @@ public class GUI extends javax.swing.JFrame
                 ltcField.setEditable(false);
                 ltcField.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
                 ltcField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                ltcField.setText("LU5mPptunXYmqx9iDwsEeSFAfJZ9RFafyF");
+                ltcField.setText("Li6TZKNEGdfpjsLfSt1kaYAbKKpchjp5xR");
                 ltcField.addMouseListener(new java.awt.event.MouseAdapter()
                 {
                     public void mouseReleased(java.awt.event.MouseEvent evt)
@@ -763,7 +763,7 @@ public class GUI extends javax.swing.JFrame
                 qortField.setEditable(false);
                 qortField.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
                 qortField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                qortField.setText("Qa672e3FktYjMRRiSZP2sJ8fyqHt3kx68Y");
+                qortField.setText("QTAjPXL42gZrEADibDb1WfCCYryE75wjSn");
                 qortField.addMouseListener(new java.awt.event.MouseAdapter()
                 {
                     public void mouseReleased(java.awt.event.MouseEvent evt)
