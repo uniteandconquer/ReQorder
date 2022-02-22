@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.sql.Connection;
 import java.text.NumberFormat;
+import java.time.Instant;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,7 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
 import oshi.hardware.NetworkIF;
 
 public class MonitorPanel extends javax.swing.JPanel
@@ -36,7 +36,6 @@ public class MonitorPanel extends javax.swing.JPanel
     private long lastOnlineTime;
     private long lastPingTime;
     private final SystemInfo systemInfo;
-    private CentralProcessor processor;
     private final List<NetworkIF> interfaces; 
     private long totalBytesSent = 0;
     private long totalBytesReceived = 0;   
@@ -62,7 +61,6 @@ public class MonitorPanel extends javax.swing.JPanel
         initComponents();
         
         systemInfo = new SystemInfo();
-        processor = systemInfo.getHardware().getProcessor();
         interfaces = systemInfo.getHardware().getNetworkIFs();
 
         for (NetworkIF nif : interfaces)
@@ -96,7 +94,8 @@ public class MonitorPanel extends javax.swing.JPanel
             buildversionNode,blockchainNode,spaceLeftNode,peersNode,allMintersNode,
             knownPeersNode,mintingAccountNode,blocksMintedNode,balanceNode,levelNode,
             dataUsageNode,averageRateNode,minuteRateNode,hourRateNode,dayRateNode,
-            pricesNode,qortToLtcNode,ltcToQortNode,qortToDogeNode,dogeToQortNode;    
+            pricesNode,qortToUsdNode,usdToQortNode,qortToLtcNode,ltcToQortNode,
+            qortToDogeNode,dogeToQortNode;    
     
     protected void CreateMonitorTree()
     {
@@ -152,10 +151,14 @@ public class MonitorPanel extends javax.swing.JPanel
         
         pricesNode = new DefaultMutableTreeNode(new NodeInfo(Main.BUNDLE.getString("pricesNode"),"prices.png"));  
         root.add(pricesNode);
+        qortToUsdNode = new DefaultMutableTreeNode("QORT to USD price");
+        usdToQortNode = new DefaultMutableTreeNode("USD to QORT price");
         qortToLtcNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("q2litePriceDefault"));
         ltcToQortNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("lite2qPriceDefault"));
         qortToDogeNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("q2dogePriceDefault"));
         dogeToQortNode = new DefaultMutableTreeNode(Main.BUNDLE.getString("doge2qPriceDefault"));
+        pricesNode.add(qortToUsdNode);
+        pricesNode.add(usdToQortNode);
         pricesNode.add(qortToLtcNode);
         pricesNode.add(ltcToQortNode);
         pricesNode.add(qortToDogeNode);
@@ -379,7 +382,7 @@ public class MonitorPanel extends javax.swing.JPanel
                         syncStartTime = System.currentTimeMillis();
                         syncStartBlock = myBlockHeight;
                         isSynced = false;
-                        nodeInfoUpdateDelta = 10;
+                        nodeInfoUpdateDelta = 60;
                     }
 
                     monitorTreeModel.valueForPathChanged(new TreePath(syncNode.getPath()),
@@ -666,6 +669,14 @@ public class MonitorPanel extends javax.swing.JPanel
 
     private void pricesButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_pricesButtonActionPerformed
     {//GEN-HEADEREND:event_pricesButtonActionPerformed
+        monitorTreeModel.valueForPathChanged(new TreePath(qortToUsdNode.getPath()),
+                String.format("Fetching QORT to USD price. Please wait..."));
+        monitorTreeModel.reload(qortToUsdNode);
+        
+        monitorTreeModel.valueForPathChanged(new TreePath(usdToQortNode.getPath()),
+                String.format("Fetching USD to QORT price. Please wait..."));
+        monitorTreeModel.reload(usdToQortNode);
+        
         monitorTreeModel.valueForPathChanged(new TreePath(qortToLtcNode.getPath()),
                 String.format(Main.BUNDLE.getString("fetchQ2Lite")));
         monitorTreeModel.reload(qortToLtcNode);
@@ -701,14 +712,42 @@ public class MonitorPanel extends javax.swing.JPanel
         {
             try
             {
-                 String jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/crosschain/price/LITECOIN?maxtrades=10");
+                 long now = Instant.now().getEpochSecond();
+            
+                double LTC_USDprice = Double.NaN;
+                String jsonString = Utilities.ReadStringFromURL(
+                        "https://poloniex.com/public?command=returnChartData&currencyPair=USDC_LTC&start="
+                        + (now - 3000) + "&end=9999999999&resolution=auto");
+                
+                if(jsonString != null)
+                {
+                    JSONArray pricesArray = new JSONArray(jsonString);
+                   JSONObject lastObject = pricesArray.getJSONObject(pricesArray.length() - 1);
+                   //will be 0 if result is invalid
+                   if (lastObject.getLong("date") > 0)
+                       LTC_USDprice = (double) lastObject.getDouble("close");    
+                }                           
+                
+                 jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/crosschain/price/LITECOIN?maxtrades=10");
                  double LTCprice = ((double)Long.parseLong(jsonString) / 100000000);
                  jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/crosschain/price/DOGECOIN?maxtrades=10");
                  double DogePrice = ((double) Long.parseLong(jsonString) / 100000000);
+                
+                double qortUsdPrice = Double.isNaN(LTC_USDprice) ? Double.NaN : LTC_USDprice * (1 / LTCprice);
                  
                  //update swing components in EDT
                  SwingUtilities.invokeLater(() ->
                  {
+                    monitorTreeModel.valueForPathChanged(new TreePath(qortToUsdNode.getPath()),
+                            Double.isNaN(qortUsdPrice) ?  "Could not fetch USD data from poloniex.com" : 
+                                    String.format("1 QORT = %.5f USD", ((double)qortUsdPrice)));
+                    monitorTreeModel.reload(qortToUsdNode);
+                    
+                    monitorTreeModel.valueForPathChanged(new TreePath(usdToQortNode.getPath()),
+                            Double.isNaN(qortUsdPrice) ?  "Please check your internet connection" : 
+                                    String.format("1 USD = %.5f QORT", 1 / qortUsdPrice));
+                    monitorTreeModel.reload(usdToQortNode);
+                    
                     monitorTreeModel.valueForPathChanged(new TreePath(qortToLtcNode.getPath()),
                             String.format("1 QORT = %.5f Litecoin", ((double)1/LTCprice)));
                     monitorTreeModel.reload(qortToLtcNode);

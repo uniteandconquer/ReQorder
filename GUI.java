@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.sql.Connection;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JOptionPane;
@@ -193,6 +194,7 @@ public class GUI extends javax.swing.JFrame
     {       
         //must be done after login, password has to be initialised
         dbManager.CheckDbFiles();
+        dbManager.CheckCompatibility();
         dbManager.SetSocket();
         
         //returns false if databases were not initialised
@@ -206,7 +208,33 @@ public class GUI extends javax.swing.JFrame
         mainToolbar.setVisible(true); 
         reqorderPanel.SelectDocumentationNode();        
         CardLayout card = (CardLayout) mainPanel.getLayout();
-        card.show(mainPanel, "reqorderPanel");        
+        card.show(mainPanel, "reqorderPanel");   
+        
+        try(Connection connection = ConnectionDB.getConnection("properties"))
+        {            
+            dbManager.usePriceTreshold = (boolean)dbManager.GetFirstItem("account_data", "use_price_treshold", connection);
+            //set for when user exits
+            dbManager.backupEnabled = (boolean)dbManager.GetFirstItem("account_data", "auto_backup", connection);
+            
+//            dbManager.ChangeValue("account_data", "donate_dismissed", "false", "id", "0", connection);//FOR TESTING                
+            boolean dismissed = (boolean)dbManager.GetFirstItem("account_data", "donate_dismissed", connection);                
+            int newLoginCount = 1 + (int)dbManager.GetFirstItem("account_data", "login_count", connection);
+            dbManager.ChangeValue("account_data", "login_count", String.valueOf(newLoginCount), "id", "0", connection);
+            
+            if(!dismissed && newLoginCount % 20 == 0)
+            {
+                donateDialog.pack();
+                int x = getX() + ((getWidth() / 2) - (donateDialog.getWidth() / 2));
+                int y = getY() + ((getHeight() / 2) - (donateDialog.getHeight() / 2));
+                donateDialog.setLocation(x, y);
+                donateDialog.setVisible(true);   
+            }
+        }
+        catch (Exception e)
+        {
+            BackgroundService.AppendLog(e);
+        }
+        
         System.gc();   
     } 
     
@@ -422,6 +450,12 @@ public class GUI extends javax.swing.JFrame
         appearanceMenu = new javax.swing.JPopupMenu();
         trayPopup = new javax.swing.JDialog();
         jLabel11 = new javax.swing.JLabel();
+        donateDialog = new javax.swing.JDialog();
+        donatePanel = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        walletsButton = new javax.swing.JButton();
+        remindLaterButton = new javax.swing.JButton();
+        dismissButton = new javax.swing.JButton();
         mainToolbar = new javax.swing.JToolBar();
         mainToolbar.setVisible(false);
         reqorderButton = new javax.swing.JButton();
@@ -496,6 +530,84 @@ public class GUI extends javax.swing.JFrame
             .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
         );
 
+        donateDialog.setModal(true);
+        donateDialog.setUndecorated(true);
+        donateDialog.setResizable(false);
+
+        donatePanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(22, 162, 22), 5, true), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED)));
+        java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
+        jPanel1Layout.columnWidths = new int[] {0};
+        jPanel1Layout.rowHeights = new int[] {0, 12, 0, 12, 0, 12, 0, 12, 0, 12, 0, 12, 0};
+        donatePanel.setLayout(jPanel1Layout);
+
+        jLabel6.setFont(new java.awt.Font("Bahnschrift", 0, 14)); // NOI18N
+        jLabel6.setText("<html><div style='text-align: center;'>Enjoying ReQorder?<br/><br/>\n\nPlease consider supporting the creator of this app<br/>\nby sending a tip to one of ReQorder's Qortal wallets.<br/><br/>\n\nYou can find the wallet addresses on the wallets page.</div><html>");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        donatePanel.add(jLabel6, gridBagConstraints);
+
+        walletsButton.setFont(new java.awt.Font("Bahnschrift", 0, 12)); // NOI18N
+        walletsButton.setText("Go to wallets page");
+        walletsButton.setPreferredSize(new java.awt.Dimension(150, 45));
+        walletsButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                walletsButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        donatePanel.add(walletsButton, gridBagConstraints);
+
+        remindLaterButton.setFont(new java.awt.Font("Bahnschrift", 0, 12)); // NOI18N
+        remindLaterButton.setText("Remind me later");
+        remindLaterButton.setMinimumSize(new java.awt.Dimension(122, 22));
+        remindLaterButton.setPreferredSize(new java.awt.Dimension(150, 45));
+        remindLaterButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                remindLaterButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        donatePanel.add(remindLaterButton, gridBagConstraints);
+
+        dismissButton.setFont(new java.awt.Font("Bahnschrift", 0, 12)); // NOI18N
+        dismissButton.setText("<html><div style='text-align: center;'>Not interested<br/>Don't show again</div><html>");
+        dismissButton.setPreferredSize(new java.awt.Dimension(150, 45));
+        dismissButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                dismissButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 12;
+        donatePanel.add(dismissButton, gridBagConstraints);
+
+        javax.swing.GroupLayout donateDialogLayout = new javax.swing.GroupLayout(donateDialog.getContentPane());
+        donateDialog.getContentPane().setLayout(donateDialogLayout);
+        donateDialogLayout.setHorizontalGroup(
+            donateDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 450, Short.MAX_VALUE)
+            .addGroup(donateDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(donatePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE))
+        );
+        donateDialogLayout.setVerticalGroup(
+            donateDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 419, Short.MAX_VALUE)
+            .addGroup(donateDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(donatePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE))
+        );
+
         setTitle("ReQorder");
         setMinimumSize(new java.awt.Dimension(500, 600));
         setPreferredSize(new java.awt.Dimension(600, 600));
@@ -514,7 +626,6 @@ public class GUI extends javax.swing.JFrame
         reqorderButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/reqorder.png"))); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("i18n/Language"); // NOI18N
         reqorderButton.setText(bundle.getString("reqorderButton")); // NOI18N
-        reqorderButton.setToolTipText("");
         reqorderButton.setFocusable(false);
         reqorderButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         reqorderButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -586,7 +697,6 @@ public class GUI extends javax.swing.JFrame
 
             logButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/log.png"))); // NOI18N
             logButton.setText(bundle.getString("logButton")); // NOI18N
-            logButton.setToolTipText("");
             logButton.setFocusable(false);
             logButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
             logButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -935,6 +1045,32 @@ public class GUI extends javax.swing.JFrame
         pasteToLabel("QORT");
     }//GEN-LAST:event_qortFieldMouseReleased
 
+    private void remindLaterButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_remindLaterButtonActionPerformed
+    {//GEN-HEADEREND:event_remindLaterButtonActionPerformed
+        donateDialog.setVisible(false);
+    }//GEN-LAST:event_remindLaterButtonActionPerformed
+
+    private void walletsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_walletsButtonActionPerformed
+    {//GEN-HEADEREND:event_walletsButtonActionPerformed
+        donateDialog.setVisible(false);
+        CardLayout card = (CardLayout) mainPanel.getLayout();
+        currentCard = "tipJarPanel";
+        card.show(mainPanel, currentCard);
+    }//GEN-LAST:event_walletsButtonActionPerformed
+
+    private void dismissButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_dismissButtonActionPerformed
+    {//GEN-HEADEREND:event_dismissButtonActionPerformed
+        donateDialog.setVisible(false);
+        try(Connection connection = ConnectionDB.getConnection("properties"))
+        {
+            dbManager.ChangeValue("account_data", "donate_dismissed", "true", "id", "0", connection);
+        }
+        catch (Exception e)
+        {
+            BackgroundService.AppendLog(e);
+        }
+    }//GEN-LAST:event_dismissButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton alertsButton;
@@ -946,8 +1082,11 @@ public class GUI extends javax.swing.JFrame
     private javax.swing.JButton chartsButton;
     private reqorder.ChartsPanel chartsPanel;
     private javax.swing.JLabel clipboardLabel;
+    private javax.swing.JButton dismissButton;
     private javax.swing.JTextField dogeField;
     private javax.swing.JButton donateButton;
+    private javax.swing.JDialog donateDialog;
+    private javax.swing.JPanel donatePanel;
     private javax.swing.JButton exitButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
@@ -955,6 +1094,7 @@ public class GUI extends javax.swing.JFrame
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -969,6 +1109,7 @@ public class GUI extends javax.swing.JFrame
     private reqorder.NewUserPanel newUserPanel;
     private javax.swing.JButton nodeMonitorButton;
     private javax.swing.JTextField qortField;
+    private javax.swing.JButton remindLaterButton;
     private javax.swing.JButton reqorderButton;
     private reqorder.ReqorderPanel reqorderPanel;
     private javax.swing.JPanel splashPanel;
@@ -976,6 +1117,7 @@ public class GUI extends javax.swing.JFrame
     private javax.swing.JPanel tipJarPanel;
     private javax.swing.JScrollPane tipJarScrollPane;
     public javax.swing.JDialog trayPopup;
+    private javax.swing.JButton walletsButton;
     // End of variables declaration//GEN-END:variables
 
         

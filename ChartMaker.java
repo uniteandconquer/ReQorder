@@ -241,8 +241,10 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
     {
         datasets = new ArrayList<>();
         
-        //First range axis always uses first resultset
-        XYDataset dataset1 = createDataset(axes.get(0), resultSets.get(0));
+        String firstAxisName = axes.get(0);        
+        //First range axis always uses first resultset, levelling dataset uses axes.get(1) value to find minted_adj value
+        XYDataset dataset1 = firstAxisName.equals("levelling") ? 
+                CreateLevellingDataset(axes.get(0), resultSets.get(0),axes.get(1)) : createDataset(axes.get(0), resultSets.get(0));
         
         if(axes.size() > 1 && averageAll)
             dataset1 = CreateAverageDataset(dataset1);
@@ -267,7 +269,7 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
             firstYAxis.setNumberFormatOverride(GetDoubleFormat());        
         firstYAxis.setLabelPaint(colors[0]);
         firstYAxis.setTickLabelPaint(colors[0]);
-        plot.setBackgroundPaint(Color.LIGHT_GRAY);
+        plot.setBackgroundPaint(Color.WHITE);
         plot.getDomainAxis().setTickLabelPaint(colors[0]);     
         
         //Create all line and step renderers, can be switched according to user interpolate preferences
@@ -409,10 +411,11 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         return Double.parseDouble(stringValue); 
     }
     
-    private XYDataset CreateLevellingDataset(String name, ResultSet resultSet)
+    private XYDataset CreateLevellingDataset(String name, ResultSet resultSet,String minted_adj)
     {
          try
         {     
+            int mintedAdjusted = Integer.parseInt(minted_adj);
             resultSet.next();
             int lowest = resultSet.getInt("blocksminted");
             long first = resultSet.getLong("timestamp");
@@ -434,7 +437,7 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
             int currentLevel = 0;
             for(int i = 0; i < levels.length; i++)
             {
-                if(highest >= levels[i + 1])
+                if( (highest + mintedAdjusted) >= levels[i + 1])
                     continue;
                 
                 currentLevel = i;
@@ -444,7 +447,7 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
             //find and set all next levels
             for(int i = currentLevel; i < levels.length - 1; i++)
             {                
-                int blocksTillNext = levels[i + 1] - highest;
+                int blocksTillNext = levels[i + 1] - (highest + mintedAdjusted);
                 long projectedMilisec = last + (blocksTillNext * millisecPerBlock);
                 
                 nextLevelTime = new Second(new Date(projectedMilisec));
@@ -700,8 +703,6 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         
         switch(name)
         {
-            case "levelling":
-                return CreateLevellingDataset(name, resultSet);
             case "mintingrate":
                 return CreateMintingDataset(name, resultSet);
             case "balancedelta":
@@ -716,6 +717,7 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
             //due to WL_ naming in database, using blocks instead of blocksminted
             name = name.equals("blocks") ? "blocksminted" : name;
             //replace box action command with db table name
+            name = name.equals("usd_to_qort_price") || name.equals("qort_to_usd_price") ? "usdprice" : name;
             name = name.equals("ltc_to_qort_price") || name.equals("qort_to_ltc_price") ? "ltcprice" : name;
             name = name.equals("doge_to_qort_price") || name.equals("qort_to_doge_price") ? "dogeprice" : name;
             
@@ -740,7 +742,17 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
                     value = (Number) resultSet.getObject(name);
                 
                 //We want the long stored in database as a double for price formatting on range axis
-                if(name.endsWith("price"))
+                //catch usdprice case before endsWith(price) (USD -> double, crypto -> long)
+                if((name.equals("usdprice")))
+                {
+                    double price = (double) value;
+                     //switch case is opposite for USD (crypto is stored in inverse in db)
+                    price = switchPrice ?  price : 1 / (price);
+                    series.addOrUpdate(time, price);
+                    continue;
+                    
+                }
+                else if(name.endsWith("price"))
                 {
                     double price = (long) value.doubleValue();
                     price = switchPrice ? 1 / (price / 100000000) : price / 100000000;
@@ -904,7 +916,9 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
             });
             crosshairOverlay.addRangeCrosshair(maCrosshair);
         }
-        chart.setBackgroundPaint(Color.DARK_GRAY);
+        
+        chart.setBackgroundPaint(Color.LIGHT_GRAY);
+            
         chartPanel.addOverlay(crosshairOverlay);
         chartPanel.setMouseWheelEnabled(true);
         chartPanel.addMouseListener(new MouseListener()

@@ -483,6 +483,7 @@ public class ReqorderPanel extends javax.swing.JPanel
             "uptime",String.valueOf(uptimeBox.isSelected()),
             "allknownpeers",String.valueOf(allKnownPeersBox.isSelected()),
             "allonlineminters",String.valueOf(allOnlineMintersBox.isSelected()),
+            "usdprice",String.valueOf(usdPriceBox.isSelected()),
             "ltcprice",String.valueOf(ltcPriceBox.isSelected()),
             "dogeprice",String.valueOf(dogePriceBox.isSelected()),
             "data_usage",String.valueOf(dataUsageBox.isSelected()),
@@ -495,7 +496,7 @@ public class ReqorderPanel extends javax.swing.JPanel
     
     private void StartReqording()
     {   
-        if(databasesTree.getSelectionPath() == null && selectedDatabase == null)
+        if(databasesTree.getSelectionPath() == null || selectedDatabase == null)
         {
             JOptionPane.showMessageDialog(this, 
                     Utilities.AllignCenterHTML(Main.BUNDLE.getString("noDbSelected")), "", JOptionPane.PLAIN_MESSAGE);
@@ -627,6 +628,13 @@ public class ReqorderPanel extends javax.swing.JPanel
                             api_IP_inputField.setText((String)dbManager.GetFirstItem("socket", "ip", connection));
                             apiPortInputField.setText((String)dbManager.GetFirstItem("socket", "port", connection));
                         }
+                        if(dbManager.TableExists("account_data", connection))
+                        {
+                            backupAccountCheckbox.setSelected(
+                                    (boolean)dbManager.GetFirstItem("account_data", "auto_backup", connection));
+                            priceUpdateCheckbox.setSelected(
+                                    (boolean)dbManager.GetFirstItem("account_data", "use_price_treshold", connection));
+                        }
                         connection.close();
                     }
                     else
@@ -746,6 +754,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         encryptDbButton = new javax.swing.JButton();
         qortalRamBox = new javax.swing.JCheckBox();
         cpu_usageBox = new javax.swing.JCheckBox();
+        usdPriceBox = new javax.swing.JCheckBox();
         dbModePanel = new javax.swing.JPanel();
         localButton = new javax.swing.JButton();
         remoteButton = new javax.swing.JButton();
@@ -758,6 +767,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         importDbButton = new javax.swing.JButton();
         switchModeButton = new javax.swing.JButton();
         tableOptionsPanel = new javax.swing.JPanel();
+        deleteDbTableButton = new javax.swing.JButton();
         itemsOptionsPanel = new javax.swing.JPanel();
         propOptionsScrollpane = new javax.swing.JScrollPane();
         propOptionsScrollpane.getVerticalScrollBar().setUnitIncrement(10);
@@ -790,6 +800,7 @@ public class ReqorderPanel extends javax.swing.JPanel
         jSeparator12 = new javax.swing.JSeparator();
         saveSocketButton = new javax.swing.JButton();
         resetDefaultButton = new javax.swing.JButton();
+        priceUpdateCheckbox = new javax.swing.JCheckBox();
         showPropsTablePanel = new javax.swing.JPanel();
         deleteTableButton = new javax.swing.JButton();
         watchlistEditor = new javax.swing.JPanel();
@@ -922,7 +933,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 25;
+                gridBagConstraints.gridy = 26;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 dbOptionsPanel.add(saveDbPrefsButton, gridBagConstraints);
@@ -937,7 +948,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 26;
+                gridBagConstraints.gridy = 27;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 dbOptionsPanel.add(deleteDbButton, gridBagConstraints);
@@ -997,13 +1008,13 @@ public class ReqorderPanel extends javax.swing.JPanel
                 ltcPriceBox.setActionCommand("ltcPrice");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 12;
+                gridBagConstraints.gridy = 13;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(ltcPriceBox, gridBagConstraints);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 14;
+                gridBagConstraints.gridy = 15;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -1015,7 +1026,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dataUsageBox.setActionCommand("data_usage");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 15;
+                gridBagConstraints.gridy = 16;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(dataUsageBox, gridBagConstraints);
@@ -1026,7 +1037,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 cpu_tempBox.setActionCommand("cpu_temp");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 16;
+                gridBagConstraints.gridy = 17;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(cpu_tempBox, gridBagConstraints);
@@ -1036,7 +1047,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 blockchainSizeBox.setActionCommand("blockchainsize");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 19;
+                gridBagConstraints.gridy = 20;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(blockchainSizeBox, gridBagConstraints);
@@ -1065,7 +1076,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dbOptionsPanel.add(watchlistsManagerButton, gridBagConstraints);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 20;
+                gridBagConstraints.gridy = 21;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -1084,7 +1095,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 21;
+                gridBagConstraints.gridy = 22;
                 gridBagConstraints.ipadx = 14;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
@@ -1093,7 +1104,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 hourIntervalLabel.setText(bundle.getString("hourIntervalLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 22;
+                gridBagConstraints.gridy = 23;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
@@ -1102,7 +1113,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 minuteIntervalLabel.setText(bundle.getString("minuteIntervalLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 21;
+                gridBagConstraints.gridy = 22;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
@@ -1112,7 +1123,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 timeIntervalLabel.setToolTipText(bundle.getString("timeIntervalLabelTooltip")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 23;
+                gridBagConstraints.gridy = 24;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
@@ -1129,14 +1140,14 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 22;
+                gridBagConstraints.gridy = 23;
                 gridBagConstraints.ipadx = 14;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
                 dbOptionsPanel.add(hourSpinner, gridBagConstraints);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 24;
+                gridBagConstraints.gridy = 25;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -1189,7 +1200,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 dogePriceBox.setActionCommand("dogeprice");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 13;
+                gridBagConstraints.gridy = 14;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(dogePriceBox, gridBagConstraints);
@@ -1204,7 +1215,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 27;
+                gridBagConstraints.gridy = 28;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
                 dbOptionsPanel.add(encryptDbButton, gridBagConstraints);
@@ -1214,7 +1225,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 qortalRamBox.setActionCommand("qortal_ram");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 18;
+                gridBagConstraints.gridy = 19;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(qortalRamBox, gridBagConstraints);
@@ -1224,10 +1235,20 @@ public class ReqorderPanel extends javax.swing.JPanel
                 cpu_usageBox.setActionCommand("cpu_usage");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 17;
+                gridBagConstraints.gridy = 18;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
                 dbOptionsPanel.add(cpu_usageBox, gridBagConstraints);
+
+                usdPriceBox.setSelected(true);
+                usdPriceBox.setText("USD price");
+                usdPriceBox.setActionCommand("usdPrice");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 12;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(0, 35, 0, 0);
+                dbOptionsPanel.add(usdPriceBox, gridBagConstraints);
 
                 dbOptionsScrollPane.setViewportView(dbOptionsPanel);
 
@@ -1353,17 +1374,18 @@ public class ReqorderPanel extends javax.swing.JPanel
                 mainOptionsPanel.add(dbCreatePanel, "dbCreatePanel");
 
                 tableOptionsPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED)));
+                tableOptionsPanel.setLayout(new java.awt.GridBagLayout());
 
-                javax.swing.GroupLayout tableOptionsPanelLayout = new javax.swing.GroupLayout(tableOptionsPanel);
-                tableOptionsPanel.setLayout(tableOptionsPanelLayout);
-                tableOptionsPanelLayout.setHorizontalGroup(
-                    tableOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 260, Short.MAX_VALUE)
-                );
-                tableOptionsPanelLayout.setVerticalGroup(
-                    tableOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGap(0, 1014, Short.MAX_VALUE)
-                );
+                deleteDbTableButton.setText("<html><div style='text-align: center;'>Delete selected table<br/>(default invisible)</div><html");
+                deleteDbTableButton.setVisible(false);
+                deleteDbTableButton.addActionListener(new java.awt.event.ActionListener()
+                {
+                    public void actionPerformed(java.awt.event.ActionEvent evt)
+                    {
+                        deleteDbTableButtonActionPerformed(evt);
+                    }
+                });
+                tableOptionsPanel.add(deleteDbTableButton, new java.awt.GridBagConstraints());
 
                 mainOptionsPanel.add(tableOptionsPanel, "tableOptionsPanel");
 
@@ -1407,7 +1429,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 propertiesOptionsPanel.add(setBlockchainFolderButton, gridBagConstraints);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 21;
+                gridBagConstraints.gridy = 22;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 15, 0);
                 propertiesOptionsPanel.add(jSeparator11, gridBagConstraints);
@@ -1425,7 +1447,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 10;
+                gridBagConstraints.gridy = 11;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(smtpServerInput, gridBagConstraints);
 
@@ -1442,7 +1464,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 12;
+                gridBagConstraints.gridy = 13;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(portInput, gridBagConstraints);
 
@@ -1458,7 +1480,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 16;
+                gridBagConstraints.gridy = 17;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(passwordField, gridBagConstraints);
 
@@ -1475,7 +1497,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 14;
+                gridBagConstraints.gridy = 15;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(usernameInput, gridBagConstraints);
 
@@ -1490,7 +1512,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 20;
+                gridBagConstraints.gridy = 21;
                 gridBagConstraints.ipadx = 37;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 propertiesOptionsPanel.add(saveMailServerButton, gridBagConstraints);
@@ -1499,7 +1521,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 setupMailLabel.setText("Setup mail server");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 6;
+                gridBagConstraints.gridy = 7;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 9, 0);
                 propertiesOptionsPanel.add(setupMailLabel, gridBagConstraints);
 
@@ -1513,7 +1535,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 18;
+                gridBagConstraints.gridy = 19;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(testMailServerButton, gridBagConstraints);
 
@@ -1530,38 +1552,38 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 8;
+                gridBagConstraints.gridy = 9;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(recipientInput, gridBagConstraints);
 
                 recipientLabel.setText(bundle.getString("recipientLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 7;
+                gridBagConstraints.gridy = 8;
                 propertiesOptionsPanel.add(recipientLabel, gridBagConstraints);
 
                 smtpLabel.setText(bundle.getString("smtpLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 9;
+                gridBagConstraints.gridy = 10;
                 propertiesOptionsPanel.add(smtpLabel, gridBagConstraints);
 
                 portLabel.setText(bundle.getString("portLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 11;
+                gridBagConstraints.gridy = 12;
                 propertiesOptionsPanel.add(portLabel, gridBagConstraints);
 
                 userLabel.setText(bundle.getString("userLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 13;
+                gridBagConstraints.gridy = 14;
                 propertiesOptionsPanel.add(userLabel, gridBagConstraints);
 
                 passwordLabel.setText(bundle.getString("passwordLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 15;
+                gridBagConstraints.gridy = 16;
                 propertiesOptionsPanel.add(passwordLabel, gridBagConstraints);
 
                 receivedMailCheckbox.setText(bundle.getString("receivedMailCheckbox")); // NOI18N
@@ -1574,7 +1596,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 19;
+                gridBagConstraints.gridy = 20;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 propertiesOptionsPanel.add(receivedMailCheckbox, gridBagConstraints);
 
@@ -1590,7 +1612,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 17;
+                gridBagConstraints.gridy = 18;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 propertiesOptionsPanel.add(loadPasswordButton, gridBagConstraints);
 
@@ -1619,8 +1641,8 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 4;
-                gridBagConstraints.insets = new java.awt.Insets(2, 0, 1, 0);
+                gridBagConstraints.gridy = 5;
+                gridBagConstraints.insets = new java.awt.Insets(4, 0, 3, 0);
                 propertiesOptionsPanel.add(backupAccountCheckbox, gridBagConstraints);
 
                 buildVersionLabel.setText(bundle.getString("buildversionLabel")); // NOI18N
@@ -1647,7 +1669,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 apiIpLabel.setText(bundle.getString("apiIpLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 22;
+                gridBagConstraints.gridy = 23;
                 propertiesOptionsPanel.add(apiIpLabel, gridBagConstraints);
 
                 apiPortInputField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -1655,14 +1677,14 @@ public class ReqorderPanel extends javax.swing.JPanel
                 apiPortInputField.setPreferredSize(new java.awt.Dimension(175, 30));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 25;
+                gridBagConstraints.gridy = 26;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(apiPortInputField, gridBagConstraints);
 
                 apiPortLabel.setText(bundle.getString("apiPortLabel")); // NOI18N
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 24;
+                gridBagConstraints.gridy = 25;
                 propertiesOptionsPanel.add(apiPortLabel, gridBagConstraints);
 
                 api_IP_inputField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -1670,12 +1692,12 @@ public class ReqorderPanel extends javax.swing.JPanel
                 api_IP_inputField.setPreferredSize(new java.awt.Dimension(175, 30));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 23;
+                gridBagConstraints.gridy = 24;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(api_IP_inputField, gridBagConstraints);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 5;
+                gridBagConstraints.gridy = 6;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 propertiesOptionsPanel.add(jSeparator12, gridBagConstraints);
@@ -1690,7 +1712,7 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 26;
+                gridBagConstraints.gridy = 27;
                 gridBagConstraints.ipadx = 37;
                 gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
                 propertiesOptionsPanel.add(saveSocketButton, gridBagConstraints);
@@ -1705,10 +1727,26 @@ public class ReqorderPanel extends javax.swing.JPanel
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 27;
+                gridBagConstraints.gridy = 28;
                 gridBagConstraints.ipadx = 37;
                 gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 0);
                 propertiesOptionsPanel.add(resetDefaultButton, gridBagConstraints);
+
+                priceUpdateCheckbox.setSelected(true);
+                priceUpdateCheckbox.setText("Price update treshold");
+                priceUpdateCheckbox.setToolTipText("<html><div style='text-align: center;'>When enabled, crosschain and fiat prices will only be ReQorded<br/>if they change by a set treshold (0.009 for USD, 0.001 for crypto)</div><html>");
+                priceUpdateCheckbox.addActionListener(new java.awt.event.ActionListener()
+                {
+                    public void actionPerformed(java.awt.event.ActionEvent evt)
+                    {
+                        priceUpdateCheckboxActionPerformed(evt);
+                    }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.insets = new java.awt.Insets(4, 0, 3, 0);
+                propertiesOptionsPanel.add(priceUpdateCheckbox, gridBagConstraints);
 
                 propOptionsScrollpane.setViewportView(propertiesOptionsPanel);
 
@@ -2120,6 +2158,12 @@ public class ReqorderPanel extends javax.swing.JPanel
 
     private void deleteDbButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_deleteDbButtonActionPerformed
     {//GEN-HEADEREND:event_deleteDbButtonActionPerformed
+        if(GUI.REQORDING)
+        {
+            JOptionPane.showMessageDialog(gui,Utilities.AllignCenterHTML("Cannot delete database while ReQording to it"));
+            return;
+        }
+        
         if(JOptionPane.showConfirmDialog(this,
                 Main.BUNDLE.getString("deletePromptRp") + selectedDatabase + "'?",
                 Main.BUNDLE.getString("deletePromptRpTitle"), 
@@ -2657,6 +2701,14 @@ public class ReqorderPanel extends javax.swing.JPanel
     private void backupAccountCheckboxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_backupAccountCheckboxActionPerformed
     {//GEN-HEADEREND:event_backupAccountCheckboxActionPerformed
         dbManager.backupEnabled = backupAccountCheckbox.isSelected();
+        try(Connection connection = ConnectionDB.getConnection("properties"))
+        {
+            dbManager.ChangeValue("account_data", "auto_backup", String.valueOf(backupAccountCheckbox.isSelected()), "id", "0", connection);
+        }
+        catch (Exception e)
+        {
+            BackgroundService.AppendLog(e);
+        }
     }//GEN-LAST:event_backupAccountCheckboxActionPerformed
 
     private void propertiesOptionsPanelFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_propertiesOptionsPanelFocusLost
@@ -2795,9 +2847,7 @@ public class ReqorderPanel extends javax.swing.JPanel
             dbManager.CreateTable(new String[]
             {
                 TEMPWATCHLIST, "id", "int", "address", "varchar(50)", "name", "varchar(256)", "blocksminted", "boolean",
-                "level", "boolean", "balance", "boolean", "balancetreshold", "double"
-            }, connection);
-            connection.close();
+                "level", "boolean", "balance", "boolean", "balancetreshold", "double","minted_adj","int"}, connection);
         }
         catch (Exception e)
         {
@@ -3101,6 +3151,39 @@ public class ReqorderPanel extends javax.swing.JPanel
         }
     }//GEN-LAST:event_resetDefaultButtonActionPerformed
 
+    private void priceUpdateCheckboxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_priceUpdateCheckboxActionPerformed
+    {//GEN-HEADEREND:event_priceUpdateCheckboxActionPerformed
+        dbManager.usePriceTreshold = priceUpdateCheckbox.isSelected();
+        try(Connection connection = ConnectionDB.getConnection("properties"))
+        {
+            dbManager.ChangeValue("account_data", "use_price_treshold", String.valueOf(priceUpdateCheckbox.isSelected()), "id", "0", connection);
+        }
+        catch (Exception e)
+        {
+            BackgroundService.AppendLog(e);
+        }
+    }//GEN-LAST:event_priceUpdateCheckboxActionPerformed
+
+    private void deleteDbTableButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_deleteDbTableButtonActionPerformed
+    {//GEN-HEADEREND:event_deleteDbTableButtonActionPerformed
+        Object[] path = databasesTree.getSelectionPath().getPath();
+        int length = databasesTree.getSelectionPath().getPathCount();
+        String table = path[length - 1].toString();
+        if(JOptionPane.showConfirmDialog(this, "Delete " + table + " from " + selectedDatabase + "?", "Confirm", 
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+        {
+             try(Connection connection = ConnectionDB.getConnection(selectedDatabase))
+            {
+                dbManager.ExecuteUpdate("drop table " + table, connection);
+                PopulateDatabasesTree();
+            }
+            catch (Exception e)
+            {
+                BackgroundService.AppendLog(e);
+            }                
+        }
+    }//GEN-LAST:event_deleteDbTableButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel DB_chooserPanel;
@@ -3136,6 +3219,7 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JPanel dbOptionsPanel;
     private javax.swing.JScrollPane dbOptionsScrollPane;
     private javax.swing.JButton deleteDbButton;
+    private javax.swing.JButton deleteDbTableButton;
     private javax.swing.JButton deleteTableButton;
     private javax.swing.JButton deleteWatchlistButton;
     private javax.swing.JCheckBox dogePriceBox;
@@ -3179,6 +3263,7 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JLabel passwordLabel;
     private javax.swing.JTextField portInput;
     private javax.swing.JLabel portLabel;
+    private javax.swing.JCheckBox priceUpdateCheckbox;
     private javax.swing.JScrollPane propOptionsScrollpane;
     private javax.swing.JLabel propertiesLabel;
     private javax.swing.JPanel propertiesOptionsPanel;
@@ -3208,6 +3293,7 @@ public class ReqorderPanel extends javax.swing.JPanel
     private javax.swing.JLabel timeIntervalLabel;
     private javax.swing.JScrollPane treeScrollPane;
     private javax.swing.JCheckBox uptimeBox;
+    private javax.swing.JCheckBox usdPriceBox;
     private javax.swing.JLabel userLabel;
     private javax.swing.JTextField usernameInput;
     private javax.swing.JPanel watchlistEditor;

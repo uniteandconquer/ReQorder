@@ -240,6 +240,11 @@ public class Utilities
         return "<html><div style='text-align: center;'>" + s + "</div><html>";
     }
     
+    public static String numberFormat(int number)
+    {
+        return NumberFormat.getNumberInstance().format(number);
+    }
+    
     /**When there aren't any peers that show their blockheight, this method will return 0
      * @return highest known blockheight of all connected peers*/ 
     public static int FindChainHeight()
@@ -391,10 +396,14 @@ public class Utilities
             case "qortal_ram":
                 returnString = String.format("%.2fMb", value);
                 break;   
+            case "usd_to_qort_price":
             case "ltc_to_qort_price":
             case "doge_to_qort_price":
             case "balance":
                 returnString = String.format("%.5f QORT", value);
+                break;
+            case "qort_to_usd_price":
+                returnString = String.format("%.5f USD", value);
                 break;
             case "qort_to_ltc_price":
                 returnString = String.format("%.5f LTC", value);

@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -275,8 +276,85 @@ public class DatabaseManager
         });  
         
         //if login was successfull and all databases were accessible, make a backup of auth files and databases
-        if(backupEnabled && removeFiles.isEmpty())
+        if(removeFiles.isEmpty())
             AccountBackup();        
+    }
+    
+    /**This function applies all updated features to existing databases and properties file*/
+    protected void CheckCompatibility()
+    {        
+        for(String dbFile : dbFiles)
+        {
+            try(Connection connection = ConnectionDB.getConnection(dbFile))
+            {
+                if(dbFile.equals("dba"))
+                    continue;
+                
+                if(dbFile.equals("properties"))
+                {
+                    for(String table : GetTables(connection))
+                    {
+                        if(table.startsWith("WL_"))
+                        {
+                            if(!GetColumnHeaders(table, connection).contains("MINTED_ADJ"))
+                            {                        
+                                ExecuteUpdate("alter table " + table + " add minted_adj int", connection);
+                                ExecuteUpdate("update " + table + " set minted_adj=0", connection);                        
+                                System.out.println("added minted_adj column to " + table);
+                                BackgroundService.AppendLog("added minted_adj column to " + table);
+                            }
+                            continue;
+                        }
+                        if(table.equals("ALERTS_SETTINGS"))
+                        {
+                            if(!GetColumnHeaders(table, connection).contains("USDPRICE"))
+                            {                        
+                                ExecuteUpdate("alter table alerts_settings add usdprice boolean", connection);
+                                ExecuteUpdate("update alerts_settings set usdprice=false", connection);   
+                                ExecuteUpdate("alter table alerts_settings add usdvalue double", connection);
+                                ExecuteUpdate("update alerts_settings set usdvalue=0", connection);                        
+                                System.out.println("added usdprice,usdvalue column to " + table);
+                                BackgroundService.AppendLog("added usdprice,usdvalue column to " + table);
+                            }                            
+                        }
+                    }
+                    if(!TableExists("account_data", connection))
+                    {
+                        CreateTable(new String[]{"account_data","id","int","auto_backup","boolean",
+                            "use_price_treshold","boolean","login_count","int","donate_dismissed","boolean"}, connection);
+                        InsertIntoDB(new String[]{"account_data","id","0","auto_backup","true","use_price_treshold","false",
+                            "login_count","0","donate_dismissed","false"}, connection);
+                    }
+                    //no need to check dbFiles for non properties related tables
+                    continue;
+                }
+                
+                if(TableExists("my_watchlist", connection))
+                {
+                    if(!GetColumnHeaders("my_watchlist", connection).contains("MINTED_ADJ"))
+                    {                        
+                        ExecuteUpdate("alter table my_watchlist add minted_adj int", connection);
+                        ExecuteUpdate("update my_watchlist set minted_adj=0", connection);                        
+                        System.out.println("added minted_adj table to " + dbFile);
+                        BackgroundService.AppendLog("added minted_adj column to " + dbFile);
+                    }
+                }
+                if(TableExists("node_prefs", connection))
+                {
+                    if(!GetColumnHeaders("node_prefs", connection).contains("USDPRICE"))
+                    {                        
+                        ExecuteUpdate("alter table node_prefs add usdprice boolean", connection);
+                        ExecuteUpdate("update node_prefs set usdprice=false", connection);                        
+                        System.out.println("added usdprice column to " + dbFile);
+                        BackgroundService.AppendLog("added usdprice column to " + dbFile);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                BackgroundService.AppendLog(e);
+            }
+        }
     }
     
     protected void SetSocket()
@@ -309,6 +387,22 @@ public class DatabaseManager
             return;
         if(!ConnectionDB.CanConnect("properties", dbPassword))
             return;
+        
+        //must check auto backup prefs after checkin if properties file is accessible
+        try(Connection connection = ConnectionDB.getConnection("properties"))
+        {
+            //older properties files will not have this table, the compatibility check must be
+            //done after CheckDBFiles() (to ensure access to properties) which calls this function. 
+            if(!TableExists("account_data", connection))
+                return;
+            
+            if(!(boolean)GetFirstItem("account_data", "auto_backup", connection))
+                return;
+        }
+        catch (Exception e)
+        {
+            BackgroundService.AppendLog(e);
+        }        
         
         ArrayList<File> backupFiles = new ArrayList<>();
         File initFile = new File(System.getProperty("user.dir") + "/bin/init");
@@ -696,6 +790,27 @@ public class DatabaseManager
         }
     }    
     
+    public Object GetFirstItem(String table,String item,String orderKey,String order,Connection c)
+    {        
+         try 
+        {   
+            Object value;
+            String sqlString = String.format("select %s from %s order by %s %s limit 1", item, table,orderKey,order);
+            Statement stmt = c.createStatement();
+            ResultSet resultSet = stmt.executeQuery(sqlString);
+            resultSet.first();
+            value = resultSet.getObject(1);      
+                 
+            return value;
+        } 
+        catch (SQLException e) 
+        {
+            BackgroundService.AppendLog(e);
+            BackgroundService.AppendLog(String.format("Item '%s' returned null for table '%s'", item,table));
+            return null;
+        }
+    }    
+    
     public Object GetItemValue(String table,String item,String key, String keyValue,Connection c)
     {        
          try 
@@ -828,6 +943,8 @@ public class DatabaseManager
                 //easier to just drop the entire table and re-create it than to change the values for every column
                 ExecuteUpdate("delete from node_prefs",c);             
                 ExecuteUpdate("drop table node_data",c);
+                if(TableExists("usdprice", c))
+                    ExecuteUpdate("drop table usdprice", c);   
                 if(TableExists("ltcprice", c))
                     ExecuteUpdate("drop table ltcprice", c);   
                 if(TableExists("dogeprice", c))
@@ -837,8 +954,8 @@ public class DatabaseManager
             {
                 CreateTable(new String[]{"node_prefs","id","tinyint","blockheight","boolean","myblockheight","boolean",
                     "numberofconnections","boolean","uptime","boolean","allknownpeers","boolean","allonlineminters","boolean",
-                    "ltcprice","boolean","dogeprice","boolean","data_usage","boolean","cpu_temp","boolean","cpu_usage","boolean",
-                    "qortal_ram","boolean","blockchainsize","boolean","updatedelta","int"},c);
+                    "usdprice","boolean","ltcprice","boolean","dogeprice","boolean","data_usage","boolean","cpu_temp","boolean",
+                    "cpu_usage","boolean", "qortal_ram","boolean","blockchainsize","boolean","updatedelta","int"},c);
             }
 
            //insert new row if table did not exist or if settings have changed
@@ -918,6 +1035,11 @@ public class DatabaseManager
            //check which price updates are set to true and create tables for them
            for(int i = 1;i<args.length - 1;i+=2)
            { 
+               if(args[i].equals("usdprice"))
+                {                    
+                    if(Boolean.parseBoolean(args[i+1]))
+                        CreateTable(new String[]{"usdprice","timestamp","long","usdprice","double"}, c);         
+                } 
                if(args[i].equals("ltcprice"))
                 {                    
                     if(Boolean.parseBoolean(args[i+1]))
@@ -948,7 +1070,9 @@ public class DatabaseManager
         try (Connection c = ConnectionDB.getConnection("properties")) 
         {             
             //we need to check with Qortal API if the entered address is valid, no string variable needed
-             Utilities.ReadStringFromURL("http://" + socket + "/addresses/" + address);   
+             String jsString = Utilities.ReadStringFromURL("http://" + socket + "/addresses/" + address);  
+             JSONObject jsObject = new JSONObject(jsString);
+             int mintedAdjusted = jsObject.getInt("blocksMintedAdjustment");
 
             //check if address exists, using the merge statement in h2 would be cleaner 
             //but this way we can notify the user that the address already exists
@@ -974,18 +1098,27 @@ public class DatabaseManager
             }
 
             //get the registered name for the address, if available
-            String jsString = Utilities.ReadStringFromURL("http://" + socket + "/names/address/" + address);
+            jsString = Utilities.ReadStringFromURL("http://" + socket + "/names/address/" + address);
             JSONArray jSONArray = new JSONArray(jsString);
             String name = Utilities.SingleQuotedString("");
             if(jSONArray.length() > 0)
             {
-                JSONObject jsObject = jSONArray.getJSONObject(0);          
-                name =  Utilities.SingleQuotedString(jsObject.getString("name"));                
+                jsObject = jSONArray.getJSONObject(0);          
+                name =  jsObject.getString("name");   
+                if(name.contains("'"))
+                        name = name.replace("'", "''");
             }
 
-            //add address
-            String sqlString = "insert into "+ watchlist + " (address,id,name,blocksminted,level,balance,balancetreshold) values ('" + address + "'," + ID + "," + name + ",true,true,true,0.1);";
-            ExecuteUpdate(sqlString,c); 
+            //add address            
+            InsertIntoDB(new String[]{watchlist,
+                "address",Utilities.SingleQuotedString(address),
+                "id",String.valueOf(ID),
+                "name",Utilities.SingleQuotedString(name),
+                "blocksminted","true",
+                "level","true",
+                "balance","true",
+                "balancetreshold","0.1",
+                "minted_adj",String.valueOf(mintedAdjusted)}, c);
             
             c.close();
             return true;            
@@ -1161,6 +1294,11 @@ public class DatabaseManager
                         invalids.add(Main.BUNDLE.getString("ivSpaceLeft"));
                     }           
                 }
+                 if ((boolean) GetFirstItem("alerts_settings", "usdprice", propsConnection))
+                {
+                    if (!(boolean) GetFirstItem("node_prefs", "usdprice", dbConn))
+                        invalids.add("USD price");              
+                }
                  if ((boolean) GetFirstItem("alerts_settings", "ltcprice", propsConnection))
                 {
                     if (!(boolean) GetFirstItem("node_prefs", "ltcprice", dbConn))
@@ -1273,16 +1411,16 @@ public class DatabaseManager
         
         if((boolean)GetFirstItem("alerts_settings", "shownodeinfo", propertiesConnection))
         {
-            if(blockHeight - myBlockHeight >= 30)
+            if(chainHeight - myBlockHeight >= 30)
             {
                 String[] split = Main.BUNDLE.getString("syncWarning").split("%%");
-                message += String.format(split[0] + "%d" + split[1], blockHeight - myBlockHeight);
+                message += String.format(split[0] + "%d" + split[1], chainHeight - myBlockHeight);
             }
             
             message += String.format(Main.BUNDLE.getString("nodeHeight") + "%s\n",
                     NumberFormat.getIntegerInstance().format(myBlockHeight));
             message += String.format(Main.BUNDLE.getString("chainHeight") + "%s\n",
-                    NumberFormat.getIntegerInstance().format(blockHeight));
+                    NumberFormat.getIntegerInstance().format(chainHeight));
             message += String.format(Main.BUNDLE.getString("coreUptime") + "%s\n",
                     Utilities.MillisToDayHrMin(uptime));
             message += String.format(Main.BUNDLE.getString("coreBuildversion") + "%s\n",
@@ -1365,11 +1503,11 @@ public class DatabaseManager
     {        
         if ((boolean) GetFirstItem("alerts_settings", "out_of_sync", propertiesConnection))
         {
-            if (!outOfSyncAlertSent && blockHeight - myBlockHeight >= 30)
+            if (!outOfSyncAlertSent && chainHeight - myBlockHeight >= 30)
             {
                 String[] split = Main.BUNDLE.getString("outOfSyncAlert").split("%%");
                 PoolAlert(Main.BUNDLE.getString("outOfSyncSubject"),
-                        String.format(split[0] + "%d" +  split[1],blockHeight - myBlockHeight));
+                        String.format(split[0] + "%d" +  split[1],chainHeight - myBlockHeight));
                 outOfSyncAlertSent = true;
             }
         }
@@ -1428,14 +1566,15 @@ public class DatabaseManager
         //a key for inserting/updating the value. When a table is read only and single row we can just use GetFirstItem() 
         CreateTable(new String[]{"alerts_settings","id","tinyint","reqording","boolean","out_of_sync","boolean","minting","boolean",
             "core_update","boolean","levelling","boolean","name_reg","boolean","blockchainsize","boolean","blockchainvalue","long",
-            "spaceleft","boolean","spaceleftvalue","long","ltcprice","boolean","ltcvalue","long","dogeprice","boolean","dogevalue","long",
-            "emailalerts","boolean","statusalerts","boolean","shownodeinfo","boolean","statusinterval","tinyint"}, connection);
+            "spaceleft","boolean","spaceleftvalue","long","usdprice","boolean","usdvalue","double","ltcprice","boolean","ltcvalue","long",
+            "dogeprice","boolean","dogevalue","long","emailalerts","boolean","statusalerts","boolean","shownodeinfo","boolean","statusinterval","tinyint"}, connection);
 
         //set all values to default
         InsertIntoDB(new String[]{ "alerts_settings","id","0","reqording","false","out_of_sync","false","minting","false",
             "core_update","false","levelling","false","name_reg","false","blockchainsize","false","blockchainvalue","0",
-            "spaceleft","false","spaceleftvalue","0","ltcprice","false","ltcvalue","0","dogeprice","false","dogevalue","0",
-            "emailalerts","false","statusalerts","false","shownodeinfo","false","statusinterval","1"}, connection);               
+            "spaceleft","false","spaceleftvalue","0","usdprice","false","usdvalue","0","ltcprice","false","ltcvalue","0",
+            "dogeprice","false","dogevalue","0","emailalerts","false","statusalerts","false","shownodeinfo","false",
+            "statusinterval","1"}, connection);               
     }
     
     /**When user saves alerts settings, we reset these flags so the alerts will be sent*/
@@ -1450,16 +1589,18 @@ public class DatabaseManager
     private long timestamp;
     private long lastGCTime;
     private final int GC_INTERVAL = 600000; //10 minutes
+    private final double USD_UPDATE_DELTA = 0.009d;
     private final int LTC_UPDATE_DELTA = 10000;
     private final int DOGE_UPDATE_DELTA = 1000;
     private int myBlockHeight;
-    private int blockHeight;
+    private int chainHeight;
     private int numberofconnections;
     private int blocksMinted;
     private int level;
     private double balance;
     private long LTCprice;
     private long BTCprice;
+    private double USDprice;
     private long DogePrice;
     private long uptime;
     private String buildVersion;
@@ -1486,6 +1627,7 @@ public class DatabaseManager
     private boolean spaceLeftAlertSent;
     private boolean outOfSyncAlertSent;
     private long lastStatusAlertTime;
+    protected boolean usePriceTreshold = false;
     
     public void StopReqording()
     {     
@@ -1518,7 +1660,16 @@ public class DatabaseManager
             {
                 dbConnection = ConnectionDB.getConnection(database);
                 nodeDataColumns = GetColumnHeaders("node_data",dbConnection);
-                updateDelta = (int) GetItemValue("node_prefs", "updatedelta", "id", "0",dbConnection);            
+                updateDelta = (int) GetItemValue("node_prefs", "updatedelta", "id", "0",dbConnection);    
+                
+                //if there's a problem fetching data from poloniex (no internet, no prices returned) 
+                //use the last entry
+                if(TableExists("usdprice", dbConnection))
+                {
+                    Object usdObject = GetFirstItem("usdprice", "usdprice", "timestamp", "desc", dbConnection);
+                    USDprice = usdObject == null ? 0 : (double)usdObject;
+                }               
+                
                 dbConnection.close();
             }
             catch (NullPointerException | SQLException e)
@@ -1579,10 +1730,11 @@ public class DatabaseManager
                     jsonString = Utilities.ReadStringFromURL("http://" + socket + "/admin/status"); 
                     jSONObject = new JSONObject(jsonString);
 
+//                    usePriceTreshold = (boolean)GetFirstItem(sql, sql, dbConnection)
                     timestamp = System.currentTimeMillis();
                     myBlockHeight = jSONObject.getInt("height");
                     numberofconnections = jSONObject.getInt("numberOfConnections");
-                    blockHeight = Utilities.FindChainHeight();
+                    chainHeight = Utilities.FindChainHeight();
 
                     jsonString = Utilities.ReadStringFromURL("http://" + socket + "/admin/info");
                     jSONObject = new JSONObject(jsonString);
@@ -1600,7 +1752,7 @@ public class DatabaseManager
                     {
                         jsonArray = new JSONArray(jsonString);
                         allOnlineMinters = jsonArray.length();                        
-                    }
+                    }       
                     
                     //Prices will return a long (probably due to floating point accuracy issues) which will have to be divided by
                     //100.000.000 to get the amount of QORT one LTC buys, to get the $ to QORT ratio we need to know the 
@@ -1613,11 +1765,33 @@ public class DatabaseManager
 //                        $70.000. Until btc trades are re-instated we should not register the btc/qort ratio
 //                        jsonString = Utilities.ReadStringFromURL("http://" + socket + "/crosschain/price/BITCOIN?maxtrades=10");
 //                        BTCprice = Long.parseLong(jsonString);  
+
+                    //fetch USD price after getting LTC price
+                    long now = Instant.now().getEpochSecond();
+                    jsonString = Utilities.ReadStringFromURL(
+                            "https://poloniex.com/public?command=returnChartData&currencyPair=USDC_LTC&start="
+                            + (now - 3000) + "&end=9999999999&resolution=auto");
+                    
+                    //last known usdPrice at session start was fetched on session start
+                    //if jsonString returns null -> use that price
+                    if(jsonString != null)
+                    {
+                        JSONArray pricesArray = new JSONArray(jsonString);
+                        JSONObject lastObject = pricesArray.getJSONObject(pricesArray.length() - 1);
+                        //will be 0 if result is invalid
+                        if (lastObject.getLong("date") > 0)
+                        {
+                            double LTC_USDprice = (double) lastObject.getDouble("close");
+                            double LTCdouble = ((double)LTCprice / 100000000);
+                            USDprice = LTC_USDprice * (1 / LTCdouble);
+                        }
+                    }                        
                     
                     StatusAlert();
                     OutOfSyncAlert();
                     SpaceLeftAlert();
                     BuildversionUpdate();
+                    UsdPriceUpdate();
                     LtcPriceUpdate();
                     DogePriceUpdate();                    
                     
@@ -1636,12 +1810,15 @@ public class DatabaseManager
                             if(jsonArray.length() > 0)
                             {
                                 jSONObject = jsonArray.getJSONObject(0);
-                                String name = jSONObject.getString("name");                            
+                                String name = jSONObject.getString("name");     
+                                if(name.contains("'"))
+                                    name = name.replace("'", "''");
+                                
                                 String nameEntry = (String) GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
                                 if(!name.equals(nameEntry))
                                 {
                                     String[] split = Main.BUNDLE.getString("nameUpdate").split("%%");
-                                    String update = String.format(split[0] + "%s" + split[1] + "%s" + split[2], nameEntry,name);
+                                    String update = String.format(split[0] + "%s" + split[1] + "%s'", nameEntry,name);
                                     ChangeValue("my_watchlist", "name", Utilities.SingleQuotedString(name), "address", Utilities.SingleQuotedString(address), dbConnection);
                                     System.out.println(update);
                                     BackgroundService.AppendLog(update); 
@@ -1810,7 +1987,7 @@ public class DatabaseManager
             if(columnHeader.equals("BLOCKHEIGHT"))
             {
                 insertStringList.add("BLOCKHEIGHT");
-                insertStringList.add(String.valueOf(blockHeight));
+                insertStringList.add(String.valueOf(chainHeight));
                 continue;
             }
             if(columnHeader.equals("NUMBEROFCONNECTIONS"))
@@ -1940,6 +2117,11 @@ public class DatabaseManager
      each one with a 5 second delay*/
     private void PoolAlert(String subject, String message)
     {
+        message += "\n\nAt time of alert:\n\n"
+             + "Node blockheight: " + Utilities.numberFormat(myBlockHeight) +
+                "\nChain height: " + Utilities.numberFormat(chainHeight) +
+                "\nConnected peers: " + numberofconnections;
+        
         alertsPool.add(new AlertItem(subject, message, 0, false));
     }    
     
@@ -2303,8 +2485,9 @@ public class DatabaseManager
         {       
             long lastPrice = rs.getLong("ltcprice");
             if(currentTick == 1)
-            {                
-                if(Math.abs(lastPrice - LTCprice) > LTC_UPDATE_DELTA)
+            {    
+                boolean insertEntry = !usePriceTreshold || usePriceTreshold && Math.abs(lastPrice - LTCprice) > LTC_UPDATE_DELTA;
+                if(insertEntry)
                 {
                     sql = "insert into ltcprice (timestamp,ltcprice) values (" + 
                             timestamp + "," + LTCprice + ")";
@@ -2342,6 +2525,69 @@ public class DatabaseManager
             }            
         } 
     }
+        
+    private void UsdPriceUpdate() throws SQLException
+    {   
+        if(!TableExists("usdprice", dbConnection))
+            return;
+        
+        //find out if ltcprice has changed since last entry
+        statement = dbConnection.createStatement();
+        rs = statement.executeQuery("select top(1) * from usdprice order by timestamp desc"); //gets last inserted by timestamp
+        //if there are no rows in table
+        if(!rs.first())
+        {
+            if(currentTick == 1)
+            {
+                sql = "insert into usdprice (timestamp,usdprice) values (" + 
+                        timestamp + "," + USDprice + ")"; 
+                ExecuteUpdate(sql,dbConnection);                   
+            }                           
+        }
+        else
+        {       
+            double lastPrice = rs.getDouble("usdprice");
+            if(currentTick == 1)
+            {    
+                boolean insertEntry = !usePriceTreshold || usePriceTreshold && Math.abs(lastPrice - USDprice) > USD_UPDATE_DELTA;
+                if(insertEntry)
+                {
+                    sql = "insert into usdprice (timestamp,usdprice) values (" + 
+                            timestamp + "," + USDprice + ")";
+                    ExecuteUpdate(sql,dbConnection);  
+                }  
+            }
+            //will only be triggered once, after which user will have to set a new alert
+            if((boolean)GetFirstItem("alerts_settings", "usdprice",propertiesConnection))
+            {                
+                double alertValue = (double)GetFirstItem("alerts_settings", "usdvalue",propertiesConnection);
+                //if stored alert value is negative, it means the user wants to be informed that the price has 
+                //gone below specified (absolute) value, this saves us keeping an extra flag for increase/decrease
+                boolean alertForExceed = alertValue >= 0;
+                alertValue = Math.abs(alertValue);
+                
+                boolean sendAlert = false;
+                
+                if(alertForExceed && USDprice - alertValue > 0)//usd price has increased above alertvalue
+                    sendAlert = true;
+                if(!alertForExceed && USDprice - alertValue < 0)//usd price has decreased below alertvalue
+                    sendAlert = true;
+                
+                if(sendAlert)
+                {
+                    String[] split = Main.BUNDLE.getString("usdAlertMessage").split("%%");//0=up/down type,1=last price,2=current price,3=alertvalue
+                    PoolAlert(Main.BUNDLE.getString("usdAlertSubject"), String.format(
+                            split[0] + "%s" + split[1] + "%.5f" + split[2] + "%.5f" + split[3] + "%.5f" + split[4],
+                                alertForExceed ? Main.BUNDLE.getString("hasExceeded") : Main.BUNDLE.getString("isNowBelow"),
+                                lastPrice,USDprice,alertValue));
+                    //disable alert
+                    ChangeValue("alerts_settings", "usdprice", "false", "id", "0", propertiesConnection);
+                    if(BackgroundService.GUI != null)
+                        BackgroundService.GUI.alertsPanel.ltcAlertBox.setSelected(false);
+                }
+            }            
+        } 
+    }
     
     private void DogePriceUpdate() throws SQLException
     {  
@@ -2365,8 +2611,9 @@ public class DatabaseManager
         {       
             long lastPrice = rs.getLong("dogeprice");
             if(currentTick == 1)
-            {                
-                if(Math.abs(lastPrice - DogePrice) > DOGE_UPDATE_DELTA)
+            {    
+                boolean insertEntry = !usePriceTreshold || usePriceTreshold && Math.abs(lastPrice - DogePrice) > DOGE_UPDATE_DELTA;
+                if(insertEntry)
                 {
                     sql = "insert into dogeprice (timestamp,dogeprice) values (" + 
                             timestamp + "," + DogePrice + ")";

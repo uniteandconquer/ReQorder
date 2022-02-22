@@ -115,16 +115,21 @@ public class ChartsPanel extends javax.swing.JPanel
                             SetCheckboxes(new String[]{"BUILDVERSION"});
                             break;
                         case "PRICES":
-                            String[] tableNames = new String[4];
+                            String[] tableNames = new String[6];
+                            if(gui.dbManager.TableExists("USDPRICE", connection))
+                            {
+                                tableNames[0] = "USDPRICE";
+                                tableNames[1] = "USDPRICE";
+                            }
                             if(gui.dbManager.TableExists("LTCPRICE", connection))
                             {
-                                tableNames[0] = "LTCPRICE";
-                                tableNames[1] = "LTCPRICE";
+                                tableNames[2] = "LTCPRICE";
+                                tableNames[3] = "LTCPRICE";
                             }
                             if(gui.dbManager.TableExists("DOGEPRICE", connection))
                             {
-                                tableNames[2] = "DOGEPRICE";
-                                tableNames[3] = "DOGEPRICE";
+                                tableNames[4] = "DOGEPRICE";
+                                tableNames[5] = "DOGEPRICE";
                             }
                             
                             SetCheckboxes(tableNames);
@@ -201,7 +206,7 @@ public class ChartsPanel extends javax.swing.JPanel
         Component[] components = ResetChartPanelBoxes();
         
         for(String tableName : tableNames)
-        {
+        {            
             JCheckBox checkBox;
             for (Component c : components)
             {
@@ -211,6 +216,8 @@ public class ChartsPanel extends javax.swing.JPanel
                     //since we use the action command of price boxes to determine which price type to use (qort 2 ltc or vice versa),
                     //we cannot compare it to the table name of the price, if it starts with ltc or doge, we can check for those tables
                     String boxName = checkBox.getActionCommand();
+                    
+                    boxName = boxName.equals("usd_to_qort_price") || boxName.equals("qort_to_usd_price") ? "usdprice" : boxName;
                     boxName = boxName.equals("ltc_to_qort_price") || boxName.equals("qort_to_ltc_price") ? "ltcprice" : boxName;
                     boxName = boxName.equals("doge_to_qort_price") || boxName.equals("qort_to_doge_price") ? "dogeprice" : boxName;
                     //don't break if box was already enabled (for prices implementation)
@@ -447,6 +454,8 @@ public class ChartsPanel extends javax.swing.JPanel
         averageAllBox = new javax.swing.JCheckBox();
         qortalRamBox = new javax.swing.JCheckBox();
         cpu_usageBox = new javax.swing.JCheckBox();
+        qort2UsdBox = new javax.swing.JCheckBox();
+        usd2Qortbox = new javax.swing.JCheckBox();
 
         chartsSplitPane.setDividerLocation(200);
 
@@ -492,7 +501,7 @@ public class ChartsPanel extends javax.swing.JPanel
         balanceCheckbox.setActionCommand("balance");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 26;
+        gridBagConstraints.gridy = 28;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(balanceCheckbox, gridBagConstraints);
@@ -501,7 +510,7 @@ public class ChartsPanel extends javax.swing.JPanel
         levelCheckbox.setActionCommand("level");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 28;
+        gridBagConstraints.gridy = 30;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(levelCheckbox, gridBagConstraints);
@@ -510,7 +519,7 @@ public class ChartsPanel extends javax.swing.JPanel
         numberOfConnectionsBox.setActionCommand("numberOfConnections");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 29;
+        gridBagConstraints.gridy = 31;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(numberOfConnectionsBox, gridBagConstraints);
@@ -519,7 +528,7 @@ public class ChartsPanel extends javax.swing.JPanel
         allKnownPeersBox.setActionCommand("allKnownPeers");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 30;
+        gridBagConstraints.gridy = 32;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(allKnownPeersBox, gridBagConstraints);
@@ -528,7 +537,7 @@ public class ChartsPanel extends javax.swing.JPanel
         uptimeBox.setActionCommand("uptime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 32;
+        gridBagConstraints.gridy = 34;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(uptimeBox, gridBagConstraints);
@@ -537,13 +546,13 @@ public class ChartsPanel extends javax.swing.JPanel
         ltc2Qortbox.setActionCommand("ltc_to_qort_price");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 18;
+        gridBagConstraints.gridy = 20;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(ltc2Qortbox, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 33;
+        gridBagConstraints.gridy = 35;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
@@ -554,7 +563,7 @@ public class ChartsPanel extends javax.swing.JPanel
         cpu_tempBox.setActionCommand("cpu_temp");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 42;
+        gridBagConstraints.gridy = 44;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(cpu_tempBox, gridBagConstraints);
@@ -563,7 +572,7 @@ public class ChartsPanel extends javax.swing.JPanel
         blockchainSizeBox.setActionCommand("blockchainsize");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 45;
+        gridBagConstraints.gridy = 47;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(blockchainSizeBox, gridBagConstraints);
@@ -572,7 +581,7 @@ public class ChartsPanel extends javax.swing.JPanel
         allOnlineMintersBox.setActionCommand("allOnlineMinters");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 31;
+        gridBagConstraints.gridy = 33;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(allOnlineMintersBox, gridBagConstraints);
@@ -581,7 +590,7 @@ public class ChartsPanel extends javax.swing.JPanel
         blocksMintedBox.setActionCommand("blocks");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 23;
+        gridBagConstraints.gridy = 25;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(blocksMintedBox, gridBagConstraints);
@@ -612,7 +621,7 @@ public class ChartsPanel extends javax.swing.JPanel
         ramUsageBox.setActionCommand("ram_usage");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 46;
+        gridBagConstraints.gridy = 48;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 10, 10);
         chartsOptionsPanel.add(ramUsageBox, gridBagConstraints);
@@ -627,7 +636,7 @@ public class ChartsPanel extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 47;
+        gridBagConstraints.gridy = 49;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 6, 0);
         chartsOptionsPanel.add(selectAllButton, gridBagConstraints);
@@ -642,7 +651,7 @@ public class ChartsPanel extends javax.swing.JPanel
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 48;
+        gridBagConstraints.gridy = 50;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 12, 0);
         chartsOptionsPanel.add(deselectAllButton, gridBagConstraints);
@@ -701,7 +710,7 @@ public class ChartsPanel extends javax.swing.JPanel
         doge2QortBox.setActionCommand("doge_to_qort_price");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 20;
+        gridBagConstraints.gridy = 22;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(doge2QortBox, gridBagConstraints);
@@ -710,7 +719,7 @@ public class ChartsPanel extends javax.swing.JPanel
         myBlockHeightBox.setActionCommand("myblockheight");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 21;
+        gridBagConstraints.gridy = 23;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(myBlockHeightBox, gridBagConstraints);
@@ -719,7 +728,7 @@ public class ChartsPanel extends javax.swing.JPanel
         blockHeightBox.setActionCommand("blockheight");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 22;
+        gridBagConstraints.gridy = 24;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(blockHeightBox, gridBagConstraints);
@@ -749,7 +758,7 @@ public class ChartsPanel extends javax.swing.JPanel
         mintingRateBox.setActionCommand("mintingrate");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 24;
+        gridBagConstraints.gridy = 26;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(mintingRateBox, gridBagConstraints);
@@ -758,7 +767,7 @@ public class ChartsPanel extends javax.swing.JPanel
         balanceDeltaBox.setActionCommand("balancedelta");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 27;
+        gridBagConstraints.gridy = 29;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(balanceDeltaBox, gridBagConstraints);
@@ -784,7 +793,7 @@ public class ChartsPanel extends javax.swing.JPanel
         efficiencyBox.setActionCommand("efficiency");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 25;
+        gridBagConstraints.gridy = 27;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(efficiencyBox, gridBagConstraints);
@@ -809,7 +818,7 @@ public class ChartsPanel extends javax.swing.JPanel
         qort2LtcBox.setActionCommand("qort_to_ltc_price");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 17;
+        gridBagConstraints.gridy = 19;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(qort2LtcBox, gridBagConstraints);
@@ -818,7 +827,7 @@ public class ChartsPanel extends javax.swing.JPanel
         qort2DogeBox.setActionCommand("qort_to_doge_price");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 19;
+        gridBagConstraints.gridy = 21;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(qort2DogeBox, gridBagConstraints);
@@ -827,7 +836,7 @@ public class ChartsPanel extends javax.swing.JPanel
         recPerHourBox.setActionCommand("bytes_rec_avg_hour");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 40;
+        gridBagConstraints.gridy = 42;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(recPerHourBox, gridBagConstraints);
@@ -836,7 +845,7 @@ public class ChartsPanel extends javax.swing.JPanel
         sentPerHourBox.setActionCommand("bytes_sent_avg_hour");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 37;
+        gridBagConstraints.gridy = 39;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(sentPerHourBox, gridBagConstraints);
@@ -845,7 +854,7 @@ public class ChartsPanel extends javax.swing.JPanel
         bytesRecBox.setActionCommand("bytes_received");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 35;
+        gridBagConstraints.gridy = 37;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(bytesRecBox, gridBagConstraints);
@@ -854,7 +863,7 @@ public class ChartsPanel extends javax.swing.JPanel
         bytesSentBox.setActionCommand("bytes_sent");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 34;
+        gridBagConstraints.gridy = 36;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(bytesSentBox, gridBagConstraints);
@@ -863,7 +872,7 @@ public class ChartsPanel extends javax.swing.JPanel
         sentPerDayBox.setActionCommand("bytes_sent_avg_day");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 38;
+        gridBagConstraints.gridy = 40;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(sentPerDayBox, gridBagConstraints);
@@ -872,7 +881,7 @@ public class ChartsPanel extends javax.swing.JPanel
         recPerDayBox.setActionCommand("bytes_rec_avg_day");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 41;
+        gridBagConstraints.gridy = 43;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(recPerDayBox, gridBagConstraints);
@@ -881,7 +890,7 @@ public class ChartsPanel extends javax.swing.JPanel
         sentPerMinBox.setActionCommand("bytes_sent_avg_min");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 36;
+        gridBagConstraints.gridy = 38;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(sentPerMinBox, gridBagConstraints);
@@ -890,7 +899,7 @@ public class ChartsPanel extends javax.swing.JPanel
         recPerMinBox.setActionCommand("bytes_rec_avg_min");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 39;
+        gridBagConstraints.gridy = 41;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(recPerMinBox, gridBagConstraints);
@@ -980,7 +989,7 @@ public class ChartsPanel extends javax.swing.JPanel
         qortalRamBox.setActionCommand("qortal_ram");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 44;
+        gridBagConstraints.gridy = 46;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(qortalRamBox, gridBagConstraints);
@@ -990,10 +999,28 @@ public class ChartsPanel extends javax.swing.JPanel
         cpu_usageBox.setActionCommand("cpu_usage");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 43;
+        gridBagConstraints.gridy = 45;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
         chartsOptionsPanel.add(cpu_usageBox, gridBagConstraints);
+
+        qort2UsdBox.setText("Qort to USD price");
+        qort2UsdBox.setActionCommand("qort_to_usd_price");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 17;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
+        chartsOptionsPanel.add(qort2UsdBox, gridBagConstraints);
+
+        usd2Qortbox.setText("USD to Qort price");
+        usd2Qortbox.setActionCommand("usd_to_qort_price");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 18;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 10, 3, 10);
+        chartsOptionsPanel.add(usd2Qortbox, gridBagConstraints);
 
         ChartOptionsScrollpane.setViewportView(chartsOptionsPanel);
 
@@ -1036,7 +1063,7 @@ public class ChartsPanel extends javax.swing.JPanel
     private void createChartButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_createChartButtonActionPerformed
     {//GEN-HEADEREND:event_createChartButtonActionPerformed
         if (chartsTree.getSelectionPath() == null)//failsafe, should never be the case (button should be disabled)
-        {
+        {            
             JOptionPane.showMessageDialog(this, Main.BUNDLE.getString("selectDataset"),
                     Main.BUNDLE.getString("selectDatasetTitle"), JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -1071,6 +1098,8 @@ public class ChartsPanel extends javax.swing.JPanel
                 }
             }
         }
+        if (uptimeSelected)
+            selectedItems.add("uptime");
         
         if(selectedItems.isEmpty())
         {
@@ -1079,9 +1108,6 @@ public class ChartsPanel extends javax.swing.JPanel
         }
         movingAverageBox.setEnabled(selectedItems.size() == 1);
         showDataBox.setEnabled(selectedItems.size() == 1);
-
-        if (uptimeSelected)
-            selectedItems.add("uptime");
         
         //we want  level to be the first chart, so they'll always use a steprenderer
         if (selectedItems.contains("level"))
@@ -1119,7 +1145,10 @@ public class ChartsPanel extends javax.swing.JPanel
                             for (int i = 0; i < selectedItems.size(); i++)
                             {
                                 query = "";
-                                String axis = selectedItems.get(i);
+                                String axis = selectedItems.get(i);                                
+                                if (axis.equals("qort_to_usd_price") || axis.equals("usd_to_qort_price"))
+                                    query = "select timestamp, usdprice from usdprice";
+                                
                                 if (axis.equals("qort_to_ltc_price") || axis.equals("ltc_to_qort_price"))
                                     query = "select timestamp, ltcprice from ltcprice";
                                 
@@ -1268,6 +1297,11 @@ public class ChartsPanel extends javax.swing.JPanel
             selectedItems.add("levelling");
             int ID = gui.dbManager.GetAddressID(connection,chartsTree.getSelectionPath().getLastPathComponent().toString());
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            
+            //MINTED ADJUSTED is added as 2nd item in selected items, this is used in the createLevellingDataset to adjust for minted_adj
+            int mintedAdjusted = (int) gui.dbManager.GetItemValue("my_watchlist", "minted_adj", "id", String.valueOf(ID), connection);
+            selectedItems.add(String.valueOf(mintedAdjusted));
+            
             resultSets.add(statement.executeQuery("select timestamp,blocksminted from WL_ADDRESS_" + ID + "_BLOCKS"));
 
             chartPanel = chartMaker.createChartPanel(
@@ -1388,6 +1422,7 @@ public class ChartsPanel extends javax.swing.JPanel
     private javax.swing.JCheckBox numberOfConnectionsBox;
     private javax.swing.JCheckBox qort2DogeBox;
     private javax.swing.JCheckBox qort2LtcBox;
+    private javax.swing.JCheckBox qort2UsdBox;
     private javax.swing.JCheckBox qortalRamBox;
     private javax.swing.JCheckBox ramUsageBox;
     private javax.swing.JCheckBox recPerDayBox;
@@ -1401,5 +1436,6 @@ public class ChartsPanel extends javax.swing.JPanel
     private javax.swing.JCheckBox showDialogCheckbox;
     private javax.swing.JCheckBox showSnapshotsBox;
     private javax.swing.JCheckBox uptimeBox;
+    private javax.swing.JCheckBox usd2Qortbox;
     // End of variables declaration//GEN-END:variables
 }
