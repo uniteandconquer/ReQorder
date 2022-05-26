@@ -3,6 +3,8 @@ package reqorder;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -82,20 +84,24 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         chartDialogLabel = new javax.swing.JLabel();
         chartDialogLabel.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         chartDialogLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        chartDialogLabel.setForeground(Color.LIGHT_GRAY);
+        chartDialogLabel.setForeground(Color.LIGHT_GRAY);        
+        
+        //Some linux systems do not support translucent windows
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
         
         //only enable chartDialog transparancy for non linux systems
         //Linux rendering on transparent background is blurry to the point of unreadable
-        if(gui.dbManager.myOS.contains("nix") || gui.dbManager.myOS.contains("nux"))
-        {
-            chartDialog.getRootPane ().setOpaque (true);
-            chartDialog.getContentPane ().setBackground (new Color (30, 30, 30));
-        }
-        else
-        {
+        if(gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT))
+        {   
             chartDialog.getRootPane ().setOpaque (false);
             chartDialog.getContentPane ().setBackground (new Color (0, 0, 0, 0));
             chartDialog.setBackground (new Color (30, 30, 30, 180));   
+        }
+        else
+        {
+            chartDialog.getRootPane ().setOpaque (true);
+            chartDialog.getContentPane ().setBackground (new Color (30, 30, 30));
         }       
         
         javax.swing.GroupLayout chartDialogLayout = new javax.swing.GroupLayout(chartDialog.getContentPane());
@@ -363,7 +369,7 @@ public class ChartMaker extends ApplicationFrame implements ChartMouseListener
         linerenders[rangeIndex] = new XYLineAndShapeRenderer();
         linerenders[rangeIndex].setSeriesStroke(0, new BasicStroke(2f));
         linerenders[rangeIndex].setSeriesPaint(0, colors[rangeIndex]);
-    }    
+    }  
        
     private boolean  AxisToInteger(String axis)
     {

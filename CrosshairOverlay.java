@@ -459,6 +459,7 @@ public class CrosshairOverlay extends AbstractOverlay implements Overlay,
             {
                 String label = crosshair.getLabelGenerator().generateLabel(
                         crosshair);
+                
                 RectangleAnchor anchor = crosshair.getLabelAnchor();
                 Point2D pt = calculateLabelPoint(line, anchor, 5, 5);
                 float xx = (float) pt.getX();

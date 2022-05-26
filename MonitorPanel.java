@@ -263,6 +263,8 @@ public class MonitorPanel extends javax.swing.JPanel
                 }
                 else
                 {
+                    lastPingTime = lastPingTime == 0 ? System.currentTimeMillis() : lastPingTime;
+                    
                     //show last online (if was online)
                     nodeStatusString = lastOnlineTime == 0 ? Main.BUNDLE.getString("lastRefresh") + Utilities.TimeFormat(lastPingTime)
                             : Main.BUNDLE.getString("lastOnline") + Utilities.DateFormat(lastOnlineTime);
@@ -725,7 +727,7 @@ public class MonitorPanel extends javax.swing.JPanel
                    JSONObject lastObject = pricesArray.getJSONObject(pricesArray.length() - 1);
                    //will be 0 if result is invalid
                    if (lastObject.getLong("date") > 0)
-                       LTC_USDprice = (double) lastObject.getDouble("close");    
+                       LTC_USDprice = (double) lastObject.getDouble("weightedAverage");    
                 }                           
                 
                  jsonString = Utilities.ReadStringFromURL("http://" + gui.dbManager.socket + "/crosschain/price/LITECOIN?maxtrades=10");

@@ -1781,7 +1781,7 @@ public class DatabaseManager
                         //will be 0 if result is invalid
                         if (lastObject.getLong("date") > 0)
                         {
-                            double LTC_USDprice = (double) lastObject.getDouble("close");
+                            double LTC_USDprice = (double) lastObject.getDouble("weightedAverage");
                             double LTCdouble = ((double)LTCprice / 100000000);
                             USDprice = LTC_USDprice * (1 / LTCdouble);
                         }
@@ -2246,7 +2246,15 @@ public class DatabaseManager
                 if(currentTick == 1)
                 {
                     lastBlockMintedTime = timestamp;
-                    alertedBlockAddresses.remove(address);
+                    
+                    if(alertedBlockAddresses.remove(address))
+                    {
+                        String name = (String) GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
+                        name = name.isEmpty() ? address : name;
+                        PoolAlert("Minting has resumed", "ReQorder has detected that account ''" + name + "'' is minting again. Minting was resumed"
+                                + " at " + Utilities.DateFormatShort(System.currentTimeMillis()) + ", current blocks minted is " + blocksMinted + ".");
+                    }
+                    
                     sql = "insert into " + table + " (timestamp,blocksminted) values (" + 
                             timestamp + "," + blocksMinted + ")";
                     ExecuteUpdate(sql,dbConnection);  
@@ -2254,22 +2262,26 @@ public class DatabaseManager
             }
             else
             {
-                //check if alert enabled
-                if ((boolean) GetFirstItem("alerts_settings", "minting",propertiesConnection))
+                //only send minting halted alerts if node is not les than 30 blocks behind
+                if(chainHeight > 0 && chainHeight - myBlockHeight < 30)
                 {
-                    long WARNING_TIME = 900000;//warn if not minted for this amount of time (15 minutes)
-                    long timeNotMinted = System.currentTimeMillis() - lastBlockMintedTime;
-                    //using a list of addresses to make sure only one alert is sent, using time as flag was not reliable enough
-                    if (timeNotMinted > WARNING_TIME && !alertedBlockAddresses.contains(address))
+                    //check if alert enabled
+                    if ((boolean) GetFirstItem("alerts_settings", "minting",propertiesConnection))
                     {
-                        alertedBlockAddresses.add(address);
-                        String name = (String) GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
-                        name = name.isEmpty() ? address : name;
-                        String[] split = Main.BUNDLE.getString("mintingHaltedAlert").split("%%");
-                        PoolAlert(Main.BUNDLE.getString("mintingHaltedSubject"),
-                                String.format(split[0] + "%s" + split[1] + "%s" + split[2],name, Utilities.MillisToDayHrMin(WARNING_TIME)));
+                        long WARNING_TIME = 900000;//warn if not minted for this amount of time (15 minutes)
+                        long timeNotMinted = System.currentTimeMillis() - lastBlockMintedTime;
+                        //using a list of addresses to make sure only one alert is sent, using time as flag was not reliable enough
+                        if (timeNotMinted > WARNING_TIME && !alertedBlockAddresses.contains(address))
+                        {
+                            alertedBlockAddresses.add(address);
+                            String name = (String) GetItemValue("my_watchlist", "name", "address", Utilities.SingleQuotedString(address), dbConnection);
+                            name = name.isEmpty() ? address : name;
+                            String[] split = Main.BUNDLE.getString("mintingHaltedAlert").split("%%");
+                            PoolAlert(Main.BUNDLE.getString("mintingHaltedSubject"),
+                                    String.format(split[0] + "%s" + split[1] + "%s" + split[2],name, Utilities.MillisToDayHrMin(WARNING_TIME)));
+                        }
                     }
-                }
+                }                    
             }
         }
     }

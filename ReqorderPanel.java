@@ -1543,11 +1543,11 @@ public class ReqorderPanel extends javax.swing.JPanel
                 recipientInput.setText(bundle.getString("recipientInput")); // NOI18N
                 recipientInput.setMinimumSize(new java.awt.Dimension(250, 22));
                 recipientInput.setPreferredSize(new java.awt.Dimension(175, 30));
-                recipientInput.addFocusListener(new java.awt.event.FocusAdapter()
+                recipientInput.addActionListener(new java.awt.event.ActionListener()
                 {
-                    public void focusGained(java.awt.event.FocusEvent evt)
+                    public void actionPerformed(java.awt.event.ActionEvent evt)
                     {
-                        recipientInputFocusGained(evt);
+                        recipientInputActionPerformed(evt);
                     }
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -2642,11 +2642,6 @@ public class ReqorderPanel extends javax.swing.JPanel
         }
     }//GEN-LAST:event_testMailServerButtonActionPerformed
 
-    private void recipientInputFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_recipientInputFocusGained
-    {//GEN-HEADEREND:event_recipientInputFocusGained
-        recipientInput.selectAll();
-    }//GEN-LAST:event_recipientInputFocusGained
-
     private void receivedMailCheckboxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_receivedMailCheckboxActionPerformed
     {//GEN-HEADEREND:event_receivedMailCheckboxActionPerformed
         saveMailServerButton.setEnabled(receivedMailCheckbox.isSelected());
@@ -3183,6 +3178,11 @@ public class ReqorderPanel extends javax.swing.JPanel
             }                
         }
     }//GEN-LAST:event_deleteDbTableButtonActionPerformed
+
+    private void recipientInputActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_recipientInputActionPerformed
+    {//GEN-HEADEREND:event_recipientInputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_recipientInputActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
