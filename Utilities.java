@@ -101,13 +101,14 @@ public class Utilities
         }
         catch(ExecutionException e)
         {
-            if(e.getCause().toString().startsWith("java.net.ConnectException"))
-                throw new ConnectException();
-            if(e.getCause().toString().startsWith("java.io.IOException"))
-                throw new IOException();
-            
             BackgroundService.AppendLog(e.toString() + " for " + requestURL);
             BackgroundService.AppendLog(e);
+            
+            if(e.getCause().toString().startsWith("java.net.ConnectException"))
+                throw new ConnectException();
+            if(e.getCause().toString().startsWith("java.io.IOException"))                
+                //If API unavailable (qortal/poloniex/coingecko) but core is online, returning null will prevent reqording session from ending                
+                return null;
         }
         catch( InterruptedException  e)
         { 

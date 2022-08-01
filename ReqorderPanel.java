@@ -428,6 +428,7 @@ public class ReqorderPanel extends javax.swing.JPanel
             uptimeBox.setSelected((boolean)dbManager.GetItemValue("node_prefs", "uptime", "id", "0",connection));
             ltcPriceBox.setSelected((boolean)dbManager.GetItemValue("node_prefs", "ltcprice", "id", "0",connection));
             dogePriceBox.setSelected((boolean)dbManager.GetItemValue("node_prefs", "dogeprice", "id", "0",connection));
+            usdPriceBox.setSelected((boolean)dbManager.GetItemValue("node_prefs", "usdprice", "id", "0",connection));
             dataUsageBox.setSelected((boolean)dbManager.GetItemValue("node_prefs", "data_usage", "id", "0",connection));
             cpu_tempBox.setSelected((boolean)dbManager.GetItemValue("node_prefs", "cpu_temp", "id", "0",connection));
             blockchainSizeBox.setSelected((boolean)dbManager.GetItemValue("node_prefs", "blockchainsize", "id", "0",connection));

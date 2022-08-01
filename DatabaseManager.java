@@ -1761,31 +1761,34 @@ public class DatabaseManager
                     LTCprice = Long.parseLong(jsonString);                    
                     jsonString = Utilities.ReadStringFromURL("http://" + socket + "/crosschain/price/DOGECOIN?maxtrades=10");
                     DogePrice = Long.parseLong(jsonString);
-//                        this url returns the price based on the last 10 trades, which apparently took place when btc was around
-//                        $70.000. Until btc trades are re-instated we should not register the btc/qort ratio
-//                        jsonString = Utilities.ReadStringFromURL("http://" + socket + "/crosschain/price/BITCOIN?maxtrades=10");
-//                        BTCprice = Long.parseLong(jsonString);  
+                    // this url returns the price based on the last 10 trades, which apparently took place when btc was around
+                    //$70.000. Until btc trades are re-instated we should not register the btc/qort ratio
+//                    jsonString = Utilities.ReadStringFromURL("http://" + socket + "/crosschain/price/BITCOIN?maxtrades=10");
+//                    BTCprice = Long.parseLong(jsonString);  
 
-                    //fetch USD price after getting LTC price
-                    long now = Instant.now().getEpochSecond();
-                    jsonString = Utilities.ReadStringFromURL(
-                            "https://poloniex.com/public?command=returnChartData&currencyPair=USDC_LTC&start="
-                            + (now - 3000) + "&end=9999999999&resolution=auto");
-                    
-                    //last known usdPrice at session start was fetched on session start
-                    //if jsonString returns null -> use that price
-                    if(jsonString != null)
+
+                    System.err.println(GetFirstItem("NODE_PREFS", "USDPRICE", dbConnection));
+
+                    //Only fetch usd price if enabled by user
+                    if((boolean)GetFirstItem("NODE_PREFS", "USDPRICE", dbConnection))
                     {
-                        JSONArray pricesArray = new JSONArray(jsonString);
-                        JSONObject lastObject = pricesArray.getJSONObject(pricesArray.length() - 1);
-                        //will be 0 if result is invalid
-                        if (lastObject.getLong("date") > 0)
-                        {
-                            double LTC_USDprice = (double) lastObject.getDouble("weightedAverage");
+                        //fetch USD price after getting LTC price
+                        long now = Instant.now().getEpochSecond();
+                        jsonString = Utilities.ReadStringFromURL(
+                             "https://api.coingecko.com/api/v3/coins/litecoin/market_chart/range?vs_currency=USD&from=" + (now - 600) + "&to=" + now);
+
+                        //last known usdPrice at session start was fetched on session start
+                        //if jsonString returns null -> use that price
+                        if(jsonString != null)
+                        {                        
+                            JSONObject jsonResponse = new JSONObject(jsonString);
+                            JSONArray pricesArray = jsonResponse.getJSONArray("prices");                        
+                            JSONArray result = pricesArray.getJSONArray(pricesArray.length() - 1);                    
+                            double LTC_USDprice = result.getDouble(1);
                             double LTCdouble = ((double)LTCprice / 100000000);
                             USDprice = LTC_USDprice * (1 / LTCdouble);
-                        }
-                    }                        
+                        }                           
+                    }                     
                     
                     StatusAlert();
                     OutOfSyncAlert();
