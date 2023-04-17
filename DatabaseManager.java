@@ -1899,7 +1899,7 @@ public class DatabaseManager
                 }
                 catch (IOException | NullPointerException | NumberFormatException | SQLException | TimeoutException | JSONException e) 
                 {
-                    if(retries < 5)
+                    if(retries < 10)
                     {
                         timer.cancel();//important to close the timer (thread)
                         Retry();

@@ -63,7 +63,7 @@ import org.json.JSONException;
 public class Utilities
 {
     private static final ExecutorService executor = Executors.newCachedThreadPool();
-    private static final int TIMEOUT_DURATION = 45;
+    private static final int TIMEOUT_DURATION = 90;
     private static final String WEEKS =Main.BUNDLE.getString("weeks");
     private static final String DAYS =Main.BUNDLE.getString("days");
     private static final String HOURS =Main.BUNDLE.getString("hours");
